@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Booking Receipt - {{ quick_booking.booking_number }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+        
+        .receipt-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-top: 5px;  
+            background: white;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .company-info {
+            flex: 1;
+        }
+        
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 5px;
+        }
+        
+        .company-details {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .logo {
+            width: 120px;
+            height: 80px;
+            object-fit: contain;
+        }
+        
+        .receipt-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .quick-booking-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 5px solid #28a745;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 5px 0;
+            border-bottom: 1px dotted #ddd;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #555;
+            flex: 1;
+        }
+        
+        .info-value {
+            color: #333;
+            flex: 2;
+            text-align: right;
+        }
+        
+        .highlight-section {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 5px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .highlight-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .highlight-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .next-steps {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .next-steps h4 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .next-steps ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+        
+        .next-steps li {
+            margin-bottom: 8px;
+        }
+        
+        .contact-info {
+            background: #e7f3ff;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .contact-info h4 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+        
+        .contact-info p {
+            color: #0c5460;
+            margin-bottom: 5px;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            padding-top: 20px;
+        }
+        
+        .terms {
+            margin-top: 20px;
+            font-size: 10px;
+            color: #555;
+        }
+        
+        .terms h4 {
+            margin-bottom: 10px;
+            color: #28a745;
+        }
+        
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+        
+        .signature {
+            text-align: center;
+            width: 200px;
+        }
+        
+        .signature-line {
+            border-top: 1px solid #333;
+            margin-top: 50px;
+            padding-top: 5px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .special-request {
+            background: #f0f8ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .special-request h4 {
+            color: #0056b3;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .special-request p {
+            color: #333;
+            font-style: italic;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            
+            .receipt-container {
+                max-width: none;
+                margin: 0;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="company-info">
+                <div class="company-name">{{ company.name }}</div>
+                <div class="company-details">
+                    {{ company.address }}<br>
+                    Phone: {{ company.phone }} | Email: {{ company.email }}
+                </div>
+            </div>
+            <img src="http://127.0.0.1:8000/media/company_logos/TawheedUmrahnew41.png" alt="Company Logo" class="logo">
+        </div>
+        
+        <!-- Receipt Title -->
+        <div class="receipt-title">
+            Quick Booking Receipt
+        </div>
+        
+        <!-- Quick Booking Information -->
+        <div class="quick-booking-info">
+            <div class="info-row">
+                <span class="info-label">Booking Reference:</span>
+                <span class="info-value">{{ quick_booking.booking_number }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Customer Name:</span>
+                <span class="info-value">{{ quick_booking.customer_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ quick_booking.email }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Mobile:</span>
+                <span class="info-value">{{ quick_booking.mobile }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Travel Date:</span>
+                <span class="info-value">{{ quick_booking.travel_month }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Destination:</span>
+                <span class="info-value">{{ quick_booking.destination }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Number of Travelers:</span>
+                <span class="info-value">{{ quick_booking.number_of_travelers }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Payment Preference:</span>
+                <span class="info-value">{{ quick_booking.preferred_payment|title }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Estimated Budget :</span>
+                <span class="info-value">₹{{ quick_booking.budget }}</span>
+            </div>
+             <div class="info-row">
+                <span class="info-label">Payment Amount:</span>
+                <span class="info-value">₹{{ quick_booking.payment }}</span>
+            </div>
+             <div class="info-row">
+                <span class="info-label">Dues Amount :</span>
+                <span class="info-value">₹{{ quick_booking.dues }}</span>
+            </div>
+        </div>
+                
+        <!-- Special Requests -->
+        {% if quick_booking.special_request %}
+        <div class="special-request">
+            <h4>Special Requests</h4>
+            <p>{{ quick_booking.special_request }}</p>
+        </div>
+        {% endif %}
+                        
+        <!-- Terms and Conditions -->
+        <div class="terms">
+            <h4>Important Notes:</h4>
+            <ul>
+                <li>This is a preliminary booking inquiry, not a confirmed reservation.</li>
+                <li>Actual package prices may vary based on availability and season.</li>
+                <li>Final confirmation required with advance payment.</li>
+                <li>All bookings subject to terms and conditions.</li>
+                <li>Travel insurance recommended for international destinations.</li>
+            </ul>
+        </div>
+        
+        <!-- Signature Section -->
+        <div class="signature-section">
+            <div class="signature">
+                <div class="signature-line">Customer Signature</div>
+            </div>
+            <div class="signature">
+                <div class="signature-line">Agent Signature</div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>Thank you for your interest in {{ company.name }}!</p>
+            <p>Inquiry Date: {{ quick_booking.created_at|date:"F d, Y" }} | Agent: {{ quick_booking.created_by_name }}</p>
+            <h4>Need Immediate Assistance?</h4>
+            <p><strong>Phone:</strong> {{ company.phone }}</p>
+            <p><strong>Email:</strong> {{ company.email }}</p>
+        </div>
+    </div>
+</body>
+</html>

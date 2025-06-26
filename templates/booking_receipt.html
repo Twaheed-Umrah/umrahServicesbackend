@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Receipt - {{ booking.booking_number }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+            background: white;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .receipt-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+
+        .header {
+            width: 100%;
+            border-bottom: 3px solid #007a55;
+            padding-bottom: 15px;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+
+        .header-content {
+            display: table;
+            width: 100%;
+        }
+
+        .company-info {
+            display: table-cell;
+            vertical-align: middle;
+            width: 70%;
+        }
+
+        .logo-container {
+            display: table-cell;
+            vertical-align: middle;
+            width: 30%;
+            text-align: right;
+        }
+
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007a55;
+            margin-bottom: 8px;
+        }
+
+        .company-details {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .logo {
+            max-width: 120px;
+            max-height: 80px;
+            width: auto;
+            height: auto;
+        }
+
+        .receipt-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #007a55;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .booking-info {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .info-sections {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .info-section {
+            display: table-cell;
+            width: 50%;
+            background: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+
+        .info-section:first-child {
+            border-right: none;
+        }
+
+        .info-title {
+            font-weight: bold;
+            color: #007a55;
+            margin-bottom: 12px;
+            font-size: 14px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 5px;
+        }
+
+        .info-row {
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #555;
+            float: left;
+            width: 40%;
+        }
+
+        .info-value {
+            color: #333;
+            float: right;
+            width: 58%;
+            text-align: right;
+        }
+
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            border: 2px solid #007a55;
+        }
+
+        .pricing-table th {
+            background-color: #007a55;
+            color: white;
+            font-weight: bold;
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid #0056b3;
+        }
+
+        .pricing-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .pricing-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .pricing-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .total-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border: 2px solid #007a55;
+            margin-bottom: 10px;
+        }
+
+        .total-row {
+            margin-bottom: 4px;
+            overflow: hidden;
+            font-size: 13px;
+        }
+
+        .total-label {
+            font-weight: bold;
+            float: left;
+            width: 70%;
+        }
+
+        .total-value {
+            float: right;
+            width: 28%;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .total-row.grand-total {
+            font-weight: bold;
+            font-size: 16px;
+            color: #007a55;
+            border-top: 2px solid #007a55;
+            padding-top: 10px;
+            margin-top: 15px;
+        }
+
+        .grand-total .total-label,
+        .grand-total .total-value {
+            font-size: 16px;
+            color: #007a55;
+        }
+
+        .special-requests {
+            background: #f8f9fa;
+            padding: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .special-requests .info-title {
+            color: #28a745;
+        }
+
+        .terms {
+            margin-top: 20px;
+            font-size: 10px;
+            color: #555;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+
+        .terms h4 {
+            margin-bottom: 10px;
+            color: #007a55;
+            font-size: 12px;
+        }
+
+        .terms ul {
+            padding-left: 15px;
+        }
+
+        .terms li {
+            margin-bottom: 3px;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+        }
+
+        .signature {
+            text-align: center;
+            width: 200px;
+        }
+
+        .signature-line {
+            border-top: 1px solid #333;
+            margin-top: 10px;
+            padding-top: 5px;
+        }
+
+        .footer {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            padding-top: 10px;
+        }
+
+        .footer p {
+            margin-bottom: 5px;
+        }
+
+        /* PDF/Print Specific Styles */
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                font-size: 11px;
+            }
+
+            .receipt-container {
+                max-width: none;
+                margin: 0;
+                padding: 10px;
+                box-shadow: none;
+            }
+
+            .header {
+                page-break-inside: avoid;
+            }
+
+            .pricing-table {
+                page-break-inside: avoid;
+            }
+
+            .total-section {
+                page-break-inside: avoid;
+            }
+
+            .signature-section {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 25px;
+                padding-top: 20px;
+            }
+
+            .signature {
+                text-align: center;
+                width: 200px;
+            }
+
+            .signature-line {
+                border-top: 1px solid #333;
+                margin-top: 50px;
+                padding-top: 5px;
+            }
+
+            /* Ensure colors print correctly */
+            .pricing-table th {
+                background-color: #007a55 !important;
+                color: white !important;
+            }
+
+            .company-name,
+            .receipt-title,
+            .info-title,
+            .grand-total {
+                color: #007a55 !important;
+            }
+        }
+
+        /* Additional PDF generation styles */
+        @page {
+            margin: 0.5in;
+            size: A4;
+        }
+
+        /* Clearfix utility */
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="receipt-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="company-info">
+                    <div class="company-name">{{ company.name }}</div>
+                    <div class="company-details">
+                        {{ company.address }}<br>
+                        Phone: {{ company.phone }} | Email: {{ company.email }}
+                    </div>
+                </div>
+                <div class="logo-container">
+                    <img src="{{ company.logo_url }}" alt="Company Logo" class="logo">
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipt Title -->
+        <div class="receipt-title">Travel Booking Receipt</div>
+
+        <!-- Booking Information -->
+        <div class="booking-info">
+            <div class="info-sections">
+                <div class="info-section">
+                    <div class="info-title">Customer Information</div>
+                    <div class="info-row clearfix">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value">{{ booking.customer_name }}</span>
+                    </div>
+                    <div class="info-row clearfix">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">{{ booking.email }}</span>
+                    </div>
+                    <div class="info-row clearfix">
+                        <span class="info-label">Mobile:</span>
+                        <span class="info-value">{{ booking.mobile_no }}</span>
+                    </div>
+                    <div class="info-row clearfix">
+                        <span class="info-label">Address:</span>
+                        <span class="info-value">{{ booking.address }}</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-title">Booking Details</div>
+                    <div class="info-row clearfix">
+                        <span class="info-label">Booking No:</span>
+                        <span class="info-value">{{ booking.booking_number }}</span>
+                    </div>
+                    <div class="info-row clearfix">
+                        <span class="info-label">Package:</span>
+                        <span class="info-value">{{ booking.package_name }}</span>
+                    </div>
+                    <div class="info-row clearfix">
+                        <span class="info-label">Duration:</span>
+                        <span class="info-value">{{ booking.package_days }} Days</span>
+                    </div>
+                    <div class="info-row clearfix">
+                        <span class="info-label">Travel Date:</span>
+                        <span class="info-value">{{ booking.travel_month }}</span>
+                    </div>
+                    <div class="info-row clearfix">
+                        <span class="info-label">Departure:</span>
+                        <span class="info-value">{{ booking.departure_city }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Details -->
+        <table class="pricing-table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Rate</th>
+                    <th>Quantity</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Adult</td>
+                    <td>₹{{ booking.adult_price }}</td>
+                    <td>{{ booking.total_adults }}</td>
+                    <td>₹{{ booking.total_adult_price }}</td>
+                </tr>
+                {% if booking.total_children > 0 %}
+                <tr>
+                    <td>Child</td>
+                    <td>₹{{ booking.child_price }}</td>
+                    <td>{{ booking.total_children }}</td>
+                    <td>₹{{ booking.total_child_price }}</td>
+                </tr>
+                {% endif %}
+                {% if booking.total_infants > 0 %}
+                <tr>
+                    <td>Infant</td>
+                    <td>₹{{ booking.infant_price }}</td>
+                    <td>{{ booking.total_infants }}</td>
+                    <td>₹{{ booking.total_infant_price }}</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <!-- Total Section -->
+        <div class="total-section">
+            <div class="total-row clearfix">
+                <span class="total-label">Subtotal:</span>
+                <span class="total-value">₹{{ booking.total_price }}</span>
+            </div>
+            {% if booking.discount_percentage %}
+            <div class="total-row clearfix">
+                <span class="total-label">Discount ({{ booking.discount_percentage }}%):</span>
+                <span class="total-value">-₹{{ booking.discount_amount }}</span>
+            </div>
+            {% endif %}
+            <div class="total-row grand-total clearfix">
+                <span class="total-label">Total Amount:</span>
+                <span class="total-value">₹{{ booking.total_price }}</span>
+            </div>
+            <div class="total-row clearfix">
+                <span class="total-label">Advance Paid:</span>
+                <span class="total-value">₹{{ booking.advance_payment }}</span>
+            </div>
+            <div class="total-row clearfix">
+                <span class="total-label">Balance Due:</span>
+                <span class="total-value">₹{{ booking.balance }}</span>
+            </div>
+            <div class="total-row clearfix">
+                <span class="total-label">Payment Type:</span>
+                <span class="total-value">{{ booking.payment_type|title }}</span>
+            </div>
+        </div>
+
+        <!-- Special Requests -->
+        {% if booking.special_request %}
+            <div class="special-requests">
+                <p class="info-title">Special Requests :</p>
+                <p>{{ booking.special_request }}</p>
+            </div>
+        {% endif %}
+
+        <!-- Terms and Conditions -->
+        <div class="terms">
+            <h4>Terms & Conditions:</h4>
+            <ul>
+                <li>All bookings are subject to availability and confirmation.</li>
+                <li>Cancellation charges apply as per company policy.</li>
+                <li>Full payment must be completed before travel date.</li>
+                <li>Travel insurance is recommended but not mandatory.</li>
+            </ul>
+        </div>
+
+        <!-- Signature Section -->
+        <div class="signature-section">
+            <div class="signature">
+                <div class="signature-line">Customer Signature</div>
+            </div>
+            <div class="signature">
+                <div class="signature-line">Agent Signature</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Thank you for choosing {{ company.name }}!</strong></p>
+            <p>Generated on: {{ booking.created_at|date:"F d, Y" }} | Agent: {{ booking.created_by_name }}</p>
+        </div>
+    </div>
+</body>
+
+</html>

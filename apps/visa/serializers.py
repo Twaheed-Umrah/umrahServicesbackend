@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import VisaApplication, VisaDocument
+from .models import VisaApplication, VisaDocument,Payment
 
 User = get_user_model()
 
@@ -161,3 +161,151 @@ class VisaDocumentUploadSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("File size cannot exceed 10MB")
         
         return data
+    
+class PaymentCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating payments (Other users)"""
+    
+    class Meta:
+        model = Payment
+        fields = [
+            'payment_amount', 
+            'payment_mode', 
+            'no_of_travelers',
+            'reference_number',
+            'notes'
+        ]
+    
+    def validate_payment_amount(self, value):
+        """Validate payment amount"""
+        if value <= 0:
+            raise serializers.ValidationError("Payment amount must be greater than 0")
+        return value
+    
+    def validate_no_of_travelers(self, value):
+        """Validate number of travelers"""
+        if value <= 0:
+            raise serializers.ValidationError("Number of travelers must be greater than 0")
+        return value
+    
+    def create(self, validated_data):
+        # Set the paid_by to current user
+        validated_data['paid_by'] = self.context['request'].user
+        return super().create(validated_data)
+
+class PaymentListSerializer(serializers.ModelSerializer):
+    """Serializer for listing payments (SuperAdmin view)"""
+    paid_by_name = serializers.CharField(source='paid_by.get_full_name', read_only=True)
+    paid_by_email = serializers.CharField(source='paid_by.email', read_only=True)
+    processed_by_name = serializers.CharField(source='processed_by.get_full_name', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    payment_mode_display = serializers.CharField(source='get_payment_mode_display', read_only=True)
+    
+    class Meta:
+        model = Payment
+        fields = [
+            'id', 
+            'payment_amount', 
+            'payment_mode', 
+            'payment_mode_display',
+            'no_of_travelers',
+            'status',
+            'status_display',
+            'paid_by_name',
+            'paid_by_email',
+            'processed_by_name',
+            'processed_at',
+            'reference_number',
+            'notes',
+            'created_at',
+            'updated_at'
+        ]
+
+class PaymentDetailSerializer(serializers.ModelSerializer):
+    """Serializer for detailed payment view (SuperAdmin)"""
+    paid_by_name = serializers.CharField(source='paid_by.get_full_name', read_only=True)
+    paid_by_email = serializers.CharField(source='paid_by.email', read_only=True)
+    paid_by_phone = serializers.CharField(source='paid_by.phone_number', read_only=True)
+    processed_by_name = serializers.CharField(source='processed_by.get_full_name', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    payment_mode_display = serializers.CharField(source='get_payment_mode_display', read_only=True)
+    
+    class Meta:
+        model = Payment
+        fields = [
+            'id', 
+            'payment_amount', 
+            'payment_mode', 
+            'payment_mode_display',
+            'no_of_travelers',
+            'status',
+            'status_display',
+            'paid_by',
+            'paid_by_name',
+            'paid_by_email',
+            'paid_by_phone',
+            'processed_by',
+            'processed_by_name',
+            'processed_at',
+            'reference_number',
+            'notes',
+            'created_at',
+            'updated_at'
+        ]
+
+class PaymentStatusUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for updating payment status (SuperAdmin only)"""
+    
+    class Meta:
+        model = Payment
+        fields = ['status', 'notes']
+    
+    def validate_status(self, value):
+        """Validate status transitions"""
+        current_status = self.instance.status
+        
+        # Define valid status transitions
+        valid_transitions = {
+            'inprocess': ['completed', 'rejected'],
+            'completed': [],  # Cannot change from completed
+            'rejected': ['inprocess'],  # Can reprocess rejected payments
+        }
+        
+        if current_status in valid_transitions:
+            if value not in valid_transitions[current_status] and value != current_status:
+                raise serializers.ValidationError(
+                    f"Cannot change status from {current_status} to {value}"
+                )
+        
+        return value
+    
+    def update(self, instance, validated_data):
+        # Set processed_by and processed_at when status is updated
+        if 'status' in validated_data and validated_data['status'] != instance.status:
+            from django.utils import timezone
+            instance.processed_by = self.context['request'].user
+            instance.processed_at = timezone.now()
+        
+        return super().update(instance, validated_data)
+
+class UserPaymentHistorySerializer(serializers.ModelSerializer):
+    """Serializer for user's own payment history"""
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    payment_mode_display = serializers.CharField(source='get_payment_mode_display', read_only=True)
+    processed_by_name = serializers.CharField(source='processed_by.get_full_name', read_only=True)
+    
+    class Meta:
+        model = Payment
+        fields = [
+            'id', 
+            'payment_amount', 
+            'payment_mode',
+            'payment_mode_display',
+            'no_of_travelers',
+            'status',
+            'status_display',
+            'processed_by_name',
+            'processed_at',
+            'reference_number',
+            'notes',
+            'created_at'
+        ]

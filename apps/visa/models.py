@@ -79,3 +79,53 @@ class VisaDocument(TimestampMixin):
     
     class Meta:
         ordering = ['-created_at']
+
+
+class Payment(TimestampMixin):
+    STATUS_CHOICES = [
+        ('inprocess', 'In Process'),
+        ('completed', 'Completed'),
+        ('rejected', 'Rejected'),
+    ]
+    
+    PAYMENT_MODE_CHOICES = [
+        ('cash', 'Cash'),
+        ('bank_transfer', 'Bank Transfer'),
+        ('card', 'Card'),
+        ('upi', 'UPI'),
+        ('online_banking', 'Online Banking'),
+        ('cheque', 'Cheque'),
+        ('other', 'Other'),
+    ]
+    
+    payment_amount = models.DecimalField(max_digits=12, decimal_places=2)
+    payment_mode = models.CharField(max_length=20, choices=PAYMENT_MODE_CHOICES)
+    no_of_travelers = models.PositiveIntegerField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='inprocess')
+    
+    # User who made the payment
+    paid_by = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='payments_made')
+    
+    # SuperAdmin who processed the payment
+    processed_by = models.ForeignKey(
+        'users.User', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='payments_processed'
+    )
+    processed_at = models.DateTimeField(null=True, blank=True)
+    
+    # Optional fields for additional information
+    reference_number = models.CharField(max_length=50, blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return f"Payment #{self.id} - {self.payment_amount} by {self.paid_by.get_full_name()}"
+    
+    class Meta:
+        ordering = ['-created_at']
+        permissions = [
+            ('can_view_all_payments', 'Can view all payments'),
+            ('can_process_payments', 'Can process payments'),
+        ]

@@ -25,4 +25,22 @@ urlpatterns = [
     # Utility URLs
     path('visa-types/', views.visa_types_list, name='visa-types'),
     path('status-choices/', views.application_status_choices, name='status-choices'),
+     path('payments/create/', views.PaymentCreateView.as_view(), name='payment-create'),
+    
+    # User's own payment history
+    path('payments/my-history/', views.UserPaymentHistoryView.as_view(), name='my-payment-history'),
+    
+    # SuperAdmin only views
+    path('payments/', views.PaymentListView.as_view(), name='payment-list'),
+    path('payments/<int:pk>/', views.PaymentDetailView.as_view(), name='payment-detail'),
+    path('payments/<int:pk>/update-status/', views.PaymentStatusUpdateView.as_view(), name='payment-status-update'),
+    
+    # Dashboard and utility endpoints
+    path('payments/dashboard/', views.payment_dashboard, name='payment-dashboard'),
+    path('payments/bulk-update/', views.bulk_update_payments, name='bulk-update-payments'),
+    
+    # Choice lists
+    path('payments/modes/', views.payment_modes_list, name='payment-modes-list'),
+    path('payments/status-choices/', views.payment_status_choices, name='payment-status-choices'),
+    
 ]

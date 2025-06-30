@@ -50,6 +50,8 @@ LOCAL_APPS = [
     'apps.enquiries',
     'apps.visa',
     'apps.dashboard',
+    'apps.poster_generator',
+
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -113,6 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+   # Add your Gmail app password here
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -131,6 +134,16 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+FONT_DIR = BASE_DIR / 'static' / 'fonts'
+POSTER_ASSETS_DIR = BASE_DIR / 'static' / 'poster_assets'
+
+os.makedirs(FONT_DIR, exist_ok=True)
+os.makedirs(POSTER_ASSETS_DIR, exist_ok=True)
+os.makedirs(MEDIA_ROOT, exist_ok=True)
+
+# File upload settings
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -191,6 +204,19 @@ SIMPLE_JWT = {
 
 # CORS Configuration
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-api-key',  
+]
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -208,13 +234,13 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
 }
 
-# Email Configuration (using console backend for development)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = 'tatasalt431@gmail.com'
+EMAIL_HOST_PASSWORD = 'fubpsexmiwyexpaf'
+
 
 
 # Logging Configuration

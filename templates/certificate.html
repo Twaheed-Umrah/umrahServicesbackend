@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Achievement</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 20mm;
+        }
+        
+        body {
+            font-family: 'Times New Roman', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e3a8a 100%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .certificate-container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border: 8px solid #fbbf24;
+            border-radius: 15px;
+            padding: 60px;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        /* Simplified decorative elements without clip-path */
+        .decoration-corner {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #fbbf24;
+            border-radius: 50%;
+        }
+        
+        .decoration-top-left {
+            top: 20px;
+            left: 20px;
+        }
+        
+        .decoration-top-right {
+            top: 20px;
+            right: 20px;
+        }
+        
+        .decoration-bottom-left {
+            bottom: 20px;
+            left: 20px;
+        }
+        
+        .decoration-bottom-right {
+            bottom: 20px;
+            right: 20px;
+        }
+        
+        .star-symbol {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .certificate-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+        
+        .company-logo {
+            max-width: 100px;
+            max-height: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .certificate-title {
+            font-size: 52px;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+        }
+        
+        .certificate-subtitle {
+            font-size: 28px;
+            color: #374151;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 500;
+        }
+        
+        .certificate-text {
+            font-size: 20px;
+            color: #d97706;
+            margin: 30px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        
+        .recipient-name {
+            font-size: 48px;
+            font-family: 'Brush Script MT', cursive;
+            color: #1e3a8a;
+            margin: 30px 0;
+            font-weight: normal;
+            line-height: 1.2;
+            text-decoration: underline;
+        }
+        
+        .certificate-message {
+            font-size: 18px;
+            color: #374151;
+            margin: 40px auto;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .certificate-footer {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        
+        .signature-section {
+            text-align: center;
+            flex: 1;
+            margin: 0 40px;
+        }
+        
+        .signature-line {
+            width: 200px;
+            height: 2px;
+            background: #374151;
+            margin: 0 auto 10px auto;
+        }
+        
+        .signature-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .signature-title {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        
+        .date-section {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+        
+        .date-text {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        /* Border decoration */
+        .certificate-border {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px solid #fbbf24;
+            border-radius: 10px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate-container">
+        <div class="certificate-border"></div>
+        
+        <!-- Simplified decorative elements -->
+        <div class="decoration-corner decoration-top-left">
+            <div class="star-symbol">★</div>
+        </div>
+        <div class="decoration-corner decoration-top-right">
+            <div class="star-symbol">★</div>
+        </div>
+        <div class="decoration-corner decoration-bottom-left">
+            <div class="star-symbol">★</div>
+        </div>
+        <div class="decoration-corner decoration-bottom-right">
+            <div class="star-symbol">★</div>
+        </div>
+        
+        <div class="certificate-content">
+            <!-- Logo will be handled by Django template -->
+            {% if company.logo_url %}
+                <img src="{{ company.logo_url }}" alt="Company Logo" class="company-logo">
+            {% endif %}
+            
+            <h1 class="certificate-title">Certificate</h1>
+            <h2 class="certificate-subtitle">of Achievement</h2>
+            
+            <p class="certificate-text">This Certificate is Presented to:</p>
+            
+            <div class="recipient-name">{{ user.full_name }}</div>
+            
+            <p class="certificate-message">
+                Hopefully this achievement will be the first step towards bigger success.<br>
+                Keep trying and give your best
+            </p>
+            
+            <div class="certificate-footer">
+                <div class="signature-section">
+                    <div class="signature-line"></div>
+                    <div class="signature-name">{{ company.name }}</div>
+                    <div class="signature-title">Authorized Representative</div>
+                </div>
+                
+                <div class="signature-section">
+                    <div class="signature-line"></div>
+                    <div class="signature-name">Director</div>
+                    <div class="signature-title">{{ user.date_joined|date:"F d, Y" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

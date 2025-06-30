@@ -361,14 +361,14 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class MyPackagesView(generics.ListAPIView):
     """
-    GET: Get packages created by the current user
+    GET: Get all active packages for all authenticated users
     """
     permission_classes = [IsAuthenticated]
     serializer_class = PackageListSerializer
     
     def get_queryset(self):
-        user = self.request.user
-        return Package.objects.filter(created_by=user).select_related('created_by', 'assigned_to')
+        # All authenticated users see all active packages
+        return Package.objects.filter(is_active=True).select_related('created_by', 'assigned_to')
 
 
 class AssignedPackagesView(generics.ListAPIView):

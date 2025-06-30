@@ -129,6 +129,34 @@ class SendOTPSerializer(serializers.Serializer):
             raise serializers.ValidationError("Provide either email or phone, not both")
         
         return attrs
+    
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    reset_token = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)
+
+    def validate_new_password(self, value):
+        """Validate the new password using Django's password validators"""
+        try:
+            validate_password(value)
+        except ValidationError as e:
+            raise serializers.ValidationError(e.messages)
+        return value
+
+    def validate(self, attrs):
+        """Validate that new password and confirm password match"""
+        new_password = attrs.get('new_password')
+        confirm_password = attrs.get('confirm_password')
+        
+        if new_password != confirm_password:
+            raise serializers.ValidationError("New password and confirm password do not match")
+        
+        return attrs
+
+
 
 class VerifyOTPSerializer(serializers.Serializer):
     otp = serializers.CharField(required=True, min_length=6, max_length=6)
@@ -138,3 +166,33 @@ class VerifyOTPSerializer(serializers.Serializer):
         if not value.isdigit():
             raise serializers.ValidationError("OTP must contain only digits")
         return value
+# Add this to your serializers.py file (optional)
+
+class CertificateSerializer(serializers.ModelSerializer):
+    """Serializer for certificate data"""
+    full_name = serializers.SerializerMethodField()
+    company_name = serializers.SerializerMethodField()
+    company_logo = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name', 
+            'role', 'date_joined', 'full_name', 'company_name', 'company_logo'
+        ]
+    
+    def get_full_name(self, obj):
+        """Get user's full name"""
+        return f"{obj.first_name} {obj.last_name}".strip() or obj.username
+    
+    def get_company_name(self, obj):
+        """Get company name from creator or self"""
+        company_user = obj.created_by if obj.created_by else obj
+        return company_user.company_name or 'Your Travel Company'
+    
+    def get_company_logo(self, obj):
+        """Get company logo URL from creator or self"""
+        company_user = obj.created_by if obj.created_by else obj
+        if company_user.company_logo:
+            return company_user.company_logo.url
+        return None

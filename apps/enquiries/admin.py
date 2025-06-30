@@ -1,42 +1,48 @@
 from django.contrib import admin
-from .models import Enquiry
+from .models import APIKey, Package, HomePage, ContactUs
 
 
-@admin.register(Enquiry)
-class EnquiryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'email', 'phone', 'place', 'agency', 'franchise', 'created_at']
-    list_filter = ['created_at', 'updated_at', 'place', 'agency', 'franchise']
-    search_fields = ['name', 'email', 'phone', 'message', 'place']
-    readonly_fields = ['created_at', 'updated_at']
-    list_per_page = 25
-    
+@admin.register(APIKey)
+class APIKeyAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name', 'key', 'is_active', 'created_at', 'last_used', 'website_url')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('user__username', 'name', 'key', 'website_url')
+    readonly_fields = ('created_at', 'last_used', 'key')
+
+
+@admin.register(Package)
+class PackageAdmin(admin.ModelAdmin):
+    list_display = ('title', 'package_type', 'price', 'currency', 'duration_days', 'is_active', 'is_featured', 'created_at')
+    list_filter = ('is_active', 'is_featured', 'package_type')
+    search_fields = ('title', 'description', 'features')
+    readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
-        ('Contact Information', {
-            'fields': ('name', 'email', 'phone', 'place')
+        ('Basic Info', {
+            'fields': ('package_type', 'title', 'description', 'price', 'currency', 'duration_days')
         }),
-        ('Message', {
-            'fields': ('message',)
+        ('Media & Features', {
+            'fields': ('image', 'features')
         }),
-        ('Assignment', {
-            'fields': ('agency', 'franchise'),
-            'description': 'Assign this enquiry to an agency or franchise.'
+        ('Status', {
+            'fields': ('is_active', 'is_featured')
         }),
         ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
+            'fields': ('created_at', 'updated_at')
         }),
     )
-    
-    # Optional: Add ordering
-    ordering = ['-created_at']
-    
-    # Optional: Add date hierarchy for better navigation
-    date_hierarchy = 'created_at'
-    
-    # Optional: Customize the change list template
-    actions_on_top = True
-    actions_on_bottom = False
-    
-    def get_queryset(self, request):
-        """Optimize queries by selecting related objects"""
-        return super().get_queryset(request).select_related('agency', 'franchise')
+
+
+@admin.register(HomePage)
+class HomePageAdmin(admin.ModelAdmin):
+    list_display = ('welcome_title', 'is_active', 'created_at')
+    list_filter = ('is_active',)
+    search_fields = ('welcome_title', 'welcome_subtitle', 'content')
+    readonly_fields = ('created_at', 'updated_at')
+
+
+@admin.register(ContactUs)
+class ContactUsAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'phone', 'package_type', 'is_processed', 'created_at')
+    list_filter = ('is_processed', 'created_at')
+    search_fields = ('name', 'email', 'phone', 'message')
+    readonly_fields = ('created_at',)

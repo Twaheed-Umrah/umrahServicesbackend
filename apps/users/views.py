@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework import generics, status
 from rest_framework.response import Response
+from django.http import HttpResponse
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
@@ -9,16 +10,18 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
 from datetime import timedelta
+from django.template.loader import render_to_string
+from weasyprint import HTML, CSS
 from django.db.models import Q
 from apps.common.permissions import IsSuperAdmin, IsAgencyAdmin
-
+from .emailformate import send_password_reset_otp
 import random
 import string
 
 from .models import OTPVerification
 from .serializers import (
     LoginSerializer, UserSerializer,
-    ChangePasswordSerializer, SendOTPSerializer, VerifyOTPSerializer
+    ChangePasswordSerializer, SendOTPSerializer, VerifyOTPSerializer,CertificateSerializer,ResetPasswordSerializer
 )
 
 User = get_user_model()
@@ -259,8 +262,142 @@ class SendPhoneOTPView(APIView):
                 {'error': 'Failed to send OTP. Please try again.'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+class ForgotPasswordSendOTPView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = SendOTPSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get('email')
+
+        # Check if user exists with this email
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'No account found with this email address'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Generate and save OTP
+        otp = generate_otp()
+        OTPVerification.objects.update_or_create(
+            user=user,
+            verification_type='password_reset',
+            defaults={
+                'otp': otp,
+                'new_value': email,  # Store email for reference
+                'expires_at': timezone.now() + timedelta(minutes=10),
+                'is_verified': False
+            }
+        )
+        user_name = f"{user.first_name} {user.last_name}".strip() or user.username or "Valued Customer"
+
+        # Send OTP via email
+        if send_password_reset_otp(email, otp,user_name):
+            return Response({
+                'message': 'OTP sent to your email successfully',
+                'email': email
+            })
+        else:
+            return Response(
+                {'error': 'Failed to send OTP. Please try again.'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
+class ForgotPasswordVerifyOTPView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = VerifyOTPSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        otp = serializer.validated_data['otp']
+        email = request.data.get('email')
+
+        if not email:
+            return Response(
+                {'error': 'Email is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'Invalid request'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Find valid OTP record
+            otp_record = OTPVerification.objects.get(
+                user=user,
+                verification_type='password_reset',
+                otp=otp,
+                is_verified=False,
+                expires_at__gt=timezone.now()
+            )
+        except OTPVerification.DoesNotExist:
+            return Response(
+                {'error': 'Invalid or expired OTP'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Mark OTP as verified but don't delete it yet
+        otp_record.is_verified = True
+        otp_record.save()
+        
+        return Response({
+            'message': 'OTP verified successfully',
+            'reset_token': str(otp_record.id)  # Use OTP record ID as reset token
+        })
+
+
+class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        email = serializer.validated_data['email']
+        reset_token = serializer.validated_data['reset_token']
+        new_password = serializer.validated_data['new_password']
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'Invalid request'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Verify the reset token (OTP record ID)
+            otp_record = OTPVerification.objects.get(
+                id=reset_token,
+                user=user,
+                verification_type='password_reset',
+                is_verified=True,
+                expires_at__gt=timezone.now()
+            )
+        except OTPVerification.DoesNotExist:
+            return Response(
+                {'error': 'Invalid or expired reset token'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Reset the password
+        user.set_password(new_password)
+        user.save()
+        
+        # Delete the OTP record as it's no longer needed
+        otp_record.delete()
+        
+        return Response({
+            'message': 'Password reset successfully'
+        })
 class VerifyPhoneOTPView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -371,4 +508,54 @@ class GetUserDetailsByIdView(APIView):
             return Response(
                 {'error': 'User not found'}, 
                 status=status.HTTP_404_NOT_FOUND
+            )
+        
+       
+class DownloadCertificateView(APIView):
+    """
+    GET: Generate and return user certificate as PDF
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        try:
+            user = request.user
+            
+            # Get company details from the user who created this user (their parent/creator)
+            company_user = user.created_by if user.created_by else user
+            company_details = {
+                'name': company_user.company_name or 'Your Travel Company',
+                'logo_url': company_user.company_logo.url if company_user.company_logo else None,
+                  }
+            
+            # Serialize user data (similar to QuickBookingReceiptSerializer)
+            serializer = CertificateSerializer(user)
+            context = {
+                'user': serializer.data,
+                'company': company_details
+            }
+            
+            # Render HTML template
+            html_string = render_to_string('certificate.html', context)
+            
+            # Generate PDF using WeasyPrint
+            html_doc = HTML(string=html_string)
+            pdf_bytes = html_doc.write_pdf()
+            if not pdf_bytes:
+                return Response(
+                    {'detail': 'Generated PDF is empty.'}, 
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            # Create HTTP response
+            response = HttpResponse(pdf_bytes, content_type='application/pdf')
+            response['Content-Disposition'] = f'inline; filename="certificate_{user.username}.pdf"'
+            response['Content-Length'] = len(pdf_bytes)
+            
+            return response
+            
+        except Exception as e:
+            print(f"Error generating certificate PDF: {str(e)}")
+            return Response(
+                {'detail': 'An error occurred while generating the certificate.'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

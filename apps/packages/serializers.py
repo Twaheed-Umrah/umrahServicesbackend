@@ -42,7 +42,6 @@ class PackageSerializer(serializers.ModelSerializer):
     
     # Use custom base64 image field
     image = Base64ImageField(required=False, allow_null=True)
-    image = serializers.ImageField(required=False, allow_null=True)
     
     class Meta:
         model = Package

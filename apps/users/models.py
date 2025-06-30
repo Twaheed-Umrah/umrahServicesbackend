@@ -39,17 +39,18 @@ class OTPVerification(TimestampMixin):
     VERIFICATION_TYPE_CHOICES = [
         ('email', 'Email Verification'),
         ('phone', 'Phone Verification'),
+        ('password_reset', 'Password Reset'),  # Add this line
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otp_verifications')
-    verification_type = models.CharField(max_length=10, choices=VERIFICATION_TYPE_CHOICES)
+    verification_type = models.CharField(max_length=20, choices=VERIFICATION_TYPE_CHOICES)  # Increase max_length
     otp = models.CharField(max_length=6)
     new_value = models.CharField(max_length=255, help_text="New email or phone number to be verified")
     expires_at = models.DateTimeField()
     is_verified = models.BooleanField(default=False)
     
     class Meta:
-        unique_together = ['user', 'verification_type']
+        # Remove unique_together to allow multiple OTP records for different purposes
         ordering = ['-created_at']
     
     def __str__(self):

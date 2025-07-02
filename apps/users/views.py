@@ -158,16 +158,18 @@ class SendEmailOTPView(APIView):
         email = serializer.validated_data.get('email')
 
         # Check if email already exists for another user
-        if User.objects.filter(email=email).exclude(id=request.user.id).exists():
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
             return Response(
-                {'error': 'This email is already registered to another account'}, 
+                {'error': 'No account found with this email address'}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         # Generate and save OTP
         otp = generate_otp()
         OTPVerification.objects.update_or_create(
-            user=request.user,
+            user=user,
             verification_type='email',
             defaults={
                 'otp': otp,
@@ -176,11 +178,12 @@ class SendEmailOTPView(APIView):
                 'is_verified': False
             }
         )
-
+        user_name = f"{user.first_name} {user.last_name}".strip() or user.username or "Valued Customer"
         # Send OTP via email
-        if send_email_otp(email, otp):
+        if send_password_reset_otp(email, otp,user_name):
             return Response({
-                'message': 'OTP sent to your email successfully'
+                'message': 'OTP sent to your email successfully',
+                'email': email
             })
         else:
             return Response(
@@ -473,23 +476,23 @@ class GetAllUsersView(APIView):
 
 class GetAgencyUsersView(APIView):
     """Get all franchise admins and freelancers created by logged-in agency admin"""
-    permission_classes = [IsAgencyAdmin]  # Use your custom permission class
+    permission_classes = [IsAgencyAdmin]
 
     def get(self, request):
-        # Get users created by this agency admin with specific user types
+        # Corrected 'user_type' to 'role'
         users = User.objects.filter(
             Q(created_by=request.user) & 
-            Q(user_type__in=['franchisesadmin', 'freelancer'])
+            Q(role__in=['franchisesadmin', 'freelancer'])
         ).order_by('-date_joined')
-        
+
         serializer = UserSerializer(users, many=True)
-        
+
         return Response({
             'message': 'Agency users retrieved successfully',
             'count': users.count(),
             'users': serializer.data
         })
-
+    
 class GetUserDetailsByIdView(APIView):
     """Get user details by ID - accessible from anywhere"""
     permission_classes = [IsAuthenticated]

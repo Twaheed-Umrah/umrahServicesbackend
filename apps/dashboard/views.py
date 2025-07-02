@@ -1,6 +1,4 @@
 from django.shortcuts import render
-
-# Create your views here.
 from django.db.models import Count, Sum, Q
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -13,7 +11,40 @@ import calendar
 
 from apps.bookings.models import Booking, QuickBooking
 from apps.enquiries.models import ContactUs
+from apps.enquiries.models import APIKey
 from django.db.models.functions import Extract, TruncMonth, TruncYear, TruncDate
+
+
+def get_user_specific_queryset(user, model_class):
+    """
+    Get queryset filtered by user role and permissions
+    """
+    if user.role == 'superadmin':
+        # SuperAdmin can see all data
+        return model_class.objects.all()
+    else:
+        # Other users can only see their own data
+        return model_class.objects.filter(created_by=user)
+
+
+def get_enquiry_queryset(user):
+    """
+    Get enquiry queryset based on user's API keys
+    Only superadmin gets all enquiries, others get enquiries from their API keys
+    """
+    if user.role == 'superadmin':
+        # SuperAdmin gets all enquiries
+        return ContactUs.objects.all()
+    else:
+        # Other users get enquiries only from their API keys
+        user_api_keys = APIKey.objects.filter(user=user, is_active=True)
+        if user_api_keys.exists():
+            # Get enquiries that came through this user's API keys
+            # Assuming ContactUs has an api_key field or similar tracking
+            return ContactUs.objects.filter(api_key__in=user_api_keys)
+        else:
+            # If user has no API keys, return empty queryset
+            return ContactUs.objects.none()
 
 
 @api_view(['GET'])
@@ -21,58 +52,65 @@ from django.db.models.functions import Extract, TruncMonth, TruncYear, TruncDate
 def dashboard_stats(request):
     """
     Get dashboard statistics for bookings, amounts, and enquiries
+    Data filtered by user role and permissions
     """
+    user = request.user
     now = timezone.now()
     today = now.date()
     current_month = now.month
     current_year = now.year
     
+    # Get user-specific querysets
+    booking_qs = get_user_specific_queryset(user, Booking)
+    quick_booking_qs = get_user_specific_queryset(user, QuickBooking)
+    enquiry_qs = get_enquiry_queryset(user)
+    
     # Get total bookings (both regular and quick bookings)
-    total_bookings = Booking.objects.count()
-    total_quick_bookings = QuickBooking.objects.count()
+    total_bookings = booking_qs.count()
+    total_quick_bookings = quick_booking_qs.count()
     total_all_bookings = total_bookings + total_quick_bookings
     
     # Monthly bookings
-    monthly_bookings = Booking.objects.filter(
+    monthly_bookings = booking_qs.filter(
         created_at__month=current_month,
         created_at__year=current_year
     ).count()
-    monthly_quick_bookings = QuickBooking.objects.filter(
+    monthly_quick_bookings = quick_booking_qs.filter(
         created_at__month=current_month,
         created_at__year=current_year
     ).count()
     total_monthly_bookings = monthly_bookings + monthly_quick_bookings
     
     # Today's bookings
-    today_bookings = Booking.objects.filter(created_at__date=today).count()
-    today_quick_bookings = QuickBooking.objects.filter(created_at__date=today).count()
+    today_bookings = booking_qs.filter(created_at__date=today).count()
+    today_quick_bookings = quick_booking_qs.filter(created_at__date=today).count()
     total_today_bookings = today_bookings + today_quick_bookings
     
     # Amount calculations
-    total_amount = Booking.objects.aggregate(
+    total_amount = booking_qs.aggregate(
         total=Sum('total_price')
     )['total'] or 0
     
-    monthly_amount = Booking.objects.filter(
+    monthly_amount = booking_qs.filter(
         created_at__month=current_month,
         created_at__year=current_year
     ).aggregate(total=Sum('total_price'))['total'] or 0
     
-    today_amount = Booking.objects.filter(
+    today_amount = booking_qs.filter(
         created_at__date=today
     ).aggregate(total=Sum('total_price'))['total'] or 0
     
     # Add QuickBooking amounts
-    total_quick_amount = QuickBooking.objects.aggregate(
+    total_quick_amount = quick_booking_qs.aggregate(
         total=Sum('budget')
     )['total'] or 0
     
-    monthly_quick_amount = QuickBooking.objects.filter(
+    monthly_quick_amount = quick_booking_qs.filter(
         created_at__month=current_month,
         created_at__year=current_year
     ).aggregate(total=Sum('budget'))['total'] or 0
     
-    today_quick_amount = QuickBooking.objects.filter(
+    today_quick_amount = quick_booking_qs.filter(
         created_at__date=today
     ).aggregate(total=Sum('budget'))['total'] or 0
     
@@ -81,13 +119,13 @@ def dashboard_stats(request):
     total_monthly_amount = monthly_amount + monthly_quick_amount
     total_today_amount = today_amount + today_quick_amount
     
-    # Enquiries (ContactUs)
-    total_enquiries = ContactUs.objects.count()
-    monthly_enquiries = ContactUs.objects.filter(
+    # Enquiries (ContactUs) - based on user's API keys
+    total_enquiries = enquiry_qs.count()
+    monthly_enquiries = enquiry_qs.filter(
         created_at__month=current_month,
         created_at__year=current_year
     ).count()
-    today_enquiries = ContactUs.objects.filter(created_at__date=today).count()
+    today_enquiries = enquiry_qs.filter(created_at__date=today).count()
     
     # Format amounts for display
     def format_amount(amount):
@@ -118,7 +156,8 @@ def dashboard_stats(request):
             'total': total_enquiries,
             'monthly': monthly_enquiries,
             'today': today_enquiries
-        }
+        },
+        'user_role': user.role  # Include user role for frontend logic
     })
 
 
@@ -127,12 +166,19 @@ def dashboard_stats(request):
 def chart_data(request):
     """
     Get chart data for different time periods and types
+    Data filtered by user role and permissions
     """
+    user = request.user
     period = request.GET.get('period', 'monthly')  # daily, monthly, yearly
     chart_type = request.GET.get('type', 'income')  # income, booking, enquiry
     
     now = timezone.now()
     current_year = now.year
+    
+    # Get user-specific querysets
+    booking_qs = get_user_specific_queryset(user, Booking)
+    quick_booking_qs = get_user_specific_queryset(user, QuickBooking)
+    enquiry_qs = get_enquiry_queryset(user)
     
     if period == 'yearly':
         # Get data for last 5 years
@@ -142,23 +188,23 @@ def chart_data(request):
         for year in years:
             if chart_type == 'income':
                 # Combine regular and quick booking amounts
-                regular_amount = Booking.objects.filter(
+                regular_amount = booking_qs.filter(
                     created_at__year=year
                 ).aggregate(total=Sum('total_price'))['total'] or 0
                 
-                quick_amount = QuickBooking.objects.filter(
+                quick_amount = quick_booking_qs.filter(
                     created_at__year=year
                 ).aggregate(total=Sum('budget'))['total'] or 0
                 
                 value = regular_amount + quick_amount
                 
             elif chart_type == 'booking':
-                regular_count = Booking.objects.filter(created_at__year=year).count()
-                quick_count = QuickBooking.objects.filter(created_at__year=year).count()
+                regular_count = booking_qs.filter(created_at__year=year).count()
+                quick_count = quick_booking_qs.filter(created_at__year=year).count()
                 value = regular_count + quick_count
                 
             else:  # enquiry
-                value = ContactUs.objects.filter(created_at__year=year).count()
+                value = enquiry_qs.filter(created_at__year=year).count()
             
             data.append({
                 'name': str(year),
@@ -173,12 +219,12 @@ def chart_data(request):
             month_short = calendar.month_abbr[month_num]
             
             if chart_type == 'income':
-                regular_amount = Booking.objects.filter(
+                regular_amount = booking_qs.filter(
                     created_at__year=current_year,
                     created_at__month=month_num
                 ).aggregate(total=Sum('total_price'))['total'] or 0
                 
-                quick_amount = QuickBooking.objects.filter(
+                quick_amount = quick_booking_qs.filter(
                     created_at__year=current_year,
                     created_at__month=month_num
                 ).aggregate(total=Sum('budget'))['total'] or 0
@@ -186,18 +232,18 @@ def chart_data(request):
                 value = regular_amount + quick_amount
                 
             elif chart_type == 'booking':
-                regular_count = Booking.objects.filter(
+                regular_count = booking_qs.filter(
                     created_at__year=current_year,
                     created_at__month=month_num
                 ).count()
-                quick_count = QuickBooking.objects.filter(
+                quick_count = quick_booking_qs.filter(
                     created_at__year=current_year,
                     created_at__month=month_num
                 ).count()
                 value = regular_count + quick_count
                 
             else:  # enquiry
-                value = ContactUs.objects.filter(
+                value = enquiry_qs.filter(
                     created_at__year=current_year,
                     created_at__month=month_num
                 ).count()
@@ -216,23 +262,23 @@ def chart_data(request):
             day_name = days[target_date.weekday()]
             
             if chart_type == 'income':
-                regular_amount = Booking.objects.filter(
+                regular_amount = booking_qs.filter(
                     created_at__date=target_date
                 ).aggregate(total=Sum('total_price'))['total'] or 0
                 
-                quick_amount = QuickBooking.objects.filter(
+                quick_amount = quick_booking_qs.filter(
                     created_at__date=target_date
                 ).aggregate(total=Sum('budget'))['total'] or 0
                 
                 value = regular_amount + quick_amount
                 
             elif chart_type == 'booking':
-                regular_count = Booking.objects.filter(created_at__date=target_date).count()
-                quick_count = QuickBooking.objects.filter(created_at__date=target_date).count()
+                regular_count = booking_qs.filter(created_at__date=target_date).count()
+                quick_count = quick_booking_qs.filter(created_at__date=target_date).count()
                 value = regular_count + quick_count
                 
             else:  # enquiry
-                value = ContactUs.objects.filter(created_at__date=target_date).count()
+                value = enquiry_qs.filter(created_at__date=target_date).count()
             
             data.append({
                 'name': day_name,
@@ -247,20 +293,26 @@ def chart_data(request):
 def booking_revenue_chart(request):
     """
     Get monthly booking and revenue data for the current year
+    Data filtered by user role and permissions
     """
+    user = request.user
     current_year = timezone.now().year
     data = []
+    
+    # Get user-specific querysets
+    booking_qs = get_user_specific_queryset(user, Booking)
+    quick_booking_qs = get_user_specific_queryset(user, QuickBooking)
     
     for month_num in range(1, 13):
         month_short = calendar.month_abbr[month_num]
         
         # Count bookings
-        regular_bookings = Booking.objects.filter(
+        regular_bookings = booking_qs.filter(
             created_at__year=current_year,
             created_at__month=month_num
         ).count()
         
-        quick_bookings = QuickBooking.objects.filter(
+        quick_bookings = quick_booking_qs.filter(
             created_at__year=current_year,
             created_at__month=month_num
         ).count()
@@ -268,12 +320,12 @@ def booking_revenue_chart(request):
         total_bookings = regular_bookings + quick_bookings
         
         # Calculate revenue
-        regular_revenue = Booking.objects.filter(
+        regular_revenue = booking_qs.filter(
             created_at__year=current_year,
             created_at__month=month_num
         ).aggregate(total=Sum('total_price'))['total'] or 0
         
-        quick_revenue = QuickBooking.objects.filter(
+        quick_revenue = quick_booking_qs.filter(
             created_at__year=current_year,
             created_at__month=month_num
         ).aggregate(total=Sum('budget'))['total'] or 0
@@ -294,9 +346,13 @@ def booking_revenue_chart(request):
 def enquiry_distribution(request):
     """
     Get enquiry distribution by package type
+    Data filtered by user's API keys (superadmin gets all)
     """
+    user = request.user
+    enquiry_qs = get_enquiry_queryset(user)
+    
     # Get enquiry counts by package_type
-    enquiry_data = ContactUs.objects.exclude(
+    enquiry_data = enquiry_qs.exclude(
         package_type__isnull=True
     ).exclude(
         package_type__exact=''
@@ -315,14 +371,9 @@ def enquiry_distribution(request):
             'color': colors[i % len(colors)]
         })
     
-    # If no package_type data, create sample data
+    # If no package_type data, return empty list
     if not data:
-        data = [
-            {'name': 'Classic', 'value': 40, 'color': '#8B5CF6'},
-            {'name': 'Deluxe', 'value': 30, 'color': '#06B6D4'},
-            {'name': 'Luxury', 'value': 20, 'color': '#10B981'},
-            {'name': 'Premium', 'value': 10, 'color': '#F59E0B'}
-        ]
+        data = []
     
     return Response(data)
 
@@ -332,11 +383,19 @@ def enquiry_distribution(request):
 def recent_activities(request):
     """
     Get recent activities - latest bookings and enquiries
+    Data filtered by user role and permissions
     """
+    user = request.user
+    
+    # Get user-specific querysets
+    booking_qs = get_user_specific_queryset(user, Booking)
+    quick_booking_qs = get_user_specific_queryset(user, QuickBooking)
+    enquiry_qs = get_enquiry_queryset(user)
+    
     # Recent bookings
-    recent_bookings = Booking.objects.select_related('created_by').order_by('-created_at')[:5]
-    recent_quick_bookings = QuickBooking.objects.select_related('created_by').order_by('-created_at')[:5]
-    recent_enquiries = ContactUs.objects.order_by('-created_at')[:5]
+    recent_bookings = booking_qs.select_related('created_by').order_by('-created_at')[:5]
+    recent_quick_bookings = quick_booking_qs.select_related('created_by').order_by('-created_at')[:5]
+    recent_enquiries = enquiry_qs.order_by('-created_at')[:5]
     
     activities = []
     
@@ -384,6 +443,7 @@ def recent_activities(request):
 def dashboard_summary(request):
     """
     Get comprehensive dashboard summary
+    Data filtered by user role and permissions
     """
     try:
         # Get all data in one response
@@ -397,7 +457,8 @@ def dashboard_summary(request):
             'booking_revenue_chart': booking_revenue_response.data,
             'enquiry_distribution': enquiry_dist_response.data,
             'recent_activities': recent_activities_response.data,
-            'last_updated': timezone.now().isoformat()
+            'last_updated': timezone.now().isoformat(),
+            'user_role': request.user.role
         })
     
     except Exception as e:

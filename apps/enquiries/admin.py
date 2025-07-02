@@ -42,7 +42,20 @@ class HomePageAdmin(admin.ModelAdmin):
 
 @admin.register(ContactUs)
 class ContactUsAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'phone', 'package_type', 'is_processed', 'created_at')
-    list_filter = ('is_processed', 'created_at')
+    list_display = ('name', 'email', 'phone', 'package_type', 'created_at')
+    list_filter = ['created_at']
     search_fields = ('name', 'email', 'phone', 'message')
-    readonly_fields = ('created_at',)
+    readonly_fields = ('created_at',)  # Assuming 'created_at' is a DateTimeField in your ContactUs model
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'email', 'phone', 'package_type', 'message')
+        }),
+        ('API Key Info', {
+            'fields': ('api_key', 'submitted_by_user'),
+            'classes': ('collapse',)  # Optional: To collapse this section initially
+        }),
+        ('Date Information', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)  # Optional: To collapse this section initially
+        }),
+    )

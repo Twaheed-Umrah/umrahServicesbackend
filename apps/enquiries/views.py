@@ -17,8 +17,12 @@ from rest_framework.permissions import IsAuthenticated
 from django.http import JsonResponse
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication
+from django.contrib.auth import get_user_model
+
 from apps.common.permissions import IsSuperAdmin 
+User = get_user_model()
 # API Key Management Views (For CRM users)
+
 class APIKeyListCreateView(generics.ListCreateAPIView):
     serializer_class = APIKeySerializer
     permission_classes = [IsAuthenticated]
@@ -156,35 +160,77 @@ class ContactUsCreateAPIView(generics.CreateAPIView):
     permission_classes = [HasValidAPIKey]
     
     def perform_create(self, serializer):
-        # You can add additional logic here like sending notifications
-        serializer.save()
+        api_key = self.request.auth  # the APIKey object from authentication
+        submitted_by_user = api_key.user if api_key else None
+
+        serializer.save(api_key=api_key, submitted_by_user=submitted_by_user)
 
 class ContactUsListView(generics.ListAPIView):
     """
-    Get all contact submissions - For logged-in users only
+    Get contact submissions based on user's API keys - For logged-in users only
+    Shows only contacts submitted through their API keys
     """
     serializer_class = ContactUsListSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication, SessionAuthentication]
     
     def get_queryset(self):
-        return ContactUs.objects.all().order_by('-created_at')
+        user = self.request.user
+        # Get all API keys belonging to the logged-in user
+        user_api_keys = APIKey.objects.filter(user=user)
+        # Return contacts submitted through user's API keys
+        return ContactUs.objects.filter(
+            api_key__in=user_api_keys
+        ).order_by('-created_at')
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        
+        # Add additional context
+        user_api_keys_count = APIKey.objects.filter(user=request.user).count()
+        
+        return Response({
+            'message': f'Contact submissions from your {user_api_keys_count} API key(s)',
+            'total_count': queryset.count(),
+            'user_api_keys': user_api_keys_count,
+            'data': serializer.data
+        })
 
 class ContactUsDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
-    Get/Update/Delete specific contact submission - For logged-in users only
+    Get/Update/Delete specific contact submission - Only from user's API keys
     """
     serializer_class = ContactUsListSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication, SessionAuthentication]
     
     def get_queryset(self):
-        return ContactUs.objects.all()
+        user = self.request.user
+        user_api_keys = APIKey.objects.filter(user=user)
+        return ContactUs.objects.filter(api_key__in=user_api_keys)
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        
+        data = serializer.data
+        # Add API key information
+        if instance.api_key:
+            data['api_key_info'] = {
+                'name': instance.api_key.name,
+                'website_url': instance.api_key.website_url,
+                'key_id': instance.api_key.id
+            }
+        
+        return Response(data)
 class ContactUsAdminView(generics.ListAPIView):
     """
-    Get all contact submissions with user details - 
-    SuperAdmin can see all, others see only their own submissions.
+    Admin view for contact submissions:
+    - SuperAdmin: sees ALL contact submissions
+    - Regular users: see only contacts from their API keys
     """
+    queryset = None  # ✅ This tells DRF not to expect a static queryset
     serializer_class = ContactUsListSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication, SessionAuthentication]
@@ -192,33 +238,19 @@ class ContactUsAdminView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
 
-        if IsSuperAdmin().has_permission(self.request, self):  # Use custom permission class
+        if IsSuperAdmin().has_permission(self.request, self):
             return ContactUs.objects.all().order_by('-created_at')
 
-        return ContactUs.objects.filter(user=user).order_by('-created_at')
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-
-        if IsSuperAdmin().has_permission(request, self):
-            return Response({
-                'message': 'All contact submissions (SuperAdmin view)',
-                'total_count': queryset.count(),
-                'data': serializer.data
-            })
-
-        return Response({
-            'message': 'Your contact submissions',
-            'total_count': queryset.count(),
-            'data': serializer.data
-        })
-
-
+        user_api_keys = APIKey.objects.filter(user=user)
+        return ContactUs.objects.filter(
+            api_key__in=user_api_keys
+        ).order_by('-created_at')
+    
 class ContactUsAdminDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
-    Get/Update/Delete specific contact submission - 
-    SuperAdmin can access all, others only their own.
+    Admin detail view for contact submissions:
+    - SuperAdmin: can access any contact submission
+    - Regular users: can access only contacts from their API keys
     """
     serializer_class = ContactUsListSerializer
     permission_classes = [IsAuthenticated]
@@ -230,23 +262,39 @@ class ContactUsAdminDetailView(generics.RetrieveUpdateDestroyAPIView):
         if IsSuperAdmin().has_permission(self.request, self):
             return ContactUs.objects.all()
 
-        return ContactUs.objects.filter(user=user)
+        # Regular users can only access contacts from their API keys
+        user_api_keys = APIKey.objects.filter(user=user)
+        return ContactUs.objects.filter(api_key__in=user_api_keys)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
+        data = serializer.data
 
         if IsSuperAdmin().has_permission(request, self):
-            data = serializer.data
-            if hasattr(instance, 'user') and instance.user:
-                data['user_details'] = {
-                    'username': instance.user.username,
-                    'email': instance.user.email,
-                    'role': getattr(instance.user, 'role', 'N/A')
+            # SuperAdmin gets full details including API key owner info
+            if instance.api_key:
+                data['api_key_details'] = {
+                    'key_id': instance.api_key.id,
+                    'key_name': instance.api_key.name,
+                    'website_url': instance.api_key.website_url,
+                    'owner_username': instance.api_key.user.username,
+                    'owner_email': instance.api_key.user.email,
+                    'created_at': instance.api_key.created_at,
+                    'last_used': instance.api_key.last_used
                 }
             return Response(data)
 
-        return Response(serializer.data)
+        # Regular users get basic API key info
+        if instance.api_key:
+            data['api_key_info'] = {
+                'name': instance.api_key.name,
+                'website_url': instance.api_key.website_url,
+                'key_id': instance.api_key.id
+            }
+
+        return Response(data)
+
 
 # API Key Validation
 @api_view(['GET'])

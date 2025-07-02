@@ -166,6 +166,14 @@ class ContactUsSerializer(serializers.ModelSerializer):
         fields = ['name', 'email', 'phone', 'package_type', 'message']
 
 class ContactUsListSerializer(serializers.ModelSerializer):
+    api_key_name = serializers.CharField(source='api_key.name', read_only=True)
+    api_key_website = serializers.CharField(source='api_key.website_url', read_only=True)
+    submitted_by_username = serializers.CharField(source='submitted_by_user.username', read_only=True)
+    
     class Meta:
         model = ContactUs
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'email', 'phone', 'package_type', 'message', 
+            'created_at', 'api_key_name', 'api_key_website', 'submitted_by_username'
+        ]
+        read_only_fields = ['created_at', 'api_key', 'submitted_by_user']

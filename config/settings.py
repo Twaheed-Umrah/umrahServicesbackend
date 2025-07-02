@@ -51,6 +51,7 @@ LOCAL_APPS = [
     'apps.visa',
     'apps.dashboard',
     'apps.poster_generator',
+    'apps.hajjumarhlead'
 
 ]
 
@@ -98,6 +99,7 @@ DATABASES = {
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -171,7 +173,7 @@ REST_FRAMEWORK = {
 
 # JWT Configuration
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=24),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -214,6 +216,7 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'X-Secret-Key',
     'x-api-key',  
 ]
 

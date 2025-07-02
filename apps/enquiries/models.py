@@ -1,6 +1,7 @@
 from django.db import models
 from apps.common.mixins import TimestampMixin
 import uuid
+from django.conf import settings
 from django.utils import timezone
 
 class APIKey(models.Model):
@@ -76,39 +77,37 @@ class HomePage(models.Model):
 
 # Add this to your existing models.py file
 
-from django.db import models
-from apps.common.mixins import TimestampMixin
-
-class ContactUs(TimestampMixin):
-    """Contact us form submissions"""
-    
-    # Contact us form data
+class ContactUs(models.Model):
     name = models.CharField(max_length=100)
-    email = models.EmailField(blank=True, null=True)  # Optional
-    phone = models.CharField(max_length=15)
-    package_type = models.CharField(max_length=50, blank=True, null=True)  # Optional
-    message = models.TextField(blank=True, null=True)  # Optional
-    
-    # System fields
+    email = models.EmailField(blank=True, null=True, db_index=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    package_type = models.CharField(max_length=50, blank=True, null=True)
+    message = models.TextField(blank=True, null=True)
     is_processed = models.BooleanField(default=False)
-    processed_by = models.ForeignKey(
-        'users.User', 
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    api_key = models.ForeignKey(
+        'APIKey', 
         on_delete=models.SET_NULL, 
         null=True, 
         blank=True,
-        related_name='processed_enquiries'
+        related_name='contact_submissions',
+        help_text="API key used to submit this contact form"
     )
-    processed_at = models.DateTimeField(null=True, blank=True)
-    notes = models.TextField(blank=True, null=True, help_text="Internal notes")
+    submitted_by_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='contact_submissions',
+        help_text="User who owns the API key used for submission"
+    )
 
     class Meta:
         ordering = ['-created_at']
-        verbose_name = 'Contact Us'
-        verbose_name_plural = 'Contact Us'
+        verbose_name = "Contact Us"
+        verbose_name_plural = "Contact Us"
 
     def __str__(self):
-        return f"Contact - {self.name} ({self.created_at.strftime('%Y-%m-%d')})"
-
-    @property
-    def status(self):
-        return "Processed" if self.is_processed else "Pending"
+        api_info = f" (via {self.api_key.name})" if self.api_key else ""
+        return f"{self.name} - {self.email}{api_info}"

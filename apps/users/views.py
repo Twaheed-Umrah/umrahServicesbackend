@@ -13,6 +13,10 @@ from datetime import timedelta
 from django.template.loader import render_to_string
 from weasyprint import HTML, CSS
 from django.db.models import Q
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.tokens import UntypedToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.contrib.auth import logout
 from apps.common.permissions import IsSuperAdmin, IsAgencyAdmin
 from .emailformate import send_password_reset_otp
 import random
@@ -54,7 +58,97 @@ def send_sms_otp(phone, otp):
     print(f"Sending SMS to {phone}: Your OTP is {otp}")
     return True
 
+class VerifyTokenView(APIView):
+    """
+    Verify if the provided token is valid and not expired
+    """
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        token = request.data.get('token')
+        
+        if not token:
+            return Response(
+                {'error': 'Token is required', 'is_valid': False}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Verify the token
+            UntypedToken(token)
+            
+            # Additional check: decode and verify token payload
+            jwt_auth = JWTAuthentication()
+            validated_token = jwt_auth.get_validated_token(token)
+            user = jwt_auth.get_user(validated_token)
+            
+            if not user.is_active:
+                return Response(
+                    {'error': 'User account is disabled', 'is_valid': False}, 
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            
+            return Response({
+                'message': 'Token is valid',
+                'is_valid': True,
+                'user_id': user.id,
+                'username': user.username
+            })
+            
+        except TokenError as e:
+            return Response(
+                {'error': 'Token is invalid or expired', 'is_valid': False}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        except Exception as e:
+            return Response(
+                {'error': 'Token verification failed', 'is_valid': False}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
+class RefreshTokenView(APIView):
+    """
+    Refresh access token using refresh token
+    """
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        refresh_token = request.data.get('refresh')
+        
+        if not refresh_token:
+            return Response(
+                {'error': 'Refresh token is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            refresh = RefreshToken(refresh_token)
+            
+            # Check if refresh token is blacklisted
+            if refresh.check_blacklist():
+                return Response(
+                    {'error': 'Refresh token is blacklisted'}, 
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            
+            # Generate new access token
+            new_access_token = refresh.access_token
+            
+            return Response({
+                'access': str(new_access_token),
+                'message': 'Token refreshed successfully'
+            })
+            
+        except TokenError as e:
+            return Response(
+                {'error': 'Invalid or expired refresh token'}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        except Exception as e:
+            return Response(
+                {'error': 'Token refresh failed'}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 class RegisterView(generics.CreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
@@ -67,12 +161,16 @@ class RegisterView(generics.CreateAPIView):
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         
+        # Pass request context to serializer for full URLs
+        user_serializer = UserSerializer(user, context={'request': request})
+        
         return Response({
             "message": "User registered successfully",
-            "user": UserSerializer(user).data,
+            "user": user_serializer.data,
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         }, status=status.HTTP_201_CREATED)
+
 
 
 class LoginView(generics.GenericAPIView):
@@ -100,7 +198,8 @@ class MeView(APIView):
 
     def get(self, request):
         """Get current user profile"""
-        return Response(UserSerializer(request.user).data)
+        # Pass request context to serializer for full URLs
+        return Response(UserSerializer(request.user, context={'request': request}).data)
 
 
 class UpdateProfileView(APIView):
@@ -108,7 +207,7 @@ class UpdateProfileView(APIView):
 
     def put(self, request):
         """Update user profile"""
-        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        serializer = UserSerializer(request.user, data=request.data, partial=True, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         
@@ -120,8 +219,7 @@ class UpdateProfileView(APIView):
     def patch(self, request):
         """Partial update user profile"""
         return self.put(request)
-
-
+     
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -465,14 +563,14 @@ class GetAllUsersView(APIView):
     def get(self, request):
         # Get all users
         users = User.objects.all().order_by('-date_joined')
-        serializer = UserSerializer(users, many=True)
+        # Pass request context to serializer for building absolute URLs
+        serializer = UserSerializer(users, many=True, context={'request': request})
         
         return Response({
             'message': 'All users retrieved successfully',
             'count': users.count(),
             'users': serializer.data
         })
-
 
 class GetAgencyUsersView(APIView):
     """Get all franchise admins and freelancers created by logged-in agency admin"""
@@ -562,3 +660,4 @@ class DownloadCertificateView(APIView):
                 {'detail': 'An error occurred while generating the certificate.'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+        

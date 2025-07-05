@@ -13,17 +13,19 @@
         
         body {
             font-family: 'Arial', sans-serif;
-            font-size: 12px;
-            line-height: 1.4;
+            font-size: 11px;
+            line-height: 1.3;
             color: #333;
+            background: white;
         }
         
         .receipt-container {
-            max-width: 600px;
+            max-width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
             margin: 0 auto;
-            padding: 20px;
-            padding-top: 5px;  
+            padding: 15mm;
             background: white;
+            page-break-inside: avoid;
         }
         
         .header {
@@ -31,8 +33,8 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #28a745;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
         }
         
         .company-info {
@@ -40,35 +42,46 @@
         }
         
         .company-name {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             color: #28a745;
             margin-bottom: 5px;
         }
         
         .company-details {
-            font-size: 11px;
+            font-size: 10px;
             color: #666;
+            line-height: 1.4;
         }
         
-        .logo {
-            width: 120px;
-            height: 80px;
-            object-fit: contain;
+        .logo-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        
+        .company-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 30%;
+            object-fit: cover;
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+            background: white;
         }
         
         .receipt-title {
             text-align: center;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #28a745;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .quick-booking-info {
             background: #f8f9fa;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             margin-bottom: 15px;
             border-left: 5px solid #28a745;
@@ -77,8 +90,8 @@
         .info-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
-            padding: 5px 0;
+            margin-bottom: 8px;
+            padding: 4px 0;
             border-bottom: 1px dotted #ddd;
         }
         
@@ -91,32 +104,34 @@
             font-weight: bold;
             color: #555;
             flex: 1;
+            font-size: 11px;
         }
         
         .info-value {
             color: #333;
             flex: 2;
             text-align: right;
+            font-size: 11px;
         }
         
         .highlight-section {
             background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
-            padding: 5px;
+            padding: 12px;
             border-radius: 8px;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
         }
         
         .highlight-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         
         .highlight-value {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
         }
         
@@ -124,88 +139,102 @@
             background: #fff3cd;
             border: 1px solid #ffeaa7;
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
+            padding: 15px;
+            margin-bottom: 15px;
         }
         
         .next-steps h4 {
             color: #856404;
-            margin-bottom: 15px;
-            font-size: 16px;
+            margin-bottom: 10px;
+            font-size: 14px;
         }
         
         .next-steps ul {
-            margin-left: 20px;
+            margin-left: 15px;
             color: #856404;
         }
         
         .next-steps li {
-            margin-bottom: 8px;
+            margin-bottom: 5px;
+            font-size: 10px;
         }
         
         .contact-info {
             background: #e7f3ff;
             border: 1px solid #bee5eb;
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
+            padding: 15px;
+            margin-bottom: 15px;
             text-align: center;
         }
         
         .contact-info h4 {
             color: #0c5460;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
         
         .contact-info p {
             color: #0c5460;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
+            font-size: 10px;
         }
         
         .footer {
-            margin-top: 40px;
+            margin-top: 20px;
             text-align: center;
-            font-size: 11px;
+            font-size: 10px;
             color: #666;
-            padding-top: 20px;
+            padding-top: 15px;
         }
         
         .terms {
-            margin-top: 20px;
-            font-size: 10px;
+            margin-top: 15px;
+            font-size: 9px;
             color: #555;
         }
         
         .terms h4 {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #28a745;
+            font-size: 12px;
+        }
+        
+        .terms ul {
+            margin-left: 15px;
+        }
+        
+        .terms li {
+            margin-bottom: 3px;
+            line-height: 1.3;
         }
         
         .signature-section {
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
-            padding-top: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
         }
         
         .signature {
             text-align: center;
-            width: 200px;
+            width: 180px;
         }
         
         .signature-line {
             border-top: 1px solid #333;
-            margin-top: 50px;
+            margin-top: 40px;
             padding-top: 5px;
+            font-size: 10px;
         }
         
         .status-badge {
             display: inline-block;
             background: #28a745;
             color: white;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             text-transform: uppercase;
         }
@@ -214,19 +243,20 @@
             background: #f0f8ff;
             border: 1px solid #b3d9ff;
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 12px;
+            margin-bottom: 15px;
         }
         
         .special-request h4 {
             color: #0056b3;
-            margin-bottom: 10px;
-            font-size: 14px;
+            margin-bottom: 8px;
+            font-size: 12px;
         }
         
         .special-request p {
             color: #333;
             font-style: italic;
+            font-size: 10px;
         }
         
         @media print {
@@ -238,7 +268,39 @@
             .receipt-container {
                 max-width: none;
                 margin: 0;
-                padding: 15px;
+                padding: 15mm;
+                min-height: 297mm;
+            }
+            
+            @page {
+                size: A4;
+                margin: 0;
+            }
+        }
+        
+        @media screen and (max-width: 768px) {
+            .receipt-container {
+                padding: 10px;
+                max-width: 100%;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .company-info {
+                margin-bottom: 10px;
+            }
+            
+            .info-row {
+                flex-direction: column;
+                text-align: left;
+            }
+            
+            .info-value {
+                text-align: left;
+                margin-top: 2px;
             }
         }
     </style>
@@ -254,7 +316,11 @@
                     Phone: {{ company.phone }} | Email: {{ company.email }}
                 </div>
             </div>
-            <img src="http://127.0.0.1:8000/media/company_logos/TawheedUmrahnew41.png" alt="Company Logo" class="logo">
+            <div class="logo-container">
+                {% if company.logo_url %}
+                <img src="{{ company.logo_url }}" alt="Company Logo" class="company-logo">
+                {% endif %}
+            </div>
         </div>
         
         <!-- Receipt Title -->
@@ -297,7 +363,7 @@
                 <span class="info-value">{{ quick_booking.preferred_payment|title }}</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Estimated Budget :</span>
+                <span class="info-label">Estimated Budget:</span>
                 <span class="info-value">₹{{ quick_booking.budget }}</span>
             </div>
              <div class="info-row">
@@ -305,7 +371,7 @@
                 <span class="info-value">₹{{ quick_booking.payment }}</span>
             </div>
              <div class="info-row">
-                <span class="info-label">Dues Amount :</span>
+                <span class="info-label">Dues Amount:</span>
                 <span class="info-value">₹{{ quick_booking.dues }}</span>
             </div>
         </div>

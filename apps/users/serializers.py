@@ -3,17 +3,89 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+import base64
+import uuid
+from django.core.files.base import ContentFile
 from .models import User
+
+class Base64ImageField(serializers.ImageField):
+    """
+    A Django REST framework field for handling image-uploads through raw post data.
+    It uses base64 for encoding and decoding the contents of the file.
+    """
+    
+    def to_internal_value(self, data):
+        # Check if this is a base64 string
+        if isinstance(data, str) and data.startswith('data:image'):
+            # Parse the base64 string
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
+            
+            # Generate a unique filename
+            filename = f"{uuid.uuid4()}.{ext}"
+            
+            # Decode the base64 string
+            data = ContentFile(base64.b64decode(imgstr), name=filename)
+        
+        return super().to_internal_value(data)
+    
+    def to_representation(self, value):
+        """Return full URL for the image"""
+        if not value:
+            return None
+        
+        request = self.context.get('request')
+        if request is not None:
+            return request.build_absolute_uri(value.url)
+        return value.url
+
+
+class Base64FileField(serializers.FileField):
+    """
+    A Django REST framework field for handling file uploads through raw post data.
+    It uses base64 for encoding and decoding the contents of the file.
+    """
+    
+    def to_internal_value(self, data):
+        # Check if this is a base64 string
+        if isinstance(data, str) and data.startswith('data:'):
+            # Parse the base64 string
+            format, filestr = data.split(';base64,')
+            ext = format.split('/')[-1]
+            
+            # Generate a unique filename
+            filename = f"{uuid.uuid4()}.{ext}"
+            
+            # Decode the base64 string
+            data = ContentFile(base64.b64decode(filestr), name=filename)
+        
+        return super().to_internal_value(data)
+    
+    def to_representation(self, value):
+        """Return full URL for the file"""
+        if not value:
+            return None
+        
+        request = self.context.get('request')
+        if request is not None:
+            return request.build_absolute_uri(value.url)
+        return value.url
+
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    # Use Base64ImageField for both input and output with full URLs
+    profile_image = Base64ImageField(required=False, allow_null=True)
+    company_logo = Base64ImageField(required=False, allow_null=True)
+    # Use Base64FileField for agreement letter
+    agreement_letter = Base64FileField(required=False, allow_null=True)
 
     class Meta:
         model = User
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name', 'role',
             'phone', 'address', 'profile_image', 'is_active',
-            'bio', 'website', 'company_name', 'license_number', 'company_logo',
+            'bio', 'website', 'company_name', 'agreement_letter', 'company_logo',
             'password'
         ]
         extra_kwargs = {
@@ -46,10 +118,23 @@ class UserSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError("This phone number is already in use")
         return value
 
+    def validate_agreement_letter(self, value):
+        """Validate that the agreement letter is a PDF file"""
+        if value:
+            # Check file extension
+            if hasattr(value, 'name') and not value.name.lower().endswith('.pdf'):
+                raise serializers.ValidationError("Agreement letter must be a PDF file")
+            
+            # Check file size (limit to 10MB)
+            if hasattr(value, 'size') and value.size > 10 * 1024 * 1024:
+                raise serializers.ValidationError("Agreement letter file size cannot exceed 10MB")
+        
+        return value
+
     def create(self, validated_data):
         password = validated_data.pop('password')
         
-        # Create user with all fields
+        # Create user with all fields (including file fields)
         user = User.objects.create(**validated_data)
         user.set_password(password)
         user.save()
@@ -59,7 +144,7 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
         
-        # Update user fields
+        # Update user fields (including file fields)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         
@@ -69,6 +154,29 @@ class UserSerializer(serializers.ModelSerializer):
         
         instance.save()
         return instance
+
+    def to_representation(self, instance):
+        """Override to ensure context is passed to file fields"""
+        representation = super().to_representation(instance)
+        
+        # Ensure the file fields get the request context
+        if hasattr(self, 'context') and 'request' in self.context:
+            request = self.context['request']
+            
+            # Handle profile_image
+            if instance.profile_image:
+                representation['profile_image'] = request.build_absolute_uri(instance.profile_image.url)
+            
+            # Handle company_logo
+            if instance.company_logo:
+                representation['company_logo'] = request.build_absolute_uri(instance.company_logo.url)
+            
+            # Handle agreement_letter
+            if instance.agreement_letter:
+                representation['agreement_letter'] = request.build_absolute_uri(instance.agreement_letter.url)
+        
+        return representation
+
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -89,6 +197,7 @@ class LoginSerializer(serializers.Serializer):
             return attrs
         else:
             raise serializers.ValidationError('Must include email and password')
+
 
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
@@ -113,6 +222,7 @@ class ChangePasswordSerializer(serializers.Serializer):
         
         return attrs
 
+
 class SendOTPSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)
     phone = serializers.CharField(required=False, max_length=20)
@@ -129,7 +239,6 @@ class SendOTPSerializer(serializers.Serializer):
             raise serializers.ValidationError("Provide either email or phone, not both")
         
         return attrs
-    
 
 
 class ResetPasswordSerializer(serializers.Serializer):
@@ -157,7 +266,6 @@ class ResetPasswordSerializer(serializers.Serializer):
         return attrs
 
 
-
 class VerifyOTPSerializer(serializers.Serializer):
     otp = serializers.CharField(required=True, min_length=6, max_length=6)
 
@@ -166,7 +274,7 @@ class VerifyOTPSerializer(serializers.Serializer):
         if not value.isdigit():
             raise serializers.ValidationError("OTP must contain only digits")
         return value
-# Add this to your serializers.py file (optional)
+
 
 class CertificateSerializer(serializers.ModelSerializer):
     """Serializer for certificate data"""

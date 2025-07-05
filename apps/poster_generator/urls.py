@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-app_name = 'poster_generator'
+app_name = 'apps.poster_generator'
 
 urlpatterns = [
     # Template endpoints
@@ -15,7 +15,8 @@ urlpatterns = [
     path('admin/templates/<int:template_id>/', views.PosterTemplateManagementView.as_view(), name='admin-template-delete'),
     # Poster generation and download
     path('posters/poster/', views.PosterGeneratorView.as_view(), name='poster_generate'),
-    path('<int:poster_id>/download/<str:format_type>/', 
+   path('download/<int:poster_id>/<str:format_type>/', 
          views.PosterDownloadView.as_view(), 
          name='poster_download'),
+
 ]

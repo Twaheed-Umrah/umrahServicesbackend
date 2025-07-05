@@ -4,7 +4,7 @@ from .views import (
     SendEmailOTPView, VerifyEmailOTPView, SendPhoneOTPView, 
     VerifyPhoneOTPView, RegisterView, LogoutView,    GetAllUsersView,
     GetAgencyUsersView,
-    GetUserDetailsByIdView,DownloadCertificateView,ForgotPasswordSendOTPView,ForgotPasswordVerifyOTPView,ResetPasswordView
+    GetUserDetailsByIdView,DownloadCertificateView,ForgotPasswordSendOTPView,ForgotPasswordVerifyOTPView,ResetPasswordView,RefreshTokenView,VerifyTokenView
 
 )
 
@@ -33,4 +33,6 @@ path('users/forgot-password/reset/', ResetPasswordView.as_view(), name='reset-pa
     path('users/agency/', GetAgencyUsersView.as_view(), name='get-agency-users'),
     path('users/<int:user_id>/', GetUserDetailsByIdView.as_view(), name='get-user-details'),
     path('download-certificate/', DownloadCertificateView.as_view(), name='download-certificate'),
+    path('verify-token/', VerifyTokenView.as_view(), name='verify-token'),
+    path('refresh-token/', RefreshTokenView.as_view(), name='refresh-token'),
 ]

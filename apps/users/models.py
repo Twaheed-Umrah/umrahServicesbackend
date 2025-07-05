@@ -25,7 +25,7 @@ class User(AbstractUser, TimestampMixin):
     bio = models.TextField(blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     company_name = models.CharField(max_length=255, blank=True, null=True)
-    license_number = models.CharField(max_length=100, blank=True, null=True)
+    agreement_letter = models.FileField(upload_to='agreement_letters/', blank=True, null=True)
     company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
 
     # Override the USERNAME_FIELD to use email for authentication

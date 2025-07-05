@@ -16,7 +16,7 @@ from .serializers import (
     BookingSerializer, BookingTravelerSerializer, QuickBookingSerializer,
     BookingReceiptSerializer, QuickBookingReceiptSerializer
 )
-from apps.common.permissions import IsFranchiseAdmin
+from apps.common.permissions import IsFranchiseOrAgencyAdmin
 
 
 class BookingListCreateView(generics.ListCreateAPIView):
@@ -26,7 +26,7 @@ class BookingListCreateView(generics.ListCreateAPIView):
     """
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'travel_month', 'payment_type']
     search_fields = ['booking_number', 'first_name', 'last_name', 'email']
@@ -47,7 +47,7 @@ class BookingDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -63,7 +63,7 @@ class QuickBookingListCreateView(generics.ListCreateAPIView):
     """
     queryset = QuickBooking.objects.all()
     serializer_class = QuickBookingSerializer
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['preferred_payment', 'is_converted_to_full_booking']
     search_fields = ['booking_number', 'first_name', 'last_name', 'email', 'destination']
@@ -84,20 +84,53 @@ class QuickBookingDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = QuickBooking.objects.all()
     serializer_class = QuickBookingSerializer
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     
     def get_queryset(self):
         queryset = super().get_queryset()
         if self.request.user.role != 'superadmin':
             queryset = queryset.filter(created_by=self.request.user)
         return queryset
-
+    def get_object(self):
+        """
+        Override to provide better error handling
+        """
+        try:
+            obj = super().get_object()
+            return obj
+        except QuickBooking.DoesNotExist:
+            from rest_framework.exceptions import NotFound
+            raise NotFound("Quick booking not found or you don't have permission to update it.")
+    
+    def perform_update(self, serializer):
+        """
+        Override to add any additional logic before saving
+        """
+        # You can add any custom logic here before saving
+        # For example, logging the update, sending notifications, etc.
+        serializer.save()
+    
+    def update(self, request, *args, **kwargs):
+        """
+        Override to customize the update response if needed
+        """
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        
+        # Return custom response
+        return Response({
+            'message': 'Quick booking updated successfully',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
 
 class BookingConfirmView(APIView):
     """
     POST: Confirm a booking
     """
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     
     def post(self, request, pk):
         try:
@@ -125,7 +158,7 @@ class BookingCancelView(APIView):
     """
     POST: Cancel a booking
     """
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     
     def post(self, request, pk):
         try:
@@ -154,7 +187,7 @@ class BookingReceiptView(APIView):
     """
     GET: Generate and return booking receipt/bill as PDF
     """
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     
     def get(self, request, pk):
         try:
@@ -169,14 +202,27 @@ class BookingReceiptView(APIView):
             
             # Get company details from the user who created the booking
             company_user = booking.created_by
+            logo_url = None
+            if company_user.company_logo:
+                if hasattr(company_user.company_logo, 'url'):
+                    # It's a file field object - build full URL
+                    logo_url = request.build_absolute_uri(company_user.company_logo.url)
+                else:
+                    # It's already a URL string - check if it's relative or absolute
+                    if company_user.company_logo.startswith(('http://', 'https://')):
+                        logo_url = company_user.company_logo
+                    else:
+                        # It's a relative path, make it absolute
+                        logo_url = request.build_absolute_uri(company_user.company_logo)
+            
             company_details = {
                 'name': company_user.company_name or 'Your Travel Company',
                 'address': company_user.address or 'Your Company Address',
                 'phone': company_user.phone or 'Your Phone Number',
                 'email': company_user.email,
                 'license_number': company_user.license_number,
-                'logo_url': company_user.company_logo.url if company_user.company_logo else None,
-                'website': getattr(company_user, 'website', None),
+                'logo_url': logo_url,
+                'website': company_user.website,
             }
             
             # Serialize booking data
@@ -189,8 +235,9 @@ class BookingReceiptView(APIView):
             # Render HTML template
             html_string = render_to_string('booking_receipt.html', context)
             
-            # Generate PDF using WeasyPrint
-            html_doc = HTML(string=html_string)
+            # Generate PDF using WeasyPrint with base_url
+            base_url = request.build_absolute_uri('/')
+            html_doc = HTML(string=html_string, base_url=base_url)
             pdf_bytes = html_doc.write_pdf()
             
             # Verify PDF content is not empty
@@ -204,7 +251,6 @@ class BookingReceiptView(APIView):
             response = HttpResponse(pdf_bytes, content_type='application/pdf')
             response['Content-Disposition'] = f'inline; filename="booking_{booking.booking_number}.pdf"'
             response['Content-Length'] = len(pdf_bytes)
-            
             return response
             
         except Booking.DoesNotExist:
@@ -220,7 +266,7 @@ class BookingReceiptView(APIView):
             )
         
 class QuickBookingReceiptView(APIView):
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     
     def get(self, request, pk):
         try:
@@ -235,13 +281,28 @@ class QuickBookingReceiptView(APIView):
             
             # Get company details
             company_user = quick_booking.created_by
+            
+            # Handle logo URL properly - ensure full URL
+            logo_url = None
+            if company_user.company_logo:
+                if hasattr(company_user.company_logo, 'url'):
+                    # It's a file field object - build full URL
+                    logo_url = request.build_absolute_uri(company_user.company_logo.url)
+                else:
+                    # It's already a URL string - check if it's relative or absolute
+                    if company_user.company_logo.startswith(('http://', 'https://')):
+                        logo_url = company_user.company_logo
+                    else:
+                        # It's a relative path, make it absolute
+                        logo_url = request.build_absolute_uri(company_user.company_logo)
+            
             company_details = {
                 'name': company_user.company_name or 'Your Travel Company',
                 'address': company_user.address or 'Your Company Address',
                 'phone': company_user.phone or 'Your Phone Number',
                 'email': company_user.email,
                 'license_number': company_user.license_number,
-                'logo_url': company_user.company_logo.url if company_user.company_logo else None,
+                'logo_url': logo_url,
                 'website': company_user.website,
             }
             
@@ -255,8 +316,9 @@ class QuickBookingReceiptView(APIView):
             # Render HTML template
             html_string = render_to_string('quick_booking_receipt.html', context)
             
-            # Generate PDF using WeasyPrint
-            html_doc = HTML(string=html_string)
+            # Generate PDF using WeasyPrint with base_url
+            base_url = request.build_absolute_uri('/')
+            html_doc = HTML(string=html_string, base_url=base_url)
             pdf_bytes = html_doc.write_pdf()
             
             # Create HTTP response
@@ -277,12 +339,12 @@ class QuickBookingReceiptView(APIView):
                 {'detail': 'An error occurred while generating the PDF.'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
+               
 class ConvertQuickBookingView(APIView):
     """
     POST: Convert quick booking to full booking
     """
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     
     def post(self, request, pk):
         try:
@@ -342,7 +404,7 @@ class AllBookingDetailView(generics.ListAPIView):
     GET: List all bookings created by the logged-in user
     """
     serializer_class = BookingSerializer
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'travel_month', 'payment_type']
     search_fields = ['booking_number', 'first_name', 'last_name', 'email']
@@ -361,7 +423,7 @@ class AllQuickBookingDetailView(generics.ListAPIView):
     GET: List all quick bookings created by the logged-in user
     """
     serializer_class = QuickBookingSerializer
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['preferred_payment', 'is_converted_to_full_booking']
     search_fields = ['booking_number', 'first_name', 'last_name', 'email', 'destination']
@@ -380,7 +442,7 @@ class UserBookingDetailView(generics.RetrieveAPIView):
     GET: Retrieve a specific booking by ID for the logged-in user
     """
     serializer_class = BookingSerializer
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     lookup_field = 'id'
     
     def get_queryset(self):
@@ -406,7 +468,7 @@ class UserQuickBookingDetailView(generics.RetrieveAPIView):
     GET: Retrieve a specific quick booking by ID for the logged-in user
     """
     serializer_class = QuickBookingSerializer
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsFranchiseOrAgencyAdmin]
     lookup_field = 'id'
     
     def get_queryset(self):

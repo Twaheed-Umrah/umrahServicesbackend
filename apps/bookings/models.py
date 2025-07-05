@@ -28,7 +28,7 @@ class Booking(TimestampMixin):
     booking_number = models.CharField(max_length=20, unique=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    email = models.EmailField()
+    email = models.EmailField(blank=True, null=True, db_index=True)
     mobile_no = models.CharField(max_length=15)
     
     # Passport Details
@@ -72,7 +72,7 @@ class Booking(TimestampMixin):
     payment_type = models.CharField(max_length=20, choices=PAYMENT_TYPE_CHOICES)
     
     # System Fields
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='completed')
     remarks = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey('users.User', on_delete=models.CASCADE)
 
@@ -144,7 +144,7 @@ class QuickBooking(TimestampMixin):
     booking_number = models.CharField(max_length=20, unique=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    email = models.EmailField()
+    email = models.EmailField(blank=True, null=True, db_index=True)
     mobile = models.CharField(max_length=15)
     
     # Travel Details

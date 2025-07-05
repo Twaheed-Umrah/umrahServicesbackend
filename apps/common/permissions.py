@@ -26,3 +26,7 @@ class IsAgencyAdminOrSuperAdmin(BasePermission):
             hasattr(request.user, 'user_type') and 
             request.user.user_type in ['agency_admin', 'superadmin']
         )
+    
+class IsFranchiseOrAgencyAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return IsFranchiseAdmin().has_permission(request, view) or IsAgencyAdmin().has_permission(request, view)

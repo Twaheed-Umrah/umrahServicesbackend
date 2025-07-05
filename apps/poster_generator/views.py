@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.http import FileResponse, Http404
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
 from .models import PackagePoster, PosterTemplate
@@ -350,68 +351,36 @@ class PosterGeneratorView(APIView):
         return content_types.get(format_type, 'application/octet-stream')
     
 class PosterDownloadView(APIView):
-    """
-    API endpoint to download existing poster files
-    """
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, poster_id, format_type):
-        """Download poster in specified format"""
+        poster = PackagePoster.objects.filter(id=poster_id, user=request.user).first()
+        if not poster:
+            raise Http404("Poster not found")
+
+        file_field = getattr(poster, f'poster_{format_type}', None)
+
+        if not file_field or not file_field.name:
+            raise Http404("Requested poster file not available")
+
+        # Optional logging
+        print(f"Serving poster: {file_field.name}")
+        print(f"Exists: {file_field.storage.exists(file_field.name)} | Size: {file_field.size}")
+
         try:
-            # Validate format
-            if format_type not in ['jpg', 'png', 'pdf']:
-                return Response(
-                    {'error': 'Invalid format. Supported formats: jpg, png, pdf'}, 
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
-            # Get poster
-            try:
-                poster = PackagePoster.objects.get(id=poster_id, user=request.user)
-            except PackagePoster.DoesNotExist:
-                return Response(
-                    {'error': 'Poster not found'}, 
-                    status=status.HTTP_404_NOT_FOUND
-                )
-            
-            # Get file field
-            file_field = getattr(poster, f'poster_{format_type}', None)
-            
-            if not file_field or not hasattr(file_field, 'file') or not file_field.file:
-                return Response(
-                    {'error': f'Poster file in {format_type} format not found'}, 
-                    status=status.HTTP_404_NOT_FOUND
-                )
-            
-            try:
-                file_content = file_field.read()
-                filename = f"{poster.package_name}_{format_type}.{format_type}"
-                
-                response = HttpResponse(
-                    file_content,
-                    content_type=self._get_content_type(format_type)
-                )
-                response['Content-Disposition'] = f'attachment; filename="{filename}"'
-                return response
-            
-            except Exception as file_error:
-                return Response(
-                    {'error': f'Failed to read poster file: {str(file_error)}'}, 
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
-                
-        except Exception as e:
-            return Response(
-                {'error': f'Unexpected error: {str(e)}'}, 
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            return FileResponse(
+                file_field.open("rb"),
+                content_type=self._get_content_type(format_type),
+                as_attachment=True,
+                filename=f"{poster.package_name}_{format_type}.{format_type}"
             )
-    
+        except Exception as e:
+            print(f"Failed to serve file: {e}")
+            raise Http404("Error while serving file")
+
     def _get_content_type(self, format_type):
-        """Get appropriate content type for format"""
-        content_types = {
-            'jpg': 'image/jpeg',
-            'jpeg': 'image/jpeg',
+        return {
+            'pdf': 'application/pdf',
             'png': 'image/png',
-            'pdf': 'application/pdf'
-        }
-        return content_types.get(format_type.lower(), 'application/octet-stream')
+            'jpg': 'image/jpeg',
+        }.get(format_type, 'application/octet-stream')

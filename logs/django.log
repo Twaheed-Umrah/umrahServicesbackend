@@ -1,0 +1,24 @@
+INFO 2025-07-05 17:10:21,792 autoreload 21032 21780 Watching for file changes with StatReloader
+INFO 2025-07-05 17:10:34,450 basehttp 21032 19808 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-05 17:10:35,024 basehttp 21032 19808 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-05 17:10:37,221 basehttp 21032 19808 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-05 17:10:37,388 basehttp 21032 19808 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-07-05 17:10:37,395 basehttp 21032 21580 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-07-05 17:10:37,395 basehttp 21032 6124 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-07-05 17:10:37,396 basehttp 21032 22092 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-07-05 17:10:37,397 basehttp 21032 5400 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-07-05 17:10:37,399 basehttp 21032 19808 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-07-05 17:10:37,399 basehttp 21032 7704 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-07-05 17:10:37,406 basehttp 21032 21580 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-07-05 17:10:37,407 basehttp 21032 22092 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-07-05 17:10:37,409 basehttp 21032 6124 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-07-05 17:10:37,613 basehttp 21032 7704 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 688
+INFO 2025-07-05 17:10:37,614 basehttp 21032 21580 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-07-05 17:10:37,679 basehttp 21032 7704 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-07-05 17:10:37,682 basehttp 21032 5400 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 688
+INFO 2025-07-05 17:10:37,715 basehttp 21032 19808 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 315
+INFO 2025-07-05 17:10:37,721 basehttp 21032 22092 "GET /api/dashboard/stats/ HTTP/1.1" 200 247
+INFO 2025-07-05 17:10:37,783 basehttp 21032 19808 "GET /api/dashboard/stats/ HTTP/1.1" 200 247
+INFO 2025-07-05 17:10:37,789 basehttp 21032 6124 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 491
+INFO 2025-07-05 17:10:37,809 basehttp 21032 5400 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 315
+INFO 2025-07-05 17:10:37,850 basehttp 21032 19808 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 491

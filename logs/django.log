@@ -22,3 +22,68 @@ INFO 2025-07-05 17:10:37,783 basehttp 21032 19808 "GET /api/dashboard/stats/ HTT
 INFO 2025-07-05 17:10:37,789 basehttp 21032 6124 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 491
 INFO 2025-07-05 17:10:37,809 basehttp 21032 5400 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 315
 INFO 2025-07-05 17:10:37,850 basehttp 21032 19808 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 491
+INFO 2025-07-07 11:02:12,842 autoreload 11992 14564 Watching for file changes with StatReloader
+INFO 2025-07-07 11:02:45,381 basehttp 11992 10500 "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:50,952 basehttp 11992 10500 "POST /api/auth/login/ HTTP/1.1" 200 979
+INFO 2025-07-07 11:02:51,218 basehttp 11992 10500 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,235 basehttp 11992 19408 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,244 basehttp 11992 10500 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,257 basehttp 11992 17012 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,278 basehttp 11992 10500 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,281 basehttp 11992 12220 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,293 basehttp 11992 19408 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,306 basehttp 11992 2100 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,311 basehttp 11992 17012 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,323 basehttp 11992 10500 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,339 basehttp 11992 12220 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,351 basehttp 11992 6396 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,376 basehttp 11992 19408 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,385 basehttp 11992 2100 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:02:51,604 basehttp 11992 10500 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 11:02:51,614 basehttp 11992 17012 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 11:02:51,676 basehttp 11992 19408 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 11:02:51,700 basehttp 11992 2100 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-07-07 11:02:51,932 basehttp 11992 17012 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 11:02:51,996 basehttp 11992 2100 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-07-07 11:02:52,021 basehttp 11992 10500 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 688
+INFO 2025-07-07 11:02:52,280 basehttp 11992 2100 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 688
+INFO 2025-07-07 11:02:52,435 basehttp 11992 6396 "GET /api/dashboard/stats/ HTTP/1.1" 200 247
+INFO 2025-07-07 11:02:52,681 basehttp 11992 19408 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 315
+INFO 2025-07-07 11:02:52,887 basehttp 11992 2100 "GET /api/dashboard/stats/ HTTP/1.1" 200 247
+INFO 2025-07-07 11:02:53,001 basehttp 11992 12220 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 491
+INFO 2025-07-07 11:02:53,172 basehttp 11992 6396 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 315
+INFO 2025-07-07 11:02:53,630 basehttp 11992 2100 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 491
+INFO 2025-07-07 11:02:56,923 basehttp 11992 2100 "OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+WARNING 2025-07-07 11:02:57,064 log 11992 2100 Bad Request: /api/auth/logout/
+WARNING 2025-07-07 11:02:57,076 basehttp 11992 2100 "POST /api/auth/logout/ HTTP/1.1" 400 25
+INFO 2025-07-07 11:03:11,077 basehttp 11992 12804 "POST /api/auth/login/ HTTP/1.1" 200 886
+INFO 2025-07-07 11:03:11,393 basehttp 11992 12804 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:03:11,477 basehttp 11992 19224 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 2
+INFO 2025-07-07 11:03:11,485 basehttp 11992 19372 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:03:11,571 basehttp 11992 12804 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:03:11,608 basehttp 11992 19224 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:03:11,717 basehttp 11992 19372 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 2
+INFO 2025-07-07 11:03:11,733 basehttp 11992 12804 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 2
+INFO 2025-07-07 11:03:11,835 basehttp 11992 19236 "GET /api/dashboard/stats/ HTTP/1.1" 200 221
+INFO 2025-07-07 11:03:11,928 basehttp 11992 19224 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 2
+INFO 2025-07-07 11:03:12,013 basehttp 11992 14132 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 301
+INFO 2025-07-07 11:03:12,186 basehttp 11992 12804 "GET /api/dashboard/stats/ HTTP/1.1" 200 221
+INFO 2025-07-07 11:03:12,488 basehttp 11992 1804 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 481
+INFO 2025-07-07 11:03:12,545 basehttp 11992 19224 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 301
+INFO 2025-07-07 11:03:13,003 basehttp 11992 12804 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 481
+INFO 2025-07-07 11:03:14,324 basehttp 11992 12804 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:03:23,281 basehttp 11992 12804 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:03:25,277 basehttp 11992 12804 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:03:25,445 basehttp 11992 19224 "OPTIONS /api/enquiries/admin/contacts/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:03:25,445 basehttp 11992 12804 "OPTIONS /api/enquiries/admin/contacts/ HTTP/1.1" 200 0
+INFO 2025-07-07 11:03:25,482 basehttp 11992 12804 "GET /api/enquiries/admin/contacts/ HTTP/1.1" 200 100
+INFO 2025-07-07 11:03:25,512 basehttp 11992 19224 "GET /api/enquiries/admin/contacts/ HTTP/1.1" 200 100
+INFO 2025-07-07 11:03:26,570 basehttp 11992 19224 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:08:27,322 basehttp 11992 19872 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:13:28,207 basehttp 11992 4972 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:18:29,210 basehttp 11992 20384 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:23:30,339 basehttp 11992 21880 "POST /api/auth/verify-token/ HTTP/1.1" 200 80
+INFO 2025-07-07 11:24:32,580 autoreload 11992 14564 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\config\settings.py changed, reloading.
+INFO 2025-07-07 11:24:37,729 autoreload 21476 22816 Watching for file changes with StatReloader
+INFO 2025-07-07 11:25:31,927 autoreload 21476 22816 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\config\settings.py changed, reloading.
+INFO 2025-07-07 11:25:34,352 autoreload 21272 23004 Watching for file changes with StatReloader

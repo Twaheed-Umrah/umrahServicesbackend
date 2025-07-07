@@ -220,7 +220,6 @@ class BookingReceiptView(APIView):
                 'address': company_user.address or 'Your Company Address',
                 'phone': company_user.phone or 'Your Phone Number',
                 'email': company_user.email,
-                'license_number': company_user.license_number,
                 'logo_url': logo_url,
                 'website': company_user.website,
             }
@@ -301,7 +300,6 @@ class QuickBookingReceiptView(APIView):
                 'address': company_user.address or 'Your Company Address',
                 'phone': company_user.phone or 'Your Phone Number',
                 'email': company_user.email,
-                'license_number': company_user.license_number,
                 'logo_url': logo_url,
                 'website': company_user.website,
             }

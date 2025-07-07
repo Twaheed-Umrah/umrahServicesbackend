@@ -26,7 +26,7 @@ class UserAdmin(BaseUserAdmin):
     # Add search functionality
     search_fields = (
         'username', 'email', 'first_name', 'last_name', 
-        'phone', 'company_name', 'license_number'
+        'phone', 'company_name'
     )
     
     # Order by date joined (newest first)
@@ -45,7 +45,7 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('collapse',)
         }),
         ('Company Information', {
-            'fields': ('company_name', 'license_number', 'company_logo'),
+            'fields': ('company_name', 'company_logo'),
             'classes': ('collapse',)
         }),
         ('Role & Permissions', {
@@ -73,7 +73,7 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('collapse',)
         }),
         ('Company Information', {
-            'fields': ('company_name', 'license_number', 'company_logo'),
+            'fields': ('company_name', 'company_logo'),
             'classes': ('collapse',)
         }),
         ('Role & Permissions', {

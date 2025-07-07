@@ -437,3 +437,66 @@ ERROR 2025-07-07 12:46:32,880 log 21272 21952 Internal Server Error: /api/bookin
 ERROR 2025-07-07 12:46:32,881 basehttp 21272 21952 "GET /api/bookings/bookings/10/receipt/ HTTP/1.1" 500 56
 INFO 2025-07-07 12:47:00,630 autoreload 21272 23004 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\bookings\views.py changed, reloading.
 INFO 2025-07-07 12:47:09,228 autoreload 14480 22648 Watching for file changes with StatReloader
+WARNING 2025-07-07 12:47:45,708 __init__ 14480 26148 Ignored `print-color-adjust: exact` at 15:13, unknown property.
+WARNING 2025-07-07 12:47:45,710 __init__ 14480 26148 Ignored `min-height: 100vh` at 24:13, invalid value.
+WARNING 2025-07-07 12:47:45,713 __init__ 14480 26148 Ignored `box-shadow: 0 4px 12px rgba(0, 122, 85, 0.3)` at 73:13, unknown property.
+WARNING 2025-07-07 12:47:45,745 __init__ 14480 26148 Ignored `box-shadow: none` at 297:17, unknown property.
+WARNING 2025-07-07 12:47:45,751 media_queries 14480 26148 Expected a media type, got '(max-width: 768px)'
+WARNING 2025-07-07 12:47:45,752 __init__ 14480 26148 Invalid media type ' (max-width: 768px) ' the whole @media rule was ignored at 374:9.
+INFO 2025-07-07 12:47:46,164 basehttp 14480 6908 "GET /media/company_logos/nikah1.jpg HTTP/1.1" 200 57080
+INFO 2025-07-07 12:47:47,572 basehttp 14480 26148 "GET /api/bookings/bookings/10/receipt/ HTTP/1.1" 200 73602
+INFO 2025-07-07 12:49:27,217 basehttp 14480 18588 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 12:51:31,202 basehttp 14480 25948 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 12:54:28,221 basehttp 14480 21508 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 12:56:32,220 basehttp 14480 22008 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 12:59:29,214 basehttp 14480 17748 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:01:33,209 basehttp 14480 9812 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:04:30,204 basehttp 14480 19788 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:06:34,202 basehttp 14480 22156 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-07-07 13:06:34,215 basehttp 14480 22156 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:09:31,252 basehttp 14480 25132 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:11:35,200 basehttp 14480 5716 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:14:32,202 basehttp 14480 24172 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:16:36,197 basehttp 14480 676 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:19:33,204 basehttp 14480 20428 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:21:37,190 basehttp 14480 14912 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:24:34,199 basehttp 14480 26496 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:26:38,205 basehttp 14480 24660 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:29:35,195 basehttp 14480 10880 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-07-07 13:29:35,205 basehttp 14480 10880 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:31:39,198 basehttp 14480 20004 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:34:36,213 basehttp 14480 22104 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:36:40,194 basehttp 14480 20356 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:39:37,225 basehttp 14480 26040 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:41:41,191 basehttp 14480 25556 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:44:38,194 basehttp 14480 25764 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:46:42,192 basehttp 14480 24900 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:49:39,327 basehttp 14480 6732 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:51:43,248 basehttp 14480 12280 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:54:40,217 basehttp 14480 19892 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:56:44,195 basehttp 14480 24812 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 13:59:41,315 basehttp 14480 21868 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:01:45,204 basehttp 14480 13624 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:04:42,202 basehttp 14480 22108 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:06:46,198 basehttp 14480 16772 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:09:43,204 basehttp 14480 17900 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:11:47,186 basehttp 14480 21592 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:14:44,197 basehttp 14480 14208 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:16:48,331 basehttp 14480 18140 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:21:49,322 basehttp 14480 1772 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:26:51,013 basehttp 14480 22756 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:31:52,460 basehttp 14480 9628 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:36:53,793 basehttp 14480 1872 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:41:54,233 basehttp 14480 13396 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:46:55,317 basehttp 14480 23652 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:51:56,412 basehttp 14480 22960 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 14:56:57,327 basehttp 14480 26612 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 15:01:58,196 basehttp 14480 22672 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 15:06:59,194 basehttp 14480 23096 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-07-07 15:06:59,207 basehttp 14480 23096 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 15:12:00,310 basehttp 14480 12076 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 15:17:01,248 basehttp 14480 22060 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 15:22:02,332 basehttp 14480 18796 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 15:27:03,228 basehttp 14480 20760 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 15:32:04,201 basehttp 14480 2176 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-07-07 15:37:05,198 basehttp 14480 10140 "POST /api/auth/verify-token/ HTTP/1.1" 200 87

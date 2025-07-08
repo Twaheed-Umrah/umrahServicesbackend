@@ -25,7 +25,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["crmweb.hajumrahservice.com",
     "localhost",
-    "127.0.0.1",]
+    "127.0.0.1",
+    'https://hajumrahservice.com/',
+    "https://tawheedumrah.com/"]
 
 # Application definition
 DJANGO_APPS = [
@@ -240,6 +242,8 @@ CORS_ALLOWED_ORIGINS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "http://crm.hajumrahservice.com",
+    'https://hajumrahservice.com/',
+    "https://tawheedumrah.com/",
     "http://localhost:3000",
     "http://localhost:5173",
 ]

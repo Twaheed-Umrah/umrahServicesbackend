@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,9 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'hajj-umrah-tawheed-786-services'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["crmweb.hajumrahservice.com",
+    "localhost",
+    "127.0.0.1",]
 
 # Application definition
 DJANGO_APPS = [
@@ -209,8 +212,10 @@ SIMPLE_JWT = {
 
 APPEND_SLASH = False
 # CORS Configuration
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_HEADERS = [
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
     'accept',
     'accept-encoding',
     'authorization',
@@ -222,14 +227,28 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
     'X-Secret-Key',
     'x-api-key',  
-]
+] 
 
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://localhost:5173",
     "http://crm.hajumrahservice.com",
+]
+
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://crm.hajumrahservice.com",
+    "http://localhost:3000",
     "http://localhost:5173",
 ]
-CORS_ALLOW_CREDENTIALS = True
+
+ALLOWED_HOSTS = [
+    "crmweb.hajumrahservice.com",  # your backend domain
+    "localhost",
+    "127.0.0.1",
+]
 # Swagger Settings
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {

@@ -23,7 +23,8 @@ SECRET_KEY = 'hajj-umrah-tawheed-786-services'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["crmweb.hajumrahservice.com",
+ALLOWED_HOSTS = [""
+    "crmweb.hajumrahservice.com",
     "localhost",
     "127.0.0.1",
     'https://hajumrahservice.com/',
@@ -236,12 +237,16 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://crm.hajumrahservice.com",
+    "https://crm.hajumrahservice.com",
+    'https://hajumrahservice.com/',
+    "https://tawheedumrah.com/",
 ]
 
 
 
 CSRF_TRUSTED_ORIGINS = [
     "http://crm.hajumrahservice.com",
+    "https://crm.hajumrahservice.com",
     'https://hajumrahservice.com/',
     "https://tawheedumrah.com/",
     "http://localhost:3000",

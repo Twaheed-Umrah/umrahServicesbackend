@@ -25,7 +25,7 @@ class HajjUmrahBookingDemo(models.Model):
         verbose_name_plural = 'Hajj Umrah Booking Demos'
     
     def __str__(self):
-        return f"{self.first_name} {self.last_name} - {self.business_plan}"
+        return f"{self.name} - {self.business_plan}"
 
 
 class HajjUmrahBookingService(models.Model):

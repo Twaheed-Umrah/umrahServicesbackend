@@ -16,15 +16,24 @@ class Base64ImageField(serializers.ImageField):
     def to_internal_value(self, data):
         # Check if this is a base64 string
         if isinstance(data, str) and data.startswith('data:image'):
-            # Parse the base64 string
-            format, imgstr = data.split(';base64,')
-            ext = format.split('/')[-1]
-            
-            # Generate a unique filename
-            filename = f"{uuid.uuid4()}.{ext}"
-            
-            # Decode the base64 string
-            data = ContentFile(base64.b64decode(imgstr), name=filename)
+            try:
+                # Parse the base64 string
+                header, imgstr = data.split(';base64,')
+                ext = header.split('/')[1]  # Get extension from data:image/jpeg
+                
+                # Handle different image formats
+                if ext == 'jpeg':
+                    ext = 'jpg'
+                
+                # Generate a unique filename
+                filename = f"{uuid.uuid4()}.{ext}"
+                
+                # Decode the base64 string
+                decoded_data = base64.b64decode(imgstr)
+                data = ContentFile(decoded_data, name=filename)
+                
+            except (ValueError, IndexError) as e:
+                raise serializers.ValidationError(f"Invalid base64 image data: {str(e)}")
         
         return super().to_internal_value(data)
     
@@ -33,27 +42,55 @@ class Base64ImageField(serializers.ImageField):
         if not value:
             return None
         
+        # Check if the file actually exists
+        try:
+            if not value.storage.exists(value.name):
+                return None
+        except Exception:
+            return None
+        
         request = self.context.get('request')
         if request is not None:
             return request.build_absolute_uri(value.url)
         return value.url
 
 class PosterTemplateSerializer(serializers.ModelSerializer):
-    background_image = serializers.SerializerMethodField()
+    # Handle both base64 input and URL output for the same field
+    background_image = Base64ImageField(required=False)
     
     class Meta:
         model = PosterTemplate
-        fields = ['id', 'name', 'template_type', 'background_image']
+        fields = ['id', 'name', 'template_type', 'background_image', 'is_active', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'created_at': {'read_only': True},
+            'updated_at': {'read_only': True},
+        }
     
-    def get_background_image(self, obj):
-        """Return full URL for background image"""
-        if not obj.background_image:
-            return None
+    def create(self, validated_data):
+        """Override create to ensure proper file handling"""
+        import logging
+        logger = logging.getLogger(__name__)
         
-        request = self.context.get('request')
-        if request is not None:
-            return request.build_absolute_uri(obj.background_image.url)
-        return obj.background_image.url
+        logger.info(f"Creating PosterTemplate with validated_data: {validated_data}")
+        
+        instance = super().create(validated_data)
+        
+        # Log the created instance details
+        logger.info(f"Created instance ID: {instance.id}")
+        logger.info(f"Background image field: {instance.background_image}")
+        
+        if instance.background_image:
+            logger.info(f"Image name: {instance.background_image.name}")
+            logger.info(f"Image path: {instance.background_image.path}")
+            logger.info(f"Image URL: {instance.background_image.url}")
+            
+            # Check if file actually exists
+            import os
+            file_exists = os.path.exists(instance.background_image.path)
+            logger.info(f"File exists on disk: {file_exists}")
+        
+        return instance
+
 
 class PackagePosterSerializer(serializers.ModelSerializer):
     user_company_name = serializers.CharField(source='user.company_name', read_only=True)

@@ -28,7 +28,8 @@ ALLOWED_HOSTS = [""
     "localhost",
     "127.0.0.1",
    "hajumrahservice.com",
-    "tawheedumrah.com"
+    "tawheedumrah.com",
+    "faizanumrah.com"
     ]
 
 # Application definition
@@ -241,6 +242,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://crm.hajumrahservice.com",
     'https://hajumrahservice.com',
     "https://tawheedumrah.com",
+    "https://faizanumrah.com/",
 ]
 
 
@@ -250,6 +252,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://crm.hajumrahservice.com",
     'https://hajumrahservice.com',
     "https://tawheedumrah.com",
+    "https://faizanumrah.com/"
     "http://localhost:3000",
     "http://localhost:5173",
 ]

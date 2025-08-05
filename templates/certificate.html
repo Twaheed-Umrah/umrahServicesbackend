@@ -1,241 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificate of Achievement</title>
+    <title>Certificate of Channel Partner/Franchise Authorization</title>
     <style>
         @page {
             size: A4 landscape;
-            margin: 20mm;
+            margin: 15mm;
         }
-        
+
         body {
             font-family: 'Times New Roman', serif;
             margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e3a8a 100%);
-            height: 100%;
+            padding: 20px;
+            background: #f8f8f8;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
+
         .certificate-container {
             width: 100%;
-            max-width: 800px;
-            background: white;
-            border: 8px solid #fbbf24;
-            border-radius: 15px;
-            padding: 60px;
+            max-width: 850px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #f7fee7 50%, #f0fdf4 100%);
+            border: 3px solid #16a34a;
+            border-radius: 20px;
+            padding: 40px;
             position: relative;
             margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        
-        /* Simplified decorative elements without clip-path */
-        .decoration-corner {
+
+        /* Ornate corner decorations */
+        .corner-decoration {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            background: #fbbf24;
-            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10 10 Q50 30 90 10 Q70 50 90 90 Q50 70 10 90 Q30 50 10 10 Z" fill="%2316a34a" opacity="0.8"/><circle cx="50" cy="50" r="15" fill="%2316a34a"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
         }
-        
-        .decoration-top-left {
-            top: 20px;
-            left: 20px;
+
+        .corner-top-left {
+            top: 15px;
+            left: 15px;
         }
-        
-        .decoration-top-right {
-            top: 20px;
-            right: 20px;
+
+        .corner-top-right {
+            top: 15px;
+            right: 15px;
+            transform: rotate(90deg);
         }
-        
-        .decoration-bottom-left {
-            bottom: 20px;
-            left: 20px;
+
+        .corner-bottom-left {
+            bottom: 15px;
+            left: 15px;
+            transform: rotate(-90deg);
         }
-        
-        .decoration-bottom-right {
-            bottom: 20px;
-            right: 20px;
+
+        .corner-bottom-right {
+            bottom: 15px;
+            right: 15px;
+            transform: rotate(180deg);
         }
-        
-        .star-symbol {
+
+        /* Decorative border lines */
+        .border-decoration {
             position: absolute;
-            top: 50%;
+            top: 25px;
+            left: 25px;
+            right: 25px;
+            bottom: 25px;
+            border: 2px solid #16a34a;
+            border-radius: 15px;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(22, 163, 74, 0.1) 2px,
+                    rgba(22, 163, 74, 0.1) 4px);
+        }
+
+        /* Top decorative line */
+        .top-decoration {
+            position: absolute;
+            top: 60px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #16a34a, transparent);
         }
-        
+
+        .top-decoration::before {
+            content: '✦';
+            position: absolute;
+            left: 50%;
+            top: -8px;
+            transform: translateX(-50%);
+            color: #16a34a;
+            font-size: 16px;
+        }
+
         .certificate-content {
             position: relative;
             z-index: 10;
             text-align: center;
+            padding: 30px 20px;
         }
-        
-        .company-logo {
-            max-width: 100px;
-            max-height: 60px;
-            margin-bottom: 20px;
-        }
-        
+
         .certificate-title {
-            font-size: 52px;
+            font-size: 48px;
             font-weight: bold;
-            color: #1f2937;
-            margin: 20px 0 10px 0;
+            color: #16a34a;
+            margin: 10px 0 10px 0;
             text-transform: uppercase;
             letter-spacing: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
-        
+
         .certificate-subtitle {
-            font-size: 28px;
-            color: #374151;
-            margin-bottom: 40px;
+            font-size: 18px;
+            color: #166534;
+            margin-bottom: 20px;
             text-transform: uppercase;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             font-weight: 500;
         }
-        
-        .certificate-text {
-            font-size: 20px;
-            color: #d97706;
-            margin: 30px 0;
+
+        .company-name {
+            font-size: 36px;
+            font-weight: bold;
+            color: #16a34a;
+            margin: 20px 0;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 600;
-        }
-        
-        .recipient-name {
-            font-size: 48px;
-            font-family: 'Brush Script MT', cursive;
-            color: #1e3a8a;
-            margin: 30px 0;
-            font-weight: normal;
-            line-height: 1.2;
+            letter-spacing: 4px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
             text-decoration: underline;
+            text-decoration-color: #16a34a;
+            text-underline-offset: 8px;
         }
-        
-        .certificate-message {
-            font-size: 18px;
-            color: #374151;
-            margin: 40px auto;
+
+        .certificate-description {
+            font-size: 16px;
+            color: #5a5a5a;
+            margin: 20px auto;
+            max-width: 650px;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        .owner-details {
+            font-size: 16px;
+            color: #5a5a5a;
+            margin: 20px auto;
             max-width: 600px;
             line-height: 1.6;
         }
-        
+
+        .company-logo {
+            max-width: 150px;
+            max-height: 80px;
+            margin: 20px 0;
+        }
+
         .certificate-footer {
-            margin-top: 60px;
+            margin-top: 20px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+            padding: 0 50px;
         }
-        
+
         .signature-section {
             text-align: center;
             flex: 1;
-            margin: 0 40px;
+
+            position: relative;
+            margin-top: 60px;
+            /* Add space for the stamp */
+            padding: 20px 0;
         }
-        
+        /* Alternative: If you want to use an actual img element */
+        .signature-section .stamp-image {
+            position: absolute;
+            top: -70px;
+            right: 20%;
+            width: 110px;
+            height: 110px;
+            z-index: 10;
+        }
+        .signature-section .stamp-signature{
+            position: absolute;
+            top: -40px;
+            right: 35%;
+            width: 170px;
+            height: 60px;
+            z-index: 10;
+        }
+
+
         .signature-line {
-            width: 200px;
+            width: 180px;
             height: 2px;
-            background: #374151;
+            background: #166534;
             margin: 0 auto 10px auto;
         }
-        
+
         .signature-name {
-            font-size: 16px;
+            font-size: 20px;
             font-weight: bold;
-            color: #1f2937;
+            color: #5a5a5a;
+            font-style: italic;
         }
-        
+
         .signature-title {
             font-size: 14px;
-            color: #6b7280;
+            color: #166534;
             margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        
-        .date-section {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-        }
-        
-        .date-text {
-            font-size: 14px;
-            color: #6b7280;
-        }
-        
-        /* Border decoration */
-        .certificate-border {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 2px solid #fbbf24;
+
+        .company-info-box {
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px dashed #16a34a;
             border-radius: 10px;
-            pointer-events: none;
+            color: #166534;
+        }
+
+        /* Responsive design */
+        @media (max-width: 900px) {
+            .certificate-container {
+                max-width: 95%;
+                padding: 30px;
+            }
+
+            .certificate-title {
+                font-size: 36px;
+                letter-spacing: 4px;
+            }
+
+            .company-name {
+                font-size: 28px;
+                letter-spacing: 2px;
+            }
+
+            .certificate-footer {
+                flex-direction: column;
+                gap: 30px;
+                padding: 0 20px;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="certificate-container">
-        <div class="certificate-border"></div>
-        
-        <!-- Simplified decorative elements -->
-        <div class="decoration-corner decoration-top-left">
-            <div class="star-symbol">★</div>
-        </div>
-        <div class="decoration-corner decoration-top-right">
-            <div class="star-symbol">★</div>
-        </div>
-        <div class="decoration-corner decoration-bottom-left">
-            <div class="star-symbol">★</div>
-        </div>
-        <div class="decoration-corner decoration-bottom-right">
-            <div class="star-symbol">★</div>
-        </div>
-        
+        <div class="border-decoration"></div>
+
+        <!-- Corner decorations -->
+        <div class="corner-decoration corner-top-left"></div>
+        <div class="corner-decoration corner-top-right"></div>
+        <div class="corner-decoration corner-bottom-left"></div>
+        <div class="corner-decoration corner-bottom-right"></div>
+
+        <!-- Decorative lines -->
+        <div class="top-decoration"></div>
+        <div class="bottom-decoration"></div>
+
         <div class="certificate-content">
-            <!-- Logo will be handled by Django template -->
-            {% if company.logo_url %}
-                <img src="http://127.0.0.1:8000/media/company_logos/TawheedUmrahnew41.png" alt="Company Logo" class="company-logo">
-            {% endif %}
-            
             <h1 class="certificate-title">Certificate</h1>
-            <h2 class="certificate-subtitle">of Achievement</h2>
-            
-            <p class="certificate-text">This Certificate is Presented to:</p>
-            
-            <div class="recipient-name">{{ user.full_name }}</div>
-            
-            <p class="certificate-message">
-                Hopefully this achievement will be the first step towards bigger success.<br>
-                Keep trying and give your best
-            </p>
-            
+            {% if user.role == 'agencyadmin' %}
+            <h2 class="certificate-subtitle">of Agency Partner Authorization</h2>
+            {% elif user.role == 'franchisesadmin' %}
+            <h2 class="certificate-subtitle">of Franchises Partner Authorization</h2>
+            {% elif user.role == 'freelancer' %}
+            <h2 class="certificate-subtitle">of Freelancer Partner Authorization</h2>
+            {% endif %}
+
+            <div class="company-name">
+                {{ company.name|default:"Pure Gifted Vacations" }}
+            </div>
+
+            <div class="certificate-description">
+                Owned by, <strong>{{ user.full_name|default:"[Owner Name]" }}</strong>.
+                Add. <strong>{{ user.address|default:"[Address]" }}</strong>.
+                Authorized
+                {% if user.role == 'agencyadmin' %}
+                Agency Partner
+                {% elif user.role == 'franchisesadmin' %}
+                Franchises Partner
+                {% elif user.role == 'freelancer' %}
+                Freelancer Partner
+                {% else %}
+                Channel Partner
+                {% endif %}
+                of <strong>HAJJ UMRAH SERVICE</strong>
+                in Sector 62 Noida U.P States abide the rule & regulation of the company.
+            </div>
+
+            <div class="company-info-box">
+                <strong>HAJJ UMRAH SERVICE</strong><br>
+            </div>
+
             <div class="certificate-footer">
                 <div class="signature-section">
+                     <div class="signature-name">Shoaib Qamar</div>
                     <div class="signature-line"></div>
-                    <div class="signature-name">{{ company.name }}</div>
-                    <div class="signature-title">Authorized Representative</div>
+                    <div class="signature-title">Director</div>
                 </div>
-                
+
                 <div class="signature-section">
+                    <img src="https://crmweb.hajumrahservice.com/media/profiles/shuaibsirsignature-r.png" alt="Official Stamp" class="stamp-signature">
+                    <img src="https://crmweb.hajumrahservice.com/media/profiles/stampofhajjumrahlogo.png" alt="Official Stamp" class="stamp-image">
                     <div class="signature-line"></div>
-                    <div class="signature-name">Director</div>
-                    <div class="signature-title">{{ user.date_joined|date:"F d, Y" }}</div>
+                    <div class="signature-title">Authorized Representative</div>
+                    <div class="signature-date">{{ user.date_joined|date:"F d, Y" }}</div>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>

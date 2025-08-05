@@ -286,7 +286,7 @@ class CertificateSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name', 
-            'role', 'date_joined', 'full_name', 'company_name', 'company_logo'
+            'role', 'date_joined', 'full_name', 'company_name', 'company_logo','role','address'
         ]
     
     def get_full_name(self, obj):
@@ -294,13 +294,9 @@ class CertificateSerializer(serializers.ModelSerializer):
         return f"{obj.first_name} {obj.last_name}".strip() or obj.username
     
     def get_company_name(self, obj):
-        """Get company name from creator or self"""
-        company_user = obj.created_by if obj.created_by else obj
-        return company_user.company_name or 'Your Travel Company'
-    
+        return (obj.company_name or '').strip() or 'Your Travel Company'
+
     def get_company_logo(self, obj):
-        """Get company logo URL from creator or self"""
-        company_user = obj.created_by if obj.created_by else obj
-        if company_user.company_logo:
-            return company_user.company_logo.url
-        return None
+       if obj.company_logo and hasattr(obj.company_logo, 'url'):
+          return obj.company_logo.url
+       return None

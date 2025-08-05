@@ -617,47 +617,46 @@ class DownloadCertificateView(APIView):
     GET: Generate and return user certificate as PDF
     """
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
         try:
             user = request.user
-            
-            # Get company details from the user who created this user (their parent/creator)
-            company_user = user.created_by if user.created_by else user
-            company_details = {
-                'name': company_user.company_name or 'Your Travel Company',
-                'logo_url': company_user.company_logo.url if company_user.company_logo else None,
-                  }
-            
-            # Serialize user data (similar to QuickBookingReceiptSerializer)
+
+            # Serialize user data including full_name, company_name, and company_logo
             serializer = CertificateSerializer(user)
+            user_data = serializer.data
+            print(user_data)
+            # No need to separately construct company_details
             context = {
-                'user': serializer.data,
-                'company': company_details
+                'user': user_data,
+                'company': {
+                    'name': user_data.get('company_name'),
+                    'logo_url': user_data.get('company_logo'),
+                }
             }
-            
-            # Render HTML template
+
+            # Render HTML template with context
             html_string = render_to_string('certificate.html', context)
-            
+
             # Generate PDF using WeasyPrint
             html_doc = HTML(string=html_string)
             pdf_bytes = html_doc.write_pdf()
             if not pdf_bytes:
                 return Response(
-                    {'detail': 'Generated PDF is empty.'}, 
+                    {'detail': 'Generated PDF is empty.'},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
-            # Create HTTP response
+
+            # Create and return HTTP response
             response = HttpResponse(pdf_bytes, content_type='application/pdf')
             response['Content-Disposition'] = f'inline; filename="certificate_{user.username}.pdf"'
             response['Content-Length'] = len(pdf_bytes)
-            
+
             return response
-            
+
         except Exception as e:
             print(f"Error generating certificate PDF: {str(e)}")
             return Response(
-                {'detail': 'An error occurred while generating the certificate.'}, 
+                {'detail': 'An error occurred while generating the certificate.'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        

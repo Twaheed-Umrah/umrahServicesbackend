@@ -29,7 +29,10 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
    "hajumrahservice.com",
     "tawheedumrah.com",
-    "faizanumrah.com"
+    "faizanumrah.com",
+    "almakkahmadinah.com",
+    "huzaifahajjumrah.com",
+    "drpervezumrah.com",
     ]
 
 # Application definition
@@ -243,6 +246,9 @@ CORS_ALLOWED_ORIGINS = [
     'https://hajumrahservice.com',
     "https://tawheedumrah.com",
     "https://faizanumrah.com",
+    "https://almakkahmadinah.com",
+    "https://www.huzaifahajjumrah.com",
+    "https://www.drpervezumrah.com",
 ]
 
 
@@ -253,6 +259,9 @@ CSRF_TRUSTED_ORIGINS = [
     'https://hajumrahservice.com',
     "https://tawheedumrah.com",
     "https://faizanumrah.com",
+    "https://www.huzaifahajjumrah.com",
+    "https://www.drpervezumrah.com",
+    "https://almakkahmadinah.com",
     "http://localhost:3000",
     "http://localhost:5173",
 ]

@@ -930,3 +930,109 @@ WARNING 2025-08-05 17:48:16,142 media_queries 22232 12660 Expected a media type,
 WARNING 2025-08-05 17:48:16,143 __init__ 22232 12660 Invalid media type ' (max-width: 900px) ' the whole @media rule was ignored at 221:9.
 INFO 2025-08-05 17:48:17,749 basehttp 22232 12660 "GET /api/auth/download-certificate/ HTTP/1.1" 200 285001
 INFO 2025-08-05 17:59:23,656 autoreload 12852 11400 Watching for file changes with StatReloader
+INFO 2025-08-05 18:25:49,190 basehttp 12852 14924 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,197 basehttp 12852 21840 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,198 basehttp 12852 20692 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,209 basehttp 12852 2980 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,211 basehttp 12852 23976 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,215 basehttp 12852 22940 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,254 basehttp 12852 2980 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,259 basehttp 12852 23976 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,263 basehttp 12852 2980 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,263 basehttp 12852 23976 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,270 basehttp 12852 23976 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,270 basehttp 12852 2980 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:49,273 basehttp 12852 23976 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:50,267 basehttp 12852 22940 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:25:50,269 basehttp 12852 23976 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:25:50,273 basehttp 12852 20692 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:25:50,277 basehttp 12852 14924 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:25:50,278 basehttp 12852 21840 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:25:50,278 basehttp 12852 2980 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:25:50,426 basehttp 12852 2980 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-08-05 18:25:50,454 basehttp 12852 21840 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 688
+INFO 2025-08-05 18:25:50,456 basehttp 12852 14924 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-08-05 18:25:50,462 basehttp 12852 2980 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 688
+INFO 2025-08-05 18:25:50,550 basehttp 12852 22940 "GET /api/dashboard/stats/ HTTP/1.1" 200 237
+INFO 2025-08-05 18:25:50,680 basehttp 12852 23976 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 315
+INFO 2025-08-05 18:25:50,735 basehttp 12852 2980 "GET /api/dashboard/stats/ HTTP/1.1" 200 237
+INFO 2025-08-05 18:25:50,760 basehttp 12852 20692 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 491
+INFO 2025-08-05 18:25:50,806 basehttp 12852 22940 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 315
+INFO 2025-08-05 18:25:50,896 basehttp 12852 2980 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 491
+INFO 2025-08-05 18:25:52,940 basehttp 12852 2980 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:25:53,150 basehttp 12852 2980 "OPTIONS /api/auth/users/me/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:53,150 basehttp 12852 22940 "OPTIONS /api/auth/users/me/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:53,222 basehttp 12852 22940 "GET /api/auth/users/me/ HTTP/1.1" 200 584
+INFO 2025-08-05 18:25:53,231 basehttp 12852 2980 "GET /api/auth/users/me/ HTTP/1.1" 200 584
+WARNING 2025-08-05 18:25:53,308 log 12852 2460 Not Found: /media/company_logos/nikah1.jpg
+WARNING 2025-08-05 18:25:53,308 log 12852 9968 Not Found: /media/profiles/HomepageImage.jpg
+WARNING 2025-08-05 18:25:53,309 basehttp 12852 2460 "GET /media/company_logos/nikah1.jpg HTTP/1.1" 404 179
+WARNING 2025-08-05 18:25:53,309 basehttp 12852 9968 "GET /media/profiles/HomepageImage.jpg HTTP/1.1" 404 179
+INFO 2025-08-05 18:25:56,504 basehttp 12852 2980 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:25:56,551 basehttp 12852 2980 "OPTIONS /api/auth/certificates/ HTTP/1.1" 200 0
+INFO 2025-08-05 18:25:56,551 basehttp 12852 22940 "OPTIONS /api/auth/certificates/ HTTP/1.1" 200 0
+WARNING 2025-08-05 18:25:56,557 log 12852 22940 Not Found: /api/auth/certificates/
+INFO 2025-08-05 18:25:56,558 basehttp 12852 20692 "GET /api/auth/users/me/ HTTP/1.1" 200 584
+WARNING 2025-08-05 18:25:56,561 basehttp 12852 22940 "GET /api/auth/certificates/ HTTP/1.1" 404 179
+WARNING 2025-08-05 18:25:56,562 log 12852 20692 Not Found: /api/auth/certificates/
+WARNING 2025-08-05 18:25:56,564 basehttp 12852 20692 "GET /api/auth/certificates/ HTTP/1.1" 404 179
+INFO 2025-08-05 18:25:56,573 basehttp 12852 2980 "GET /api/auth/users/me/ HTTP/1.1" 200 584
+INFO 2025-08-05 18:26:03,875 basehttp 12852 22076 "OPTIONS /api/auth/download-certificate/ HTTP/1.1" 200 0
+WARNING 2025-08-05 18:26:04,462 __init__ 12852 22076 Ignored `height: 100vh` at 12:13, invalid value.
+WARNING 2025-08-05 18:26:04,466 __init__ 12852 22076 Ignored `box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1)` at 27:13, unknown property.
+WARNING 2025-08-05 18:26:04,469 __init__ 12852 22076 Ignored `text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1)` at 114:13, unknown property.
+WARNING 2025-08-05 18:26:04,470 __init__ 12852 22076 Ignored `text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1)` at 133:13, unknown property.
+WARNING 2025-08-05 18:26:04,474 media_queries 12852 22076 Expected a media type, got '(max-width: 900px)'
+WARNING 2025-08-05 18:26:04,474 __init__ 12852 22076 Invalid media type ' (max-width: 900px) ' the whole @media rule was ignored at 229:9.
+INFO 2025-08-05 18:26:07,557 basehttp 12852 22076 "GET /api/auth/download-certificate/ HTTP/1.1" 200 320659
+INFO 2025-08-05 18:30:57,620 basehttp 12852 22420 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:35:58,504 basehttp 12852 24484 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:40:59,222 basehttp 12852 1792 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:46:00,217 basehttp 12852 4616 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:51:01,220 basehttp 12852 21308 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 18:56:02,421 basehttp 12852 23260 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-08-05 19:02:15,965 basehttp 12852 22636 "GET /admin/packages/package/ HTTP/1.1" 200 27844
+WARNING 2025-08-05 19:02:16,025 log 12852 22636 Not Found: /static/admin/css/base.css
+WARNING 2025-08-05 19:02:16,029 basehttp 12852 22636 "GET /static/admin/css/base.css HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,043 log 12852 22636 Not Found: /static/admin/css/responsive.css
+WARNING 2025-08-05 19:02:16,045 log 12852 17724 Not Found: /static/admin/css/dark_mode.css
+WARNING 2025-08-05 19:02:16,046 basehttp 12852 22636 "GET /static/admin/css/responsive.css HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,049 log 12852 5652 Not Found: /static/admin/js/theme.js
+WARNING 2025-08-05 19:02:16,056 log 12852 1940 Not Found: /static/admin/css/nav_sidebar.css
+WARNING 2025-08-05 19:02:16,057 basehttp 12852 17724 "GET /static/admin/css/dark_mode.css HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,061 log 12852 12136 Not Found: /static/admin/css/changelists.css
+WARNING 2025-08-05 19:02:16,064 basehttp 12852 5652 "GET /static/admin/js/theme.js HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,066 log 12852 17724 Not Found: /static/admin/js/vendor/jquery/jquery.min.js
+WARNING 2025-08-05 19:02:16,069 log 12852 19732 Not Found: /static/admin/css/forms.css
+WARNING 2025-08-05 19:02:16,069 basehttp 12852 1940 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,080 log 12852 5652 Not Found: /static/admin/js/jquery.init.js
+WARNING 2025-08-05 19:02:16,080 basehttp 12852 12136 "GET /static/admin/css/changelists.css HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,080 basehttp 12852 17724 "GET /static/admin/js/vendor/jquery/jquery.min.js HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,083 log 12852 1940 Not Found: /static/admin/js/core.js
+WARNING 2025-08-05 19:02:16,084 basehttp 12852 19732 "GET /static/admin/css/forms.css HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,085 log 12852 12136 Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+WARNING 2025-08-05 19:02:16,089 log 12852 17724 Not Found: /static/admin/js/actions.js
+WARNING 2025-08-05 19:02:16,090 basehttp 12852 5652 "GET /static/admin/js/jquery.init.js HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,093 basehttp 12852 1940 "GET /static/admin/js/core.js HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,096 log 12852 19732 Not Found: /static/admin/js/urlify.js
+WARNING 2025-08-05 19:02:16,096 basehttp 12852 12136 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,099 log 12852 5652 Not Found: /static/admin/js/prepopulate.js
+WARNING 2025-08-05 19:02:16,102 log 12852 1940 Not Found: /static/admin/js/vendor/xregexp/xregexp.min.js
+WARNING 2025-08-05 19:02:16,103 basehttp 12852 17724 "GET /static/admin/js/actions.js HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,109 log 12852 12136 Not Found: /static/admin/img/search.svg
+WARNING 2025-08-05 19:02:16,110 basehttp 12852 19732 "GET /static/admin/js/urlify.js HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,111 basehttp 12852 1940 "GET /static/admin/js/vendor/xregexp/xregexp.min.js HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,111 basehttp 12852 5652 "GET /static/admin/js/prepopulate.js HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,112 basehttp 12852 12136 "GET /static/admin/img/search.svg HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,126 log 12852 12136 Not Found: /static/admin/js/nav_sidebar.js
+WARNING 2025-08-05 19:02:16,127 basehttp 12852 12136 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 404 179
+WARNING 2025-08-05 19:02:16,135 log 12852 12136 Not Found: /static/admin/js/filters.js
+WARNING 2025-08-05 19:02:16,137 basehttp 12852 12136 "GET /static/admin/js/filters.js HTTP/1.1" 404 179
+INFO 2025-08-05 19:02:16,267 basehttp 12852 22636 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-08-05 19:02:16,406 log 12852 22636 Not Found: /favicon.ico
+WARNING 2025-08-05 19:02:16,407 basehttp 12852 22636 "GET /favicon.ico HTTP/1.1" 404 179
+INFO 2025-08-26 11:10:16,310 autoreload 2704 23236 Watching for file changes with StatReloader
+INFO 2025-08-26 11:14:08,147 autoreload 2704 23236 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\config\settings.py changed, reloading.
+INFO 2025-08-26 11:14:11,405 autoreload 6796 15860 Watching for file changes with StatReloader
+INFO 2025-08-26 11:14:52,064 autoreload 6796 15860 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\config\settings.py changed, reloading.
+INFO 2025-08-26 11:14:55,254 autoreload 8436 13880 Watching for file changes with StatReloader

@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q, Sum, Count
 from django.utils import timezone
 from .models import Payment
-from apps.common.permissions import IsAgencyAdmin,IsSuperAdmin
+from apps.common.permissions import IsAgencyAdmin, IsSuperAdmin
 from .models import VisaApplication, VisaDocument
 from .serializers import (
     VisaApplicationListSerializer,
@@ -17,12 +17,68 @@ from .serializers import (
     VisaApplicationSubmitSerializer,
     VisaDocumentSerializer,
     VisaDocumentUploadSerializer,
-     PaymentCreateSerializer,
+    PaymentCreateSerializer,
     PaymentListSerializer,
     PaymentDetailSerializer,
     PaymentStatusUpdateSerializer,
     UserPaymentHistorySerializer
 )
+
+
+def get_accessible_queryset(user, queryset):
+    """
+    Helper function to filter queryset based on user role.
+    - Superadmin: sees everything
+    - AgencyAdmin/FranchisesAdmin: sees their own data AND data created by their accountants
+    - Accountant: sees data created by their parent admin AND their own data
+    """
+    if user.is_superuser or (hasattr(user, 'role') and user.role == 'superadmin'):
+        return queryset
+    elif hasattr(user, 'role') and user.role == 'accountant':
+        # Accountant sees data created by their parent admin AND themselves
+        if user.created_by:
+            return queryset.filter(applied_by__in=[user.created_by, user])
+        else:
+            return queryset.filter(applied_by=user)
+    else:
+        # Agency/Franchise admin sees their own data AND data created by their accountants
+        return queryset.filter(
+            Q(applied_by=user) | Q(applied_by__created_by=user, applied_by__role='accountant')
+        )
+
+
+def check_access_permission(user, obj):
+    """
+    Check if user has permission to access an object.
+    - Superadmin: can access all
+    - Creator: can access their own
+    - Accountant: can access if created by their parent admin OR themselves
+    - Parent admin: can access their own OR if created by their accountants
+    """
+    if user.is_superuser or (hasattr(user, 'role') and user.role == 'superadmin'):
+        return True
+    elif hasattr(user, 'role') and user.role == 'accountant':
+        # Accountant can access their parent admin's data AND their own
+        if user.created_by:
+            return obj.applied_by in [user.created_by, user]
+        else:
+            return obj.applied_by == user
+    else:
+        # Agency/Franchise admin can access their own AND their accountants' data
+        if obj.applied_by == user:
+            return True
+        # Check if created by one of their accountants
+        return (hasattr(obj.applied_by, 'created_by') and 
+                obj.applied_by.created_by == user and 
+                obj.applied_by.role == 'accountant')
+
+
+def can_modify(user):
+    """
+    Check if user can modify data (accountants CAN modify now)
+    """
+    # Both accountants and admins can modify
+    return hasattr(user, 'role') and user.role in ['accountant', 'agencyadmin', 'franchiseadmin']
 
 
 class VisaApplicationListView(generics.ListAPIView):
@@ -32,15 +88,8 @@ class VisaApplicationListView(generics.ListAPIView):
     
     def get_queryset(self):
         user = self.request.user
-        
-        # SuperAdmin can see all applications
-        if user.is_superuser or (hasattr(user, 'user_type') and user.user_type == 'superadmin'):
-            queryset = VisaApplication.objects.all()
-        # Agency can only see their own applications
-        elif hasattr(user, 'user_type') and user.user_type == 'agency':
-            queryset = VisaApplication.objects.filter(applied_by=user)
-        else:
-            queryset = VisaApplication.objects.none()
+        queryset = VisaApplication.objects.all()
+        queryset = get_accessible_queryset(user, queryset)
         
         # Filter by status if provided
         status_filter = self.request.query_params.get('status')
@@ -63,58 +112,57 @@ class VisaApplicationListView(generics.ListAPIView):
         
         return queryset
 
+
 class VisaApplicationDetailView(generics.RetrieveAPIView):
     """Get detailed visa application"""
     serializer_class = VisaApplicationDetailSerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        user = self.request.user
-        
-        # SuperAdmin can see all applications
-        if user.is_superuser or (hasattr(user, 'user_type') and user.user_type == 'superadmin'):
-            return VisaApplication.objects.all()
-        # Agency can only see their own applications
-        elif hasattr(user, 'user_type') and user.user_type == 'agency':
-            return VisaApplication.objects.filter(applied_by=user)
-        else:
-            return VisaApplication.objects.none()
+        queryset = VisaApplication.objects.all()
+        return get_accessible_queryset(self.request.user, queryset)
+
 
 class VisaApplicationCreateView(generics.CreateAPIView):
-    """Create new visa application (Agency only)"""
+    """Create new visa application (Agency and Accountants can create)"""
     serializer_class = VisaApplicationCreateSerializer
     permission_classes = [IsAgencyAdmin]
 
+
 class VisaApplicationUpdateView(generics.UpdateAPIView):
-    """Update visa application (Agency only, draft status only)"""
+    """Update visa application (Agency and Accountants can update, draft status only)"""
     serializer_class = VisaApplicationUpdateSerializer
     permission_classes = [IsAgencyAdmin]
     
     def get_queryset(self):
-        return VisaApplication.objects.filter(applied_by=self.request.user, status='draft')
+        user = self.request.user
+        queryset = VisaApplication.objects.filter(status='draft')
+        return get_accessible_queryset(user, queryset)
+
 
 class VisaApplicationDeleteView(generics.DestroyAPIView):
-    """Delete visa application (Agency only, draft status only)"""
+    """Delete visa application (Agency and Accountants can delete, draft status only)"""
     permission_classes = [IsAgencyAdmin]
     
     def get_queryset(self):
-        return VisaApplication.objects.filter(applied_by=self.request.user, status='draft')
+        user = self.request.user
+        queryset = VisaApplication.objects.filter(status='draft')
+        return get_accessible_queryset(user, queryset)
+
 
 @api_view(['POST'])
 @permission_classes([IsAgencyAdmin])
 def submit_visa_application(request, pk):
-    """Submit visa application for review"""
-    application = get_object_or_404(
-        VisaApplication, 
-        pk=pk, 
-        applied_by=request.user, 
-        status='draft'
-    )
+    """Submit visa application for review (Accountants and Admins can submit)"""
+    user = request.user
+    queryset = VisaApplication.objects.filter(status='draft')
+    queryset = get_accessible_queryset(user, queryset)
+    application = get_object_or_404(queryset, pk=pk)
     
     serializer = VisaApplicationSubmitSerializer(data=request.data)
     if serializer.is_valid():
         # Check if all required documents are uploaded
-        required_docs = ['passport', 'photo']  # Add more as needed
+        required_docs = ['passport', 'photo']
         uploaded_docs = application.documents.values_list('document_type', flat=True)
         
         missing_docs = [doc for doc in required_docs if doc not in uploaded_docs]
@@ -133,27 +181,35 @@ def submit_visa_application(request, pk):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class VisaApplicationStatusUpdateView(generics.UpdateAPIView):
     """Update visa application status (SuperAdmin only)"""
     serializer_class = VisaApplicationStatusUpdateSerializer
     permission_classes = [IsSuperAdmin]
     queryset = VisaApplication.objects.all()
 
+
 @api_view(['GET'])
-@permission_classes([IsSuperAdmin])
+@permission_classes([IsAuthenticated])
 def visa_application_dashboard(request):
-    """Dashboard data for SuperAdmin"""
-    total_applications = VisaApplication.objects.count()
-    pending_review = VisaApplication.objects.filter(status='submitted').count()
-    under_review = VisaApplication.objects.filter(status='under_review').count()
-    approved = VisaApplication.objects.filter(status='approved').count()
-    rejected = VisaApplication.objects.filter(status='rejected').count()
-    issued = VisaApplication.objects.filter(status='issued').count()
+    """Dashboard data - accessible by all authenticated users based on their role"""
+    user = request.user
+    
+    # Get accessible queryset based on user role
+    queryset = VisaApplication.objects.all()
+    queryset = get_accessible_queryset(user, queryset)
+    
+    total_applications = queryset.count()
+    pending_review = queryset.filter(status='submitted').count()
+    under_review = queryset.filter(status='under_review').count()
+    approved = queryset.filter(status='approved').count()
+    rejected = queryset.filter(status='rejected').count()
+    issued = queryset.filter(status='issued').count()
     
     # Visa type breakdown
     visa_type_stats = {}
     for choice in VisaApplication.VISA_TYPE_CHOICES:
-        visa_type_stats[choice[0]] = VisaApplication.objects.filter(visa_type=choice[0]).count()
+        visa_type_stats[choice[0]] = queryset.filter(visa_type=choice[0]).count()
     
     return Response({
         'total_applications': total_applications,
@@ -167,6 +223,7 @@ def visa_application_dashboard(request):
         'visa_type_breakdown': visa_type_stats,
     })
 
+
 # Document Views
 class VisaDocumentListView(generics.ListAPIView):
     """List documents for a visa application"""
@@ -178,45 +235,46 @@ class VisaDocumentListView(generics.ListAPIView):
         user = self.request.user
         
         # Check if user has access to this application
-        if user.is_superuser or (hasattr(user, 'user_type') and user.user_type == 'superadmin'):
-            application = get_object_or_404(VisaApplication, id=application_id)
-        elif hasattr(user, 'user_type') and user.user_type == 'agency':
-            application = get_object_or_404(VisaApplication, id=application_id, applied_by=user)
-        else:
-            return VisaDocument.objects.none()
+        queryset = VisaApplication.objects.all()
+        queryset = get_accessible_queryset(user, queryset)
+        application = get_object_or_404(queryset, id=application_id)
         
         return application.documents.all()
 
+
 class VisaDocumentUploadView(generics.CreateAPIView):
-    """Upload document for visa application (Agency only)"""
+    """Upload document for visa application (Agency and Accountants can upload)"""
     serializer_class = VisaDocumentUploadSerializer
     permission_classes = [IsAgencyAdmin]
     
     def perform_create(self, serializer):
         application_id = self.kwargs['application_id']
-        application = get_object_or_404(
-            VisaApplication, 
-            id=application_id, 
-            applied_by=self.request.user
-        )
+        queryset = VisaApplication.objects.all()
+        queryset = get_accessible_queryset(self.request.user, queryset)
+        application = get_object_or_404(queryset, id=application_id)
         
         # Only allow document upload for draft and submitted applications
         if application.status not in ['draft', 'submitted']:
-            raise serializers.ValidationError("Cannot upload documents for this application status")
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError("Cannot upload documents for this application status")
         
         serializer.save(visa_application=application)
 
+
 class VisaDocumentDeleteView(generics.DestroyAPIView):
-    """Delete document (Agency only, draft status only)"""
+    """Delete document (Agency and Accountants can delete, draft status only)"""
     permission_classes = [IsAgencyAdmin]
     
     def get_queryset(self):
         application_id = self.kwargs['application_id']
+        user = self.request.user
+        accessible_apps = get_accessible_queryset(user, VisaApplication.objects.all())
         return VisaDocument.objects.filter(
             visa_application_id=application_id,
-            visa_application__applied_by=self.request.user,
+            visa_application__in=accessible_apps,
             visa_application__status='draft'
         )
+
 
 @api_view(['POST'])
 @permission_classes([IsSuperAdmin])
@@ -235,6 +293,7 @@ def verify_document(request, document_id):
         'document_id': document.id
     })
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def visa_types_list(request):
@@ -242,6 +301,7 @@ def visa_types_list(request):
     return Response({
         'visa_types': [{'value': choice[0], 'label': choice[1]} for choice in VisaApplication.VISA_TYPE_CHOICES]
     })
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -251,8 +311,32 @@ def application_status_choices(request):
         'status_choices': [{'value': choice[0], 'label': choice[1]} for choice in VisaApplication.STATUS_CHOICES]
     })
 
+
+# Payment Views with Accountant Access
+def get_payment_accessible_queryset(user, queryset):
+    """
+    Helper function to filter payment queryset based on user role.
+    - Superadmin: sees everything
+    - Agency/Franchise admin: sees their own payments AND payments made by their accountants
+    - Accountant: sees payments made by their parent admin AND their own payments
+    """
+    if user.is_superuser or (hasattr(user, 'role') and user.role == 'superadmin'):
+        return queryset
+    elif hasattr(user, 'role') and user.role == 'accountant':
+        # Accountant sees payments made by their parent admin AND themselves
+        if user.created_by:
+            return queryset.filter(paid_by__in=[user.created_by, user])
+        else:
+            return queryset.filter(paid_by=user)
+    else:
+        # Agency/Franchise admin sees their own payments AND payments made by their accountants
+        return queryset.filter(
+            Q(paid_by=user) | Q(paid_by__created_by=user, paid_by__role='accountant')
+        )
+
+
 class PaymentCreateView(generics.CreateAPIView):
-    """Create new payment (Any authenticated user)"""
+    """Create new payment (authenticated users including accountants can create)"""
     serializer_class = PaymentCreateSerializer
     permission_classes = [IsAuthenticated]
     
@@ -267,14 +351,16 @@ class PaymentCreateView(generics.CreateAPIView):
             'status': 'inprocess'
         }, status=status.HTTP_201_CREATED)
 
+
 class PaymentListView(generics.ListAPIView):
-    """List all payments (SuperAdmin only)"""
+    """List all payments (All authenticated users can view based on their role)"""
     serializer_class = PaymentListSerializer
-    permission_classes = [IsSuperAdmin]
-    queryset = Payment.objects.all()
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
+        user = self.request.user
         queryset = Payment.objects.all()
+        queryset = get_payment_accessible_queryset(user, queryset)
         
         # Filter by status if provided
         status_filter = self.request.query_params.get('status')
@@ -306,11 +392,17 @@ class PaymentListView(generics.ListAPIView):
         
         return queryset
 
+
 class PaymentDetailView(generics.RetrieveAPIView):
-    """Get detailed payment information (SuperAdmin only)"""
+    """Get detailed payment information (All authenticated users can view based on their role)"""
     serializer_class = PaymentDetailSerializer
-    permission_classes = [IsSuperAdmin]
-    queryset = Payment.objects.all()
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Payment.objects.all()
+        return get_payment_accessible_queryset(user, queryset)
+
 
 class PaymentStatusUpdateView(generics.UpdateAPIView):
     """Update payment status (SuperAdmin only)"""
@@ -331,37 +423,46 @@ class PaymentStatusUpdateView(generics.UpdateAPIView):
             'status': instance.status
         })
 
+
 class UserPaymentHistoryView(generics.ListAPIView):
-    """Get user's own payment history"""
+    """Get user's own payment history or parent admin's for accountants"""
     serializer_class = UserPaymentHistorySerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        return Payment.objects.filter(paid_by=self.request.user)
+        user = self.request.user
+        queryset = Payment.objects.all()
+        return get_payment_accessible_queryset(user, queryset)
+
 
 @api_view(['GET'])
-@permission_classes([IsSuperAdmin])
+@permission_classes([IsAuthenticated])
 def payment_dashboard(request):
-    """Payment dashboard data for SuperAdmin"""
-    total_payments = Payment.objects.count()
-    inprocess_payments = Payment.objects.filter(status='inprocess').count()
-    completed_payments = Payment.objects.filter(status='completed').count()
-    rejected_payments = Payment.objects.filter(status='rejected').count()
+    """Payment dashboard data (All authenticated users can access based on their role)"""
+    user = request.user
+    
+    queryset = Payment.objects.all()
+    queryset = get_payment_accessible_queryset(user, queryset)
+    
+    total_payments = queryset.count()
+    inprocess_payments = queryset.filter(status='inprocess').count()
+    completed_payments = queryset.filter(status='completed').count()
+    rejected_payments = queryset.filter(status='rejected').count()
     
     # Total amounts
-    total_amount = Payment.objects.aggregate(total=Sum('payment_amount'))['total'] or 0
-    completed_amount = Payment.objects.filter(status='completed').aggregate(
+    total_amount = queryset.aggregate(total=Sum('payment_amount'))['total'] or 0
+    completed_amount = queryset.filter(status='completed').aggregate(
         total=Sum('payment_amount')
     )['total'] or 0
-    inprocess_amount = Payment.objects.filter(status='inprocess').aggregate(
+    inprocess_amount = queryset.filter(status='inprocess').aggregate(
         total=Sum('payment_amount')
     )['total'] or 0
     
     # Payment mode breakdown
     payment_mode_stats = {}
     for choice in Payment.PAYMENT_MODE_CHOICES:
-        mode_count = Payment.objects.filter(payment_mode=choice[0]).count()
-        mode_amount = Payment.objects.filter(payment_mode=choice[0]).aggregate(
+        mode_count = queryset.filter(payment_mode=choice[0]).count()
+        mode_amount = queryset.filter(payment_mode=choice[0]).aggregate(
             total=Sum('payment_amount')
         )['total'] or 0
         payment_mode_stats[choice[0]] = {
@@ -371,13 +472,12 @@ def payment_dashboard(request):
         }
     
     # Recent payments (last 10)
-    recent_payments = Payment.objects.select_related('paid_by', 'processed_by')[:10]
+    recent_payments = queryset.select_related('paid_by', 'processed_by')[:10]
     recent_payments_data = PaymentListSerializer(recent_payments, many=True).data
     
     # Monthly stats (current month)
-    from django.utils import timezone
     current_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    monthly_stats = Payment.objects.filter(created_at__gte=current_month).aggregate(
+    monthly_stats = queryset.filter(created_at__gte=current_month).aggregate(
         count=Count('id'),
         amount=Sum('payment_amount')
     )
@@ -401,6 +501,7 @@ def payment_dashboard(request):
         },
         'recent_payments': recent_payments_data,
     })
+
 
 @api_view(['POST'])
 @permission_classes([IsSuperAdmin])
@@ -437,6 +538,7 @@ def bulk_update_payments(request):
         'status': new_status
     })
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def payment_modes_list(request):
@@ -448,8 +550,9 @@ def payment_modes_list(request):
         ]
     })
 
+
 @api_view(['GET'])
-@permission_classes([IsSuperAdmin])
+@permission_classes([IsAuthenticated])
 def payment_status_choices(request):
     """Get list of payment status choices"""
     return Response({

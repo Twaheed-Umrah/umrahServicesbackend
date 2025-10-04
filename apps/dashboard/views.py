@@ -18,32 +18,51 @@ from django.db.models.functions import Extract, TruncMonth, TruncYear, TruncDate
 def get_user_specific_queryset(user, model_class):
     """
     Get queryset filtered by user role and permissions
+    - Superadmin: sees all data
+    - Accountant: sees data created by their parent admin
+    - Other roles: see only their own data
     """
     if user.role == 'superadmin':
         # SuperAdmin can see all data
         return model_class.objects.all()
+    elif user.role == 'accountant':
+        # Accountant sees data created by their parent admin
+        if user.created_by:
+            return model_class.objects.filter(created_by=user.created_by)
+        else:
+            # If accountant has no parent, return empty queryset
+            return model_class.objects.none()
     else:
-        # Other users can only see their own data
+        # Other users (agencyadmin, franchisesadmin, freelancer) see only their own data
         return model_class.objects.filter(created_by=user)
 
 
 def get_enquiry_queryset(user):
     """
     Get enquiry queryset based on user's API keys
-    Only superadmin gets all enquiries, others get enquiries from their API keys
+    - Superadmin: gets all enquiries
+    - Accountant: gets enquiries from their parent admin's API keys
+    - Other roles: get enquiries from their own API keys
     """
     if user.role == 'superadmin':
         # SuperAdmin gets all enquiries
         return ContactUs.objects.all()
+    elif user.role == 'accountant':
+        # Accountant gets enquiries from their parent admin's API keys
+        if user.created_by:
+            user_api_keys = APIKey.objects.filter(user=user.created_by, is_active=True)
+            if user_api_keys.exists():
+                return ContactUs.objects.filter(api_key__in=user_api_keys)
+            else:
+                return ContactUs.objects.none()
+        else:
+            return ContactUs.objects.none()
     else:
         # Other users get enquiries only from their API keys
         user_api_keys = APIKey.objects.filter(user=user, is_active=True)
         if user_api_keys.exists():
-            # Get enquiries that came through this user's API keys
-            # Assuming ContactUs has an api_key field or similar tracking
             return ContactUs.objects.filter(api_key__in=user_api_keys)
         else:
-            # If user has no API keys, return empty queryset
             return ContactUs.objects.none()
 
 
@@ -346,7 +365,7 @@ def booking_revenue_chart(request):
 def enquiry_distribution(request):
     """
     Get enquiry distribution by package type
-    Data filtered by user's API keys (superadmin gets all)
+    Data filtered by user's API keys (superadmin gets all, accountant gets parent's)
     """
     user = request.user
     enquiry_qs = get_enquiry_queryset(user)

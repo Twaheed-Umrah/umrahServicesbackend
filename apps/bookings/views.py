@@ -33,10 +33,24 @@ class BookingListCreateView(generics.ListCreateAPIView):
     ordering_fields = ['created_at', 'travel_month', 'total_price']
     
     def get_queryset(self):
+        from django.db.models import Q
         queryset = super().get_queryset()
-        if self.request.user.role != 'superadmin':
-            queryset = queryset.filter(created_by=self.request.user)
-        return queryset
+        user = self.request.user
+        
+        if user.role == 'superadmin':
+            # Superadmin can see all bookings
+            return queryset
+        elif user.role == 'accountant':
+            # Accountant can see bookings created by their parent admin AND themselves
+            if user.created_by:
+                return queryset.filter(created_by__in=[user.created_by, user])
+            else:
+                return queryset.filter(created_by=user)
+        else:
+            # Agency/Franchise admin can see their own bookings AND bookings created by their accountants
+            return queryset.filter(
+                Q(created_by=user) | Q(created_by__created_by=user, created_by__role='accountant')
+            )
 
 
 class BookingDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -50,10 +64,23 @@ class BookingDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsFranchiseOrAgencyAdmin]
     
     def get_queryset(self):
+        from django.db.models import Q
         queryset = super().get_queryset()
-        if self.request.user.role != 'superadmin':
-            queryset = queryset.filter(created_by=self.request.user)
-        return queryset
+        user = self.request.user
+        
+        if user.role == 'superadmin':
+            return queryset
+        elif user.role == 'accountant':
+            # Accountant can access bookings created by their parent admin AND themselves
+            if user.created_by:
+                return queryset.filter(created_by__in=[user.created_by, user])
+            else:
+                return queryset.filter(created_by=user)
+        else:
+            # Agency/Franchise admin can see their own bookings AND bookings created by their accountants
+            return queryset.filter(
+                Q(created_by=user) | Q(created_by__created_by=user, created_by__role='accountant')
+            )
 
 
 class QuickBookingListCreateView(generics.ListCreateAPIView):
@@ -70,10 +97,23 @@ class QuickBookingListCreateView(generics.ListCreateAPIView):
     ordering_fields = ['created_at', 'travel_month', 'budget']
     
     def get_queryset(self):
+        from django.db.models import Q
         queryset = super().get_queryset()
-        if self.request.user.role != 'superadmin':
-            queryset = queryset.filter(created_by=self.request.user)
-        return queryset
+        user = self.request.user
+        
+        if user.role == 'superadmin':
+            return queryset
+        elif user.role == 'accountant':
+            # Accountant can see quick bookings created by their parent admin AND themselves
+            if user.created_by:
+                return queryset.filter(created_by__in=[user.created_by, user])
+            else:
+                return queryset.filter(created_by=user)
+        else:
+            # Agency/Franchise admin can see their own quick bookings AND quick bookings created by their accountants
+            return queryset.filter(
+                Q(created_by=user) | Q(created_by__created_by=user, created_by__role='accountant')
+            )
 
 
 class QuickBookingDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -87,10 +127,24 @@ class QuickBookingDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsFranchiseOrAgencyAdmin]
     
     def get_queryset(self):
+        from django.db.models import Q
         queryset = super().get_queryset()
-        if self.request.user.role != 'superadmin':
-            queryset = queryset.filter(created_by=self.request.user)
-        return queryset
+        user = self.request.user
+        
+        if user.role == 'superadmin':
+            return queryset
+        elif user.role == 'accountant':
+            # Accountant can access quick bookings created by their parent admin AND themselves
+            if user.created_by:
+                return queryset.filter(created_by__in=[user.created_by, user])
+            else:
+                return queryset.filter(created_by=user)
+        else:
+            # Agency/Franchise admin can see their own quick bookings AND quick bookings created by their accountants
+            return queryset.filter(
+                Q(created_by=user) | Q(created_by__created_by=user, created_by__role='accountant')
+            )
+    
     def get_object(self):
         """
         Override to provide better error handling
@@ -106,8 +160,6 @@ class QuickBookingDetailView(generics.RetrieveUpdateDestroyAPIView):
         """
         Override to add any additional logic before saving
         """
-        # You can add any custom logic here before saving
-        # For example, logging the update, sending notifications, etc.
         serializer.save()
     
     def update(self, request, *args, **kwargs):
@@ -120,11 +172,11 @@ class QuickBookingDetailView(generics.RetrieveUpdateDestroyAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         
-        # Return custom response
         return Response({
             'message': 'Quick booking updated successfully',
             'data': serializer.data
         }, status=status.HTTP_200_OK)
+
 
 class BookingConfirmView(APIView):
     """
@@ -135,13 +187,35 @@ class BookingConfirmView(APIView):
     def post(self, request, pk):
         try:
             booking = Booking.objects.get(pk=pk)
+            user = request.user
             
             # Check permissions
-            if request.user.role != 'superadmin' and booking.created_by != request.user:
-                return Response(
-                    {'detail': 'You do not have permission to confirm this booking.'}, 
-                    status=status.HTTP_403_FORBIDDEN
-                )
+            if user.role == 'superadmin':
+                # Superadmin can confirm any booking
+                pass
+            elif user.role == 'accountant':
+                # Accountant can confirm bookings created by their parent admin OR themselves
+                if user.created_by:
+                    if booking.created_by not in [user.created_by, user]:
+                        return Response(
+                            {'detail': 'You do not have permission to confirm this booking.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+                else:
+                    if booking.created_by != user:
+                        return Response(
+                            {'detail': 'You do not have permission to confirm this booking.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+            else:
+                # Agency/Franchise admin can confirm their own bookings AND bookings created by their accountants
+                if booking.created_by != user:
+                    # Check if booking was created by one of their accountants
+                    if not (booking.created_by.created_by == user and booking.created_by.role == 'accountant'):
+                        return Response(
+                            {'detail': 'You do not have permission to confirm this booking.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
             
             booking.status = 'confirmed'
             booking.save()
@@ -163,13 +237,35 @@ class BookingCancelView(APIView):
     def post(self, request, pk):
         try:
             booking = Booking.objects.get(pk=pk)
+            user = request.user
             
             # Check permissions
-            if request.user.role != 'superadmin' and booking.created_by != request.user:
-                return Response(
-                    {'detail': 'You do not have permission to cancel this booking.'}, 
-                    status=status.HTTP_403_FORBIDDEN
-                )
+            if user.role == 'superadmin':
+                # Superadmin can cancel any booking
+                pass
+            elif user.role == 'accountant':
+                # Accountant can cancel bookings created by their parent admin OR themselves
+                if user.created_by:
+                    if booking.created_by not in [user.created_by, user]:
+                        return Response(
+                            {'detail': 'You do not have permission to cancel this booking.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+                else:
+                    if booking.created_by != user:
+                        return Response(
+                            {'detail': 'You do not have permission to cancel this booking.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+            else:
+                # Agency/Franchise admin can cancel their own bookings AND bookings created by their accountants
+                if booking.created_by != user:
+                    # Check if booking was created by one of their accountants
+                    if not (booking.created_by.created_by == user and booking.created_by.role == 'accountant'):
+                        return Response(
+                            {'detail': 'You do not have permission to cancel this booking.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
             
             booking.status = 'cancelled'
             booking.save()
@@ -182,7 +278,6 @@ class BookingCancelView(APIView):
             )
 
 
-
 class BookingReceiptView(APIView):
     """
     GET: Generate and return booking receipt/bill as PDF
@@ -192,27 +287,46 @@ class BookingReceiptView(APIView):
     def get(self, request, pk):
         try:
             booking = Booking.objects.get(pk=pk)
+            user = request.user
             
             # Check permissions
-            if request.user.role != 'superadmin' and booking.created_by != request.user:
-                return Response(
-                    {'detail': 'You do not have permission to view this booking receipt.'}, 
-                    status=status.HTTP_403_FORBIDDEN
-                )
+            if user.role == 'superadmin':
+                # Superadmin can view any booking receipt
+                pass
+            elif user.role == 'accountant':
+                # Accountant can view receipts for bookings created by their parent admin OR themselves
+                if user.created_by:
+                    if booking.created_by not in [user.created_by, user]:
+                        return Response(
+                            {'detail': 'You do not have permission to view this booking receipt.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+                else:
+                    if booking.created_by != user:
+                        return Response(
+                            {'detail': 'You do not have permission to view this booking receipt.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+            else:
+                # Agency/Franchise admin can view receipts for their own bookings AND bookings created by their accountants
+                if booking.created_by != user:
+                    # Check if booking was created by one of their accountants
+                    if not (booking.created_by.created_by == user and booking.created_by.role == 'accountant'):
+                        return Response(
+                            {'detail': 'You do not have permission to view this booking receipt.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
             
             # Get company details from the user who created the booking
             company_user = booking.created_by
             logo_url = None
             if company_user.company_logo:
                 if hasattr(company_user.company_logo, 'url'):
-                    # It's a file field object - build full URL
                     logo_url = request.build_absolute_uri(company_user.company_logo.url)
                 else:
-                    # It's already a URL string - check if it's relative or absolute
                     if company_user.company_logo.startswith(('http://', 'https://')):
                         logo_url = company_user.company_logo
                     else:
-                        # It's a relative path, make it absolute
                         logo_url = request.build_absolute_uri(company_user.company_logo)
             
             company_details = {
@@ -263,36 +377,56 @@ class BookingReceiptView(APIView):
                 {'detail': 'An error occurred while generating the PDF.'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
+
+
 class QuickBookingReceiptView(APIView):
     permission_classes = [IsFranchiseOrAgencyAdmin]
     
     def get(self, request, pk):
         try:
             quick_booking = QuickBooking.objects.get(pk=pk)
+            user = request.user
             
             # Check permissions
-            if request.user.role != 'superadmin' and quick_booking.created_by != request.user:
-                return Response(
-                    {'detail': 'You do not have permission to view this quick booking receipt.'}, 
-                    status=status.HTTP_403_FORBIDDEN
-                )
+            if user.role == 'superadmin':
+                # Superadmin can view any quick booking receipt
+                pass
+            elif user.role == 'accountant':
+                # Accountant can view receipts for quick bookings created by their parent admin OR themselves
+                if user.created_by:
+                    if quick_booking.created_by not in [user.created_by, user]:
+                        return Response(
+                            {'detail': 'You do not have permission to view this quick booking receipt.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+                else:
+                    if quick_booking.created_by != user:
+                        return Response(
+                            {'detail': 'You do not have permission to view this quick booking receipt.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+            else:
+                # Agency/Franchise admin can view receipts for their own quick bookings AND quick bookings created by their accountants
+                if quick_booking.created_by != user:
+                    # Check if quick booking was created by one of their accountants
+                    if not (quick_booking.created_by.created_by == user and quick_booking.created_by.role == 'accountant'):
+                        return Response(
+                            {'detail': 'You do not have permission to view this quick booking receipt.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
             
             # Get company details
             company_user = quick_booking.created_by
             
-            # Handle logo URL properly - ensure full URL
+            # Handle logo URL properly
             logo_url = None
             if company_user.company_logo:
                 if hasattr(company_user.company_logo, 'url'):
-                    # It's a file field object - build full URL
                     logo_url = request.build_absolute_uri(company_user.company_logo.url)
                 else:
-                    # It's already a URL string - check if it's relative or absolute
                     if company_user.company_logo.startswith(('http://', 'https://')):
                         logo_url = company_user.company_logo
                     else:
-                        # It's a relative path, make it absolute
                         logo_url = request.build_absolute_uri(company_user.company_logo)
             
             company_details = {
@@ -337,7 +471,8 @@ class QuickBookingReceiptView(APIView):
                 {'detail': 'An error occurred while generating the PDF.'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-               
+
+
 class ConvertQuickBookingView(APIView):
     """
     POST: Convert quick booking to full booking
@@ -347,13 +482,35 @@ class ConvertQuickBookingView(APIView):
     def post(self, request, pk):
         try:
             quick_booking = QuickBooking.objects.get(pk=pk)
+            user = request.user
             
             # Check permissions
-            if request.user.role != 'superadmin' and quick_booking.created_by != request.user:
-                return Response(
-                    {'detail': 'You do not have permission to convert this quick booking.'}, 
-                    status=status.HTTP_403_FORBIDDEN
-                )
+            if user.role == 'superadmin':
+                # Superadmin can convert any quick booking
+                pass
+            elif user.role == 'accountant':
+                # Accountant can convert quick bookings created by their parent admin OR themselves
+                if user.created_by:
+                    if quick_booking.created_by not in [user.created_by, user]:
+                        return Response(
+                            {'detail': 'You do not have permission to convert this quick booking.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+                else:
+                    if quick_booking.created_by != user:
+                        return Response(
+                            {'detail': 'You do not have permission to convert this quick booking.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+            else:
+                # Agency/Franchise admin can convert their own quick bookings AND quick bookings created by their accountants
+                if quick_booking.created_by != user:
+                    # Check if quick booking was created by one of their accountants
+                    if not (quick_booking.created_by.created_by == user and quick_booking.created_by.role == 'accountant'):
+                        return Response(
+                            {'detail': 'You do not have permission to convert this quick booking.'}, 
+                            status=status.HTTP_403_FORBIDDEN
+                        )
             
             if quick_booking.is_converted_to_full_booking:
                 return Response(
@@ -362,7 +519,6 @@ class ConvertQuickBookingView(APIView):
                 )
             
             # Create full booking from quick booking
-            # You'll need to provide additional required fields
             booking_data = request.data
             booking_data.update({
                 'first_name': quick_booking.first_name,
@@ -397,6 +553,8 @@ class ConvertQuickBookingView(APIView):
                 {'detail': 'Quick booking not found.'}, 
                 status=status.HTTP_404_NOT_FOUND
             )
+
+
 class AllBookingDetailView(generics.ListAPIView):
     """
     GET: List all bookings created by the logged-in user
@@ -407,13 +565,28 @@ class AllBookingDetailView(generics.ListAPIView):
     filterset_fields = ['status', 'travel_month', 'payment_type']
     search_fields = ['booking_number', 'first_name', 'last_name', 'email']
     ordering_fields = ['created_at', 'travel_month', 'total_price']
-    ordering = ['-created_at']  # Default ordering by latest first
+    ordering = ['-created_at']
     
     def get_queryset(self):
         """
-        Return bookings created by the current logged-in user only
+        Return bookings based on user role
         """
-        return Booking.objects.filter(created_by=self.request.user)
+        from django.db.models import Q
+        user = self.request.user
+        
+        if user.role == 'superadmin':
+            return Booking.objects.all()
+        elif user.role == 'accountant':
+            # Accountant sees bookings created by their parent admin AND themselves
+            if user.created_by:
+                return Booking.objects.filter(created_by__in=[user.created_by, user])
+            else:
+                return Booking.objects.filter(created_by=user)
+        else:
+            # Agency/Franchise admin sees their own bookings AND bookings created by their accountants
+            return Booking.objects.filter(
+                Q(created_by=user) | Q(created_by__created_by=user, created_by__role='accountant')
+            )
 
 
 class AllQuickBookingDetailView(generics.ListAPIView):
@@ -426,13 +599,28 @@ class AllQuickBookingDetailView(generics.ListAPIView):
     filterset_fields = ['preferred_payment', 'is_converted_to_full_booking']
     search_fields = ['booking_number', 'first_name', 'last_name', 'email', 'destination']
     ordering_fields = ['created_at', 'travel_month', 'budget']
-    ordering = ['-created_at']  # Default ordering by latest first
+    ordering = ['-created_at']
     
     def get_queryset(self):
         """
-        Return quick bookings created by the current logged-in user only
+        Return quick bookings based on user role
         """
-        return QuickBooking.objects.filter(created_by=self.request.user)
+        from django.db.models import Q
+        user = self.request.user
+        
+        if user.role == 'superadmin':
+            return QuickBooking.objects.all()
+        elif user.role == 'accountant':
+            # Accountant sees quick bookings created by their parent admin AND themselves
+            if user.created_by:
+                return QuickBooking.objects.filter(created_by__in=[user.created_by, user])
+            else:
+                return QuickBooking.objects.filter(created_by=user)
+        else:
+            # Agency/Franchise admin sees their own quick bookings AND quick bookings created by their accountants
+            return QuickBooking.objects.filter(
+                Q(created_by=user) | Q(created_by__created_by=user, created_by__role='accountant')
+            )
 
 
 class UserBookingDetailView(generics.RetrieveAPIView):
@@ -445,9 +633,24 @@ class UserBookingDetailView(generics.RetrieveAPIView):
     
     def get_queryset(self):
         """
-        Return bookings created by the current logged-in user only
+        Return bookings based on user role
         """
-        return Booking.objects.filter(created_by=self.request.user)
+        from django.db.models import Q
+        user = self.request.user
+        
+        if user.role == 'superadmin':
+            return Booking.objects.all()
+        elif user.role == 'accountant':
+            # Accountant can view bookings created by their parent admin AND themselves
+            if user.created_by:
+                return Booking.objects.filter(created_by__in=[user.created_by, user])
+            else:
+                return Booking.objects.filter(created_by=user)
+        else:
+            # Agency/Franchise admin can view their own bookings AND bookings created by their accountants
+            return Booking.objects.filter(
+                Q(created_by=user) | Q(created_by__created_by=user, created_by__role='accountant')
+            )
     
     def get_object(self):
         """
@@ -471,9 +674,24 @@ class UserQuickBookingDetailView(generics.RetrieveAPIView):
     
     def get_queryset(self):
         """
-        Return quick bookings created by the current logged-in user only
+        Return quick bookings based on user role
         """
-        return QuickBooking.objects.filter(created_by=self.request.user)
+        from django.db.models import Q
+        user = self.request.user
+        
+        if user.role == 'superadmin':
+            return QuickBooking.objects.all()
+        elif user.role == 'accountant':
+            # Accountant can view quick bookings created by their parent admin AND themselves
+            if user.created_by:
+                return QuickBooking.objects.filter(created_by__in=[user.created_by, user])
+            else:
+                return QuickBooking.objects.filter(created_by=user)
+        else:
+            # Agency/Franchise admin can view their own quick bookings AND quick bookings created by their accountants
+            return QuickBooking.objects.filter(
+                Q(created_by=user) | Q(created_by__created_by=user, created_by__role='accountant')
+            )
     
     def get_object(self):
         """
@@ -484,4 +702,4 @@ class UserQuickBookingDetailView(generics.RetrieveAPIView):
             return obj
         except QuickBooking.DoesNotExist:
             from rest_framework.exceptions import NotFound
-            raise NotFound("Quick booking not found or you don't have permission to view it.")        
+            raise NotFound("Quick booking not found or you don't have permission to view it.")

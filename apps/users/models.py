@@ -10,6 +10,7 @@ class User(AbstractUser, TimestampMixin):
         ('agencyadmin', 'AgencyAdmin'),
         ('franchisesadmin', 'FranchisesAdmin'),
         ('freelancer', 'Freelancer'),
+        ('accountant', 'Accountant'),
     ]
     
     # Basic user fields

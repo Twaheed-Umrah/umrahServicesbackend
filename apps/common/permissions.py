@@ -28,5 +28,11 @@ class IsAgencyAdminOrSuperAdmin(BasePermission):
         )
     
 class IsFranchiseOrAgencyAdmin(BasePermission):
+    """
+    Permission class to check if user is FranchiseAdmin, AgencyAdmin, their accountants, or SuperAdmin
+    """
     def has_permission(self, request, view):
-        return IsFranchiseAdmin().has_permission(request, view) or IsAgencyAdmin().has_permission(request, view)
+        return (
+            request.user.is_authenticated and 
+            request.user.role in ['superadmin', 'agencyadmin', 'franchisesadmin', 'accountant']
+        )

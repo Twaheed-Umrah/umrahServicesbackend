@@ -539,19 +539,22 @@ class LogoutView(APIView):
 
     def post(self, request):
         """Logout user by blacklisting refresh token"""
-        try:
-            refresh_token = request.data.get('refresh')
-            if refresh_token:
-                token = RefreshToken(refresh_token)
-                token.blacklist()
-            return Response({
-                'message': 'Logged out successfully'
-            })
-        except Exception as e:
+        refresh_token = request.data.get('refresh')
+        if not refresh_token:
             return Response(
-                {'error': 'Invalid token'}, 
+                {'error': 'Refresh token is required'}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({'message': 'Logged out successfully'})
+        except Exception:
+            return Response(
+                {'error': 'Invalid or expired token'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
 
 
 # Add these new view classes to your existing views.py file

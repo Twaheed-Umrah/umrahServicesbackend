@@ -29,7 +29,10 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
    "hajumrahservice.com",
     "tawheedumrah.com",
-    "faizanumrah.com"
+    "faizanumrah.com",
+    "almakkahmadinah.com",
+    "huzaifahajjumrah.com",
+    "drpervezumrah.com",
     ]
 
 # Application definition
@@ -46,6 +49,7 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
     'django_filters',
     'corsheaders',
@@ -242,6 +246,9 @@ CSRF_TRUSTED_ORIGINS = [
     'https://hajumrahservice.com',
     "https://tawheedumrah.com",
     "https://faizanumrah.com",
+    "https://www.huzaifahajjumrah.com",
+    "https://www.drpervezumrah.com",
+    "https://almakkahmadinah.com",
     "http://localhost:3000",
     "http://localhost:5173",
 ]

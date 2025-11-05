@@ -238,21 +238,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     'x-api-key',  
 ] 
 
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://crm.hajumrahservice.com",
-    "https://crm.hajumrahservice.com",
-    'https://hajumrahservice.com',
-    "https://tawheedumrah.com",
-    "https://faizanumrah.com",
-    "https://almakkahmadinah.com",
-    "https://www.huzaifahajjumrah.com",
-    "https://www.drpervezumrah.com",
-]
-
-
+CORS_ALLOW_ALL_ORIGINS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "http://crm.hajumrahservice.com",

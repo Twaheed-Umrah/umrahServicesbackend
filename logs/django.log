@@ -1,0 +1,270 @@
+INFO 2025-11-27 15:10:54,376 autoreload 3128 20968 Watching for file changes with StatReloader
+INFO 2025-11-27 15:11:20,223 autoreload 3128 20968 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\urls.py changed, reloading.
+INFO 2025-11-27 15:11:22,017 autoreload 20216 9168 Watching for file changes with StatReloader
+INFO 2025-11-27 15:11:30,093 autoreload 20216 9168 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\urls.py changed, reloading.
+INFO 2025-11-27 15:11:31,305 autoreload 17692 22552 Watching for file changes with StatReloader
+INFO 2025-11-27 15:12:31,326 autoreload 17692 22552 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
+INFO 2025-11-27 15:12:32,670 autoreload 18400 19532 Watching for file changes with StatReloader
+INFO 2025-11-27 15:12:37,403 autoreload 18400 19532 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
+INFO 2025-11-27 15:12:38,599 autoreload 23512 7588 Watching for file changes with StatReloader
+INFO 2025-11-27 15:12:46,353 autoreload 23512 7588 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
+INFO 2025-11-27 15:12:47,699 autoreload 22524 23308 Watching for file changes with StatReloader
+INFO 2025-11-27 15:13:04,337 autoreload 22524 23308 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
+INFO 2025-11-27 15:13:05,568 autoreload 19608 20004 Watching for file changes with StatReloader
+INFO 2025-11-27 15:13:34,814 autoreload 19608 20004 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\urls.py changed, reloading.
+INFO 2025-11-27 15:13:36,085 autoreload 21588 21052 Watching for file changes with StatReloader
+INFO 2025-11-27 15:13:53,228 autoreload 21588 21052 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\urls.py changed, reloading.
+INFO 2025-11-27 15:13:54,477 autoreload 15420 15980 Watching for file changes with StatReloader
+INFO 2025-11-27 15:16:23,527 basehttp 15420 18996 "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+WARNING 2025-11-27 15:16:25,572 log 15420 18996 Bad Request: /api/auth/login/
+WARNING 2025-11-27 15:16:25,573 basehttp 15420 18996 "POST /api/auth/login/ HTTP/1.1" 400 44
+WARNING 2025-11-27 15:17:08,329 log 15420 11404 Bad Request: /api/auth/login/
+WARNING 2025-11-27 15:17:08,336 basehttp 15420 11404 "POST /api/auth/login/ HTTP/1.1" 400 44
+INFO 2025-11-27 15:17:15,334 basehttp 15420 17848 "GET /admin/ HTTP/1.1" 302 0
+INFO 2025-11-27 15:17:16,493 basehttp 15420 17848 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4170
+WARNING 2025-11-27 15:17:16,607 log 15420 22124 Not Found: /static/admin/js/theme.js
+WARNING 2025-11-27 15:17:16,610 log 15420 17204 Not Found: /static/admin/css/responsive.css
+WARNING 2025-11-27 15:17:16,611 log 15420 17848 Not Found: /static/admin/css/base.css
+WARNING 2025-11-27 15:17:16,613 basehttp 15420 22124 "GET /static/admin/js/theme.js HTTP/1.1" 404 179
+WARNING 2025-11-27 15:17:16,615 basehttp 15420 17204 "GET /static/admin/css/responsive.css HTTP/1.1" 404 179
+WARNING 2025-11-27 15:17:16,620 log 15420 6544 Not Found: /static/admin/css/login.css
+WARNING 2025-11-27 15:17:16,623 basehttp 15420 17848 "GET /static/admin/css/base.css HTTP/1.1" 404 179
+WARNING 2025-11-27 15:17:16,630 log 15420 8672 Not Found: /static/admin/css/nav_sidebar.css
+WARNING 2025-11-27 15:17:16,632 basehttp 15420 6544 "GET /static/admin/css/login.css HTTP/1.1" 404 179
+WARNING 2025-11-27 15:17:16,636 log 15420 4968 Not Found: /static/admin/css/dark_mode.css
+WARNING 2025-11-27 15:17:16,639 basehttp 15420 8672 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 404 179
+WARNING 2025-11-27 15:17:16,640 basehttp 15420 4968 "GET /static/admin/css/dark_mode.css HTTP/1.1" 404 179
+WARNING 2025-11-27 15:17:16,650 log 15420 4968 Not Found: /static/admin/js/nav_sidebar.js
+WARNING 2025-11-27 15:17:16,652 log 15420 6544 Not Found: /static/admin/css/nav_sidebar.css
+WARNING 2025-11-27 15:17:16,660 basehttp 15420 6544 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 404 179
+WARNING 2025-11-27 15:17:16,654 log 15420 8672 Not Found: /static/admin/css/responsive.css
+WARNING 2025-11-27 15:17:16,655 basehttp 15420 4968 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 404 179
+WARNING 2025-11-27 15:17:16,653 log 15420 17848 Not Found: /static/admin/css/login.css
+WARNING 2025-11-27 15:17:16,667 basehttp 15420 8672 "GET /static/admin/css/responsive.css HTTP/1.1" 404 179
+WARNING 2025-11-27 15:17:16,671 basehttp 15420 17848 "GET /static/admin/css/login.css HTTP/1.1" 404 179
+WARNING 2025-11-27 15:17:16,764 log 15420 17848 Not Found: /favicon.ico
+WARNING 2025-11-27 15:17:16,768 basehttp 15420 17848 "GET /favicon.ico HTTP/1.1" 404 179
+INFO 2025-11-27 15:18:26,816 autoreload 1252 22536 Watching for file changes with StatReloader
+INFO 2025-11-27 15:18:50,795 basehttp 1252 20108 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4170
+INFO 2025-11-27 15:18:50,876 basehttp 1252 1168 "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2808
+INFO 2025-11-27 15:18:50,880 basehttp 1252 20108 "GET /static/admin/css/base.css HTTP/1.1" 200 22120
+INFO 2025-11-27 15:18:50,889 basehttp 1252 11956 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+INFO 2025-11-27 15:18:50,890 basehttp 1252 23476 "GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+INFO 2025-11-27 15:18:50,898 basehttp 1252 9896 "GET /static/admin/css/login.css HTTP/1.1" 200 951
+INFO 2025-11-27 15:18:50,923 basehttp 1252 23476 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO 2025-11-27 15:18:50,928 basehttp 1252 14960 "GET /static/admin/css/responsive.css HTTP/1.1" 200 16565
+INFO 2025-11-27 15:19:04,728 basehttp 1252 12888 "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2025-11-27 15:19:04,904 basehttp 1252 12888 "GET /admin/ HTTP/1.1" 200 25159
+INFO 2025-11-27 15:19:04,948 basehttp 1252 12888 "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2025-11-27 15:19:04,967 basehttp 1252 12888 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2025-11-27 15:19:04,968 basehttp 1252 18784 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+INFO 2025-11-27 15:19:04,988 basehttp 1252 6224 "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 200 392
+INFO 2025-11-27 15:19:16,667 basehttp 1252 14868 "GET /admin/users/user/ HTTP/1.1" 200 34914
+INFO 2025-11-27 15:19:16,731 basehttp 1252 14868 "GET /static/admin/css/changelists.css HTTP/1.1" 200 6878
+INFO 2025-11-27 15:19:16,740 basehttp 1252 16556 "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO 2025-11-27 15:19:16,758 basehttp 1252 6812 "GET /static/admin/js/core.js HTTP/1.1" 200 6208
+INFO 2025-11-27 15:19:16,773 basehttp 1252 16556 "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+INFO 2025-11-27 15:19:16,780 basehttp 1252 6812 "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+INFO 2025-11-27 15:19:16,784 basehttp 1252 21292 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 9777
+INFO 2025-11-27 15:19:16,793 basehttp 1252 6812 "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO 2025-11-27 15:19:16,796 basehttp 1252 21292 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+INFO 2025-11-27 15:19:16,800 basehttp 1252 14868 "GET /static/admin/js/actions.js HTTP/1.1" 200 8076
+INFO 2025-11-27 15:19:16,804 basehttp 1252 21292 "GET /static/admin/img/icon-no.svg HTTP/1.1" 200 560
+INFO 2025-11-27 15:19:16,857 basehttp 1252 10624 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-11-27 15:19:16,866 basehttp 1252 13616 "GET /static/admin/js/vendor/jquery/jquery.min.js HTTP/1.1" 200 87533
+INFO 2025-11-27 15:19:16,892 basehttp 1252 13616 "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+WARNING 2025-11-27 15:19:16,902 log 1252 13616 Not Found: /media/profiles/85fc26ca-40c8-4148-949b-2d2e48279fa4.jpeg
+WARNING 2025-11-27 15:19:16,903 basehttp 1252 13616 "GET /media/profiles/85fc26ca-40c8-4148-949b-2d2e48279fa4.jpeg HTTP/1.1" 404 179
+WARNING 2025-11-27 15:19:16,912 log 1252 13616 Not Found: /media/profiles/HomepageImage.jpg
+WARNING 2025-11-27 15:19:16,913 basehttp 1252 13616 "GET /media/profiles/HomepageImage.jpg HTTP/1.1" 404 179
+INFO 2025-11-27 15:19:16,993 basehttp 1252 16556 "GET /static/admin/js/vendor/xregexp/xregexp.min.js HTTP/1.1" 200 163184
+INFO 2025-11-27 15:19:17,020 basehttp 1252 10624 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO 2025-11-27 15:19:17,020 basehttp 1252 16556 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2025-11-27 15:19:17,024 basehttp 1252 13616 "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+INFO 2025-11-27 15:19:44,831 basehttp 1252 8836 "POST /api/auth/login/ HTTP/1.1" 200 841
+INFO 2025-11-27 15:19:45,136 basehttp 1252 8836 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:19:45,150 basehttp 1252 8836 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:19:45,164 basehttp 1252 8836 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:19:45,173 basehttp 1252 8836 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:19:45,173 basehttp 1252 11824 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-11-27 15:19:45,188 basehttp 1252 8836 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-11-27 15:19:45,188 basehttp 1252 16128 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:19:45,200 basehttp 1252 16128 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:19:45,207 basehttp 1252 8836 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:19:45,214 basehttp 1252 16128 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:19:45,228 basehttp 1252 21728 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:19:45,292 basehttp 1252 11824 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:19:45,293 basehttp 1252 14296 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:19:45,297 basehttp 1252 17072 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:19:45,298 basehttp 1252 8836 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:19:45,340 basehttp 1252 21728 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:19:45,421 basehttp 1252 8836 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:19:45,494 basehttp 1252 17072 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:19:45,563 basehttp 1252 16128 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:19:45,591 basehttp 1252 8836 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:19:45,676 basehttp 1252 11824 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:19:45,703 basehttp 1252 17072 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:19:45,830 basehttp 1252 8836 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:19:45,840 basehttp 1252 14296 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:19:46,001 basehttp 1252 8836 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:20:04,894 basehttp 1252 20336 "OPTIONS /api/enquiries/keys/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:20:04,905 basehttp 1252 12208 "OPTIONS /api/enquiries/keys/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:20:05,003 basehttp 1252 20336 "GET /api/enquiries/keys/ HTTP/1.1" 200 52
+INFO 2025-11-27 15:20:05,027 basehttp 1252 12208 "GET /api/enquiries/keys/ HTTP/1.1" 200 52
+INFO 2025-11-27 15:20:13,053 basehttp 1252 12208 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:20:13,266 basehttp 1252 20220 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:20:13,346 basehttp 1252 14692 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:20:13,349 basehttp 1252 21400 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:20:13,428 basehttp 1252 12208 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:20:13,502 basehttp 1252 20336 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:20:13,509 basehttp 1252 14692 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:20:13,790 basehttp 1252 21400 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:20:13,829 basehttp 1252 20436 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:20:14,075 basehttp 1252 12208 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:20:14,194 basehttp 1252 21400 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:20:52,135 basehttp 1252 21400 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:20:52,394 basehttp 1252 21400 "OPTIONS /api/auth/users/all/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:20:52,395 basehttp 1252 12208 "OPTIONS /api/auth/users/all/ HTTP/1.1" 200 0
+INFO 2025-11-27 15:20:52,413 basehttp 1252 12208 "GET /api/auth/users/all/ HTTP/1.1" 200 3471
+INFO 2025-11-27 15:20:52,468 basehttp 1252 21400 "GET /api/auth/users/all/ HTTP/1.1" 200 3471
+WARNING 2025-11-27 15:20:52,577 log 1252 16724 Not Found: /media/profiles/85fc26ca-40c8-4148-949b-2d2e48279fa4.jpeg
+WARNING 2025-11-27 15:20:52,583 log 1252 16044 Not Found: /media/profiles/HomepageImage.jpg
+WARNING 2025-11-27 15:20:52,583 basehttp 1252 16724 "GET /media/profiles/85fc26ca-40c8-4148-949b-2d2e48279fa4.jpeg HTTP/1.1" 404 179
+WARNING 2025-11-27 15:20:52,585 basehttp 1252 16044 "GET /media/profiles/HomepageImage.jpg HTTP/1.1" 404 179
+INFO 2025-11-27 15:21:03,152 basehttp 1252 21400 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:21:03,452 basehttp 1252 14692 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:21:03,490 basehttp 1252 20220 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:21:03,535 basehttp 1252 20336 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:21:03,618 basehttp 1252 21400 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:21:03,621 basehttp 1252 20220 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:21:03,674 basehttp 1252 12208 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:21:03,775 basehttp 1252 20336 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:21:03,841 basehttp 1252 20436 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:21:03,890 basehttp 1252 20220 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:21:03,982 basehttp 1252 20336 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:21:07,299 basehttp 1252 18956 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:21:07,481 basehttp 1252 18956 "GET /api/auth/users/all/ HTTP/1.1" 200 3471
+INFO 2025-11-27 15:21:07,518 basehttp 1252 9704 "GET /api/auth/users/all/ HTTP/1.1" 200 3471
+WARNING 2025-11-27 15:21:07,630 log 1252 13288 Not Found: /media/profiles/85fc26ca-40c8-4148-949b-2d2e48279fa4.jpeg
+WARNING 2025-11-27 15:21:07,631 basehttp 1252 13288 "GET /media/profiles/85fc26ca-40c8-4148-949b-2d2e48279fa4.jpeg HTTP/1.1" 404 179
+WARNING 2025-11-27 15:21:07,633 log 1252 8868 Not Found: /media/profiles/HomepageImage.jpg
+WARNING 2025-11-27 15:21:07,635 basehttp 1252 8868 "GET /media/profiles/HomepageImage.jpg HTTP/1.1" 404 179
+INFO 2025-11-27 15:21:43,739 basehttp 1252 9704 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:21:44,152 basehttp 1252 8284 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:21:44,229 basehttp 1252 17260 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:21:44,288 basehttp 1252 19952 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:21:44,417 basehttp 1252 17260 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:21:44,431 basehttp 1252 9704 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:21:44,596 basehttp 1252 17260 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:21:44,601 basehttp 1252 18956 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:21:44,783 basehttp 1252 2116 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:21:44,828 basehttp 1252 17260 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:21:44,947 basehttp 1252 18956 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:26:45,010 basehttp 1252 11700 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:26:46,680 autoreload 1252 22536 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
+INFO 2025-11-27 15:26:53,334 autoreload 16628 6988 Watching for file changes with StatReloader
+INFO 2025-11-27 15:31:27,754 autoreload 17428 7872 Watching for file changes with StatReloader
+INFO 2025-11-27 15:31:45,731 basehttp 17428 13116 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:37:03,375 basehttp 17428 20748 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:37:56,743 basehttp 17428 17940 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:37:56,780 basehttp 17428 8564 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:37:56,849 basehttp 17428 22080 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:37:56,949 basehttp 17428 2104 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:37:57,064 basehttp 17428 4036 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:37:57,064 basehttp 17428 17940 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:37:57,214 basehttp 17428 2104 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:37:57,231 basehttp 17428 4036 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:37:57,250 basehttp 17428 17940 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:37:57,266 basehttp 17428 2104 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:37:57,650 basehttp 17428 17188 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:37:57,661 basehttp 17428 8564 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:37:57,754 basehttp 17428 2104 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:37:57,784 basehttp 17428 22080 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:37:57,784 basehttp 17428 17940 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:37:57,871 basehttp 17428 2104 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:38:33,448 basehttp 17428 20508 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:33,451 basehttp 17428 19728 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:33,571 basehttp 17428 19728 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:33,572 basehttp 17428 7572 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:33,597 basehttp 17428 6852 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:38:33,641 basehttp 17428 7572 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:33,653 basehttp 17428 6852 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:33,664 basehttp 17428 20508 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:38:33,682 basehttp 17428 7572 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:38:33,685 basehttp 17428 19728 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:38:33,685 basehttp 17428 16048 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:38:33,734 basehttp 17428 7572 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:38:33,745 basehttp 17428 6852 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:38:33,772 basehttp 17428 19728 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:38:33,773 basehttp 17428 2280 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:38:33,838 basehttp 17428 6852 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:38:48,647 basehttp 17428 6852 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:48,651 basehttp 17428 2280 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:48,813 basehttp 17428 2280 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:48,834 basehttp 17428 16048 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:38:48,867 basehttp 17428 2280 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:48,884 basehttp 17428 16048 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:48,923 basehttp 17428 20508 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:38:48,923 basehttp 17428 16048 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:38:48,939 basehttp 17428 6852 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:38:48,963 basehttp 17428 2280 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:38:49,014 basehttp 17428 16048 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:38:49,036 basehttp 17428 7572 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:38:49,054 basehttp 17428 19728 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:38:49,068 basehttp 17428 20508 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:38:49,205 basehttp 17428 2280 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:38:49,237 basehttp 17428 16048 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:38:57,643 basehttp 17428 19728 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:38:57,687 basehttp 17428 16048 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:38:57,687 basehttp 17428 7572 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:38:57,723 basehttp 17428 2280 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:38:57,753 basehttp 17428 20508 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:39:34,699 basehttp 17428 17692 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:39:34,699 basehttp 17428 8808 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:39:34,835 basehttp 17428 8808 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:39:34,863 basehttp 17428 9612 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:39:34,867 basehttp 17428 1584 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:39:34,918 basehttp 17428 9612 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:39:34,949 basehttp 17428 1584 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:39:34,953 basehttp 17428 17692 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:39:34,953 basehttp 17428 8808 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:39:34,994 basehttp 17428 9612 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2025-11-27 15:39:35,009 basehttp 17428 11564 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:39:35,030 basehttp 17428 1584 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1577
+INFO 2025-11-27 15:39:35,047 basehttp 17428 8808 "GET /api/dashboard/stats/ HTTP/1.1" 200 232
+INFO 2025-11-27 15:39:35,070 basehttp 17428 16288 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:39:35,071 basehttp 17428 9612 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 325
+INFO 2025-11-27 15:39:35,123 basehttp 17428 8808 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 497
+INFO 2025-11-27 15:39:42,455 basehttp 17428 20448 "OPTIONS /api/admin/export-db/ HTTP/1.1" 200 0
+WARNING 2025-11-27 15:39:42,596 log 17428 20448 Not Found: /api/admin/export-db/
+WARNING 2025-11-27 15:39:42,598 basehttp 17428 20448 "GET /api/admin/export-db/ HTTP/1.1" 404 179
+INFO 2025-11-27 15:40:34,994 basehttp 17428 14228 "OPTIONS /api/auth/admin/export-db/ HTTP/1.1" 200 0
+ERROR 2025-11-27 15:40:35,507 log 17428 14228 Internal Server Error: /api/auth/admin/export-db/
+ERROR 2025-11-27 15:40:35,508 basehttp 17428 14228 "GET /api/auth/admin/export-db/ HTTP/1.1" 500 75
+ERROR 2025-11-27 15:40:52,110 log 17428 18268 Internal Server Error: /api/auth/admin/export-db/
+ERROR 2025-11-27 15:40:52,111 basehttp 17428 18268 "GET /api/auth/admin/export-db/ HTTP/1.1" 500 75
+INFO 2025-11-27 15:42:14,317 autoreload 17428 7872 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
+INFO 2025-11-27 15:42:23,206 autoreload 5440 6548 Watching for file changes with StatReloader
+WARNING 2025-11-27 15:42:49,302 log 5440 12588 Forbidden: /api/auth/admin/export-db/
+WARNING 2025-11-27 15:42:49,303 basehttp 5440 12588 "GET /api/auth/admin/export-db/ HTTP/1.1" 403 63
+WARNING 2025-11-27 15:43:18,553 log 5440 7872 Forbidden: /api/auth/admin/export-db/
+WARNING 2025-11-27 15:43:18,554 basehttp 5440 7872 "GET /api/auth/admin/export-db/ HTTP/1.1" 403 63
+INFO 2025-11-27 15:43:39,116 autoreload 5440 6548 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
+INFO 2025-11-27 15:43:41,360 autoreload 15140 20828 Watching for file changes with StatReloader
+ERROR 2025-11-27 15:43:50,705 log 15140 22416 Internal Server Error: /api/auth/admin/export-db/
+ERROR 2025-11-27 15:43:50,706 basehttp 15140 22416 "GET /api/auth/admin/export-db/ HTTP/1.1" 500 75
+INFO 2025-11-27 15:44:35,614 basehttp 15140 21004 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:44:52,563 autoreload 15140 20828 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
+INFO 2025-11-27 15:44:54,611 autoreload 15452 22764 Watching for file changes with StatReloader
+INFO 2025-11-27 15:45:53,390 autoreload 15452 22764 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
+INFO 2025-11-27 15:45:54,781 autoreload 1264 12436 Watching for file changes with StatReloader
+ERROR 2025-11-27 15:45:59,474 log 1264 8620 Internal Server Error: /api/auth/admin/export-db/
+ERROR 2025-11-27 15:45:59,476 basehttp 1264 8620 "GET /api/auth/admin/export-db/ HTTP/1.1" 500 59
+ERROR 2025-11-27 15:46:09,990 log 1264 22028 Internal Server Error: /api/auth/admin/export-db/
+ERROR 2025-11-27 15:46:09,991 basehttp 1264 22028 "GET /api/auth/admin/export-db/ HTTP/1.1" 500 59
+INFO 2025-11-27 15:47:02,874 autoreload 1264 12436 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
+INFO 2025-11-27 15:47:04,424 autoreload 3276 15304 Watching for file changes with StatReloader
+INFO 2025-11-27 15:47:44,302 basehttp 3276 20576 "GET /api/auth/admin/export-db/ HTTP/1.1" 200 19574
+INFO 2025-11-27 15:49:36,749 basehttp 3276 2440 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2025-11-27 15:54:20,965 autoreload 3276 15304 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
+INFO 2025-11-27 15:54:27,262 autoreload 6612 19744 Watching for file changes with StatReloader

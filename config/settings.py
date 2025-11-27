@@ -25,6 +25,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     "crmweb.hajumrahservice.com",
+    "51.20.91.180",
     "localhost",
     "127.0.0.1",
    "hajumrahservice.com",
@@ -254,6 +255,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 ALLOWED_HOSTS = [
+    "51.20.91.180",
     "crmweb.hajumrahservice.com",  # your backend domain
     "localhost",
     "127.0.0.1",

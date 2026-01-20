@@ -30,4 +30,11 @@ urlpatterns = [
     # Utility Endpoints (Require API Key)
     path('apikey/validate-key/', views.validate_api_key, name='validate_api_key'),
     path('apikey/health/', views.api_health_check, name='api_health_check'),
+    
+    # Gallery Management
+    path('admin/gallery/', views.GalleryImageListCreateView.as_view(), name='admin_gallery_list_create'),
+    path('admin/gallery/<int:pk>/', views.GalleryImageDetailView.as_view(), name='admin_gallery_detail'),
+    
+    # Gallery API (Requires API Key)
+    path('apikey/gallery/', views.GalleryImageAPIView.as_view(), name='api_gallery_list'),
 ]

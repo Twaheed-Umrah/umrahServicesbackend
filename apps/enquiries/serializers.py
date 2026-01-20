@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import APIKey, Package, HomePage, ContactUs
+from .models import APIKey, Package, HomePage, ContactUs, GalleryImage
 from django.contrib.auth.models import User
 from drf_extra_fields.fields import Base64ImageField, Base64FileField
 from rest_framework.exceptions import ValidationError
@@ -118,20 +118,23 @@ class CustomBase64ImageField(Base64ImageField):
             raise ValidationError("Error processing image file.")
 
 class APIKeySerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    
     class Meta:
         model = APIKey
-        fields = ['id', 'key', 'name', 'is_active', 'created_at', 'last_used', 'website_url']
-        read_only_fields = ['key', 'created_at', 'last_used']
+        fields = ['id', 'key', 'name', 'is_active', 'created_at', 'last_used', 'website_url', 'username']
+        read_only_fields = ['key', 'created_at', 'last_used', 'username']
 
 class PackageSerializer(serializers.ModelSerializer):
     features_list = serializers.ReadOnlyField(source='get_features_list')
     image=CustomBase64ImageField(required=False)
+    username = serializers.CharField(source='user.username', read_only=True)
     class Meta:
         model = Package
         fields = [
             'id', 'package_type', 'title', 'description', 'price', 'currency',
             'image', 'features', 'features_list', 'duration_days', 'is_active',
-            'is_featured', 'created_at', 'updated_at'
+            'is_featured', 'created_at', 'updated_at', 'username'
         ]
 
 class PackageUpdateSerializer(serializers.ModelSerializer):
@@ -144,12 +147,13 @@ class HomePageSerializer(serializers.ModelSerializer):
     background_image = CustomBase64ImageField(required=False)
     background_video = CustomBase64FileField(required=False)
     
+    username = serializers.CharField(source='user.username', read_only=True)
     class Meta:
         model = HomePage
         fields = [
             'id', 'content', 'background_video', 'background_image',
             'welcome_title', 'welcome_subtitle', 'is_active',
-            'created_at', 'updated_at'
+            'created_at', 'updated_at', 'username'
         ]
 
 class HomePageUpdateSerializer(serializers.ModelSerializer):
@@ -177,3 +181,12 @@ class ContactUsListSerializer(serializers.ModelSerializer):
             'created_at', 'api_key_name', 'api_key_website', 'submitted_by_username'
         ]
         read_only_fields = ['created_at', 'api_key', 'submitted_by_user']
+
+class GalleryImageSerializer(serializers.ModelSerializer):
+    image = CustomBase64ImageField(required=True)
+    username = serializers.CharField(source='user.username', read_only=True)
+    
+    class Meta:
+        model = GalleryImage
+        fields = ['id', 'image', 'title', 'is_active', 'created_at', 'username']
+        read_only_fields = ['created_at', 'username']

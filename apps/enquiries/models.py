@@ -35,7 +35,8 @@ class Package(models.Model):
         ('ramadan_full', 'Full Month Ramadan Package'),
     ]
     
-    package_type = models.CharField(max_length=20, choices=PACKAGE_TYPES, unique=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='enquiry_packages', null=True, blank=True)
+    package_type = models.CharField(max_length=20, choices=PACKAGE_TYPES)
     title = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -50,6 +51,7 @@ class Package(models.Model):
 
     class Meta:
         ordering = ['package_type']
+        unique_together = ['user', 'package_type']
 
     def __str__(self):
         return self.title
@@ -59,6 +61,7 @@ class Package(models.Model):
         return [feature.strip() for feature in self.features.split('\n') if feature.strip()]
 
 class HomePage(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='home_pages', null=True, blank=True)
     content = models.TextField(help_text="Main content for the homepage")
     background_video = models.FileField(upload_to='homepage_videos/', blank=True, null=True)
     background_image = models.ImageField(upload_to='homepage_images/', blank=True, null=True)
@@ -111,3 +114,17 @@ class ContactUs(models.Model):
     def __str__(self):
         api_info = f" (via {self.api_key.name})" if self.api_key else ""
         return f"{self.name} - {self.email}{api_info}"
+
+class GalleryImage(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='gallery_images')
+    image = models.ImageField(upload_to='gallery/')
+    title = models.CharField(max_length=255, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Gallery Image ({self.id}) for user {self.user.username}"

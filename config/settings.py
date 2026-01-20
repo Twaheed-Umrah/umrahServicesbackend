@@ -64,7 +64,8 @@ LOCAL_APPS = [
     'apps.visa',
     'apps.dashboard',
     'apps.poster_generator',
-    'apps.hajjumarhlead'
+    'apps.hajjumarhlead',
+    'apps.crm'
 
 ]
 

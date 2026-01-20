@@ -268,3 +268,496 @@ INFO 2025-11-27 15:47:44,302 basehttp 3276 20576 "GET /api/auth/admin/export-db/
 INFO 2025-11-27 15:49:36,749 basehttp 3276 2440 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
 INFO 2025-11-27 15:54:20,965 autoreload 3276 15304 E:\Saumata\hajjumrahservices\hajjServicesBackend\umrahServicesbackend\apps\users\views.py changed, reloading.
 INFO 2025-11-27 15:54:27,262 autoreload 6612 19744 Watching for file changes with StatReloader
+INFO 2025-11-27 17:55:34,427 autoreload 22800 24088 Watching for file changes with StatReloader
+INFO 2025-11-27 17:57:09,388 basehttp 22800 22216 "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:11,747 basehttp 22800 22216 "POST /api/auth/login/ HTTP/1.1" 200 1065
+INFO 2025-11-27 17:57:12,079 basehttp 22800 10296 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:12,098 basehttp 22800 22912 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:12,109 basehttp 22800 22912 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:12,119 basehttp 22800 13952 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:12,125 basehttp 22800 25492 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:12,131 basehttp 22800 13952 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:12,140 basehttp 22800 25492 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:12,150 basehttp 22800 13952 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:12,154 basehttp 22800 25492 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:12,164 basehttp 22800 10480 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:12,167 basehttp 22800 13952 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:12,214 basehttp 22800 10296 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-27 17:57:12,215 basehttp 22800 22912 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-27 17:57:12,220 basehttp 22800 25492 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-27 17:57:12,242 basehttp 22800 27036 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-27 17:57:12,311 basehttp 22800 25492 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 2
+INFO 2025-11-27 17:57:12,319 basehttp 22800 13952 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 712
+INFO 2025-11-27 17:57:12,342 basehttp 22800 25492 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 2
+INFO 2025-11-27 17:57:12,352 basehttp 22800 13952 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 712
+INFO 2025-11-27 17:57:12,492 basehttp 22800 10480 "GET /api/dashboard/stats/ HTTP/1.1" 200 238
+INFO 2025-11-27 17:57:12,503 basehttp 22800 10296 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 316
+INFO 2025-11-27 17:57:12,584 basehttp 22800 22912 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 491
+INFO 2025-11-27 17:57:12,609 basehttp 22800 10480 "GET /api/dashboard/stats/ HTTP/1.1" 200 238
+INFO 2025-11-27 17:57:12,626 basehttp 22800 10296 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 316
+INFO 2025-11-27 17:57:12,760 basehttp 22800 22912 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 491
+INFO 2025-11-27 17:57:16,613 basehttp 22800 22912 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-27 17:57:18,334 basehttp 22800 22912 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-27 17:57:19,602 basehttp 22800 22912 "OPTIONS /api/bookings/my-quick-bookings/ HTTP/1.1" 200 0
+INFO 2025-11-27 17:57:20,898 basehttp 22800 22912 "GET /api/bookings/my-quick-bookings/ HTTP/1.1" 200 1853
+INFO 2025-11-27 17:57:20,925 basehttp 22800 22912 "GET /api/bookings/my-quick-bookings/ HTTP/1.1" 200 1853
+INFO 2025-11-27 17:57:23,675 basehttp 22800 10584 "OPTIONS /api/bookings/quick-bookings/4/receipt/ HTTP/1.1" 200 0
+WARNING 2025-11-27 17:57:24,113 __init__ 22800 10584 Ignored `box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2)` at 62:13, unknown property.
+WARNING 2025-11-27 17:57:24,129 media_queries 22800 10584 Expected a media type, got 'screen/**/and/**/(max-width: 768px)'
+WARNING 2025-11-27 17:57:24,130 __init__ 22800 10584 Invalid media type ' screen and (max-width: 768px) ' the whole @media rule was ignored at 275:9.
+WARNING 2025-11-27 17:57:24,330 log 22800 3020 Not Found: /media/company_logos/1383df65-b06f-4b58-b29b-7b3e2f489b6b.png
+ERROR 2025-11-27 17:57:24,333 images 22800 10584 Failed to load image at 'http://127.0.0.1:8000/media/company_logos/1383df65-b06f-4b58-b29b-7b3e2f489b6b.png': HTTPError: HTTP Error 404: Not Found
+WARNING 2025-11-27 17:57:24,334 basehttp 22800 3020 "GET /media/company_logos/1383df65-b06f-4b58-b29b-7b3e2f489b6b.png HTTP/1.1" 404 179
+INFO 2025-11-27 17:57:24,807 basehttp 22800 10584 "GET /api/bookings/quick-bookings/4/receipt/ HTTP/1.1" 200 27036
+INFO 2025-11-27 17:59:43,958 autoreload 26888 23480 Watching for file changes with StatReloader
+WARNING 2025-11-27 18:00:26,601 __init__ 26888 17748 Ignored `box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2)` at 62:13, unknown property.
+WARNING 2025-11-27 18:00:26,610 media_queries 26888 17748 Expected a media type, got 'screen/**/and/**/(max-width: 768px)'
+WARNING 2025-11-27 18:00:26,610 __init__ 26888 17748 Invalid media type ' screen and (max-width: 768px) ' the whole @media rule was ignored at 275:9.
+INFO 2025-11-27 18:00:28,271 basehttp 26888 17748 "GET /api/bookings/quick-bookings/4/receipt/ HTTP/1.1" 200 136624
+INFO 2025-11-27 18:00:49,176 basehttp 26888 20740 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-27 18:04:39,358 basehttp 26888 19212 "OPTIONS /api/bookings/quick-bookings/ HTTP/1.1" 200 0
+INFO 2025-11-27 18:04:39,772 basehttp 26888 19212 "POST /api/bookings/quick-bookings/ HTTP/1.1" 201 596
+INFO 2025-11-27 18:04:41,683 basehttp 26888 19212 "OPTIONS /api/bookings/quick-bookings/7/receipt/ HTTP/1.1" 200 0
+WARNING 2025-11-27 18:04:41,847 __init__ 26888 19212 Ignored `box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2)` at 62:13, unknown property.
+WARNING 2025-11-27 18:04:41,854 media_queries 26888 19212 Expected a media type, got 'screen/**/and/**/(max-width: 768px)'
+WARNING 2025-11-27 18:04:41,855 __init__ 26888 19212 Invalid media type ' screen and (max-width: 768px) ' the whole @media rule was ignored at 275:9.
+INFO 2025-11-27 18:04:42,840 basehttp 26888 19212 "GET /api/bookings/quick-bookings/7/receipt/ HTTP/1.1" 200 136449
+INFO 2025-11-27 18:05:33,465 basehttp 26888 14196 "OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+INFO 2025-11-27 18:05:33,677 basehttp 26888 14196 "POST /api/auth/logout/ HTTP/1.1" 200 37
+INFO 2025-11-28 17:32:40,940 autoreload 10612 13460 Watching for file changes with StatReloader
+INFO 2025-11-28 17:34:34,153 basehttp 10612 26456 "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,309 basehttp 10612 26456 "POST /api/auth/login/ HTTP/1.1" 200 1065
+INFO 2025-11-28 17:34:37,516 basehttp 10612 26456 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,528 basehttp 10612 26456 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,536 basehttp 10612 20128 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,546 basehttp 10612 10628 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,558 basehttp 10612 15012 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,564 basehttp 10612 7776 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,567 basehttp 10612 10628 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,569 basehttp 10612 7776 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,570 basehttp 10612 15012 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,573 basehttp 10612 26456 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:34:37,574 basehttp 10612 10628 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,576 basehttp 10612 7776 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:37,579 basehttp 10612 7516 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:34:37,590 basehttp 10612 20128 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:34:37,628 basehttp 10612 15012 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:34:37,635 basehttp 10612 7516 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 2
+INFO 2025-11-28 17:34:37,649 basehttp 10612 20128 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 888
+INFO 2025-11-28 17:34:37,666 basehttp 10612 20128 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 888
+INFO 2025-11-28 17:34:37,682 basehttp 10612 15012 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 2
+INFO 2025-11-28 17:34:37,826 basehttp 10612 26456 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 323
+INFO 2025-11-28 17:34:37,841 basehttp 10612 10628 "GET /api/dashboard/stats/ HTTP/1.1" 200 248
+INFO 2025-11-28 17:34:37,927 basehttp 10612 26456 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 323
+INFO 2025-11-28 17:34:37,932 basehttp 10612 10628 "GET /api/dashboard/stats/ HTTP/1.1" 200 248
+INFO 2025-11-28 17:34:37,955 basehttp 10612 7776 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 496
+INFO 2025-11-28 17:34:38,099 basehttp 10612 7776 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 496
+INFO 2025-11-28 17:34:40,216 basehttp 10612 7776 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:34:40,394 basehttp 10612 7776 "OPTIONS /api/bookings/my-quick-bookings/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:40,394 basehttp 10612 10628 "OPTIONS /api/bookings/my-quick-bookings/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:34:40,433 basehttp 10612 10628 "GET /api/bookings/my-quick-bookings/ HTTP/1.1" 200 2450
+INFO 2025-11-28 17:34:40,465 basehttp 10612 10628 "GET /api/bookings/my-quick-bookings/ HTTP/1.1" 200 2450
+INFO 2025-11-28 17:34:49,189 basehttp 10612 10628 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:39:46,781 basehttp 10612 15160 "OPTIONS /api/bookings/quick-bookings/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:39:47,460 basehttp 10612 15160 "POST /api/bookings/quick-bookings/ HTTP/1.1" 201 594
+INFO 2025-11-28 17:39:49,231 basehttp 10612 15160 "OPTIONS /api/bookings/quick-bookings/8/receipt/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:39:49,382 basehttp 10612 15160 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+WARNING 2025-11-28 17:39:49,705 __init__ 10612 3080 Ignored `box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2)` at 62:13, unknown property.
+WARNING 2025-11-28 17:39:49,729 media_queries 10612 3080 Expected a media type, got 'screen/**/and/**/(max-width: 768px)'
+WARNING 2025-11-28 17:39:49,731 __init__ 10612 3080 Invalid media type ' screen and (max-width: 768px) ' the whole @media rule was ignored at 275:9.
+INFO 2025-11-28 17:39:51,961 basehttp 10612 3080 "GET /api/bookings/quick-bookings/8/receipt/ HTTP/1.1" 200 136531
+INFO 2025-11-28 17:45:37,460 basehttp 10612 9920 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:45:48,688 basehttp 10612 9920 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:45:48,695 basehttp 10612 23084 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:45:49,138 basehttp 10612 9920 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:45:49,144 basehttp 10612 4832 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:45:49,146 basehttp 10612 23084 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:45:49,271 basehttp 10612 20224 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:48:09,948 basehttp 10612 19396 "POST /api/bookings/quick-bookings/ HTTP/1.1" 201 596
+INFO 2025-11-28 17:48:11,334 basehttp 10612 19396 "OPTIONS /api/bookings/quick-bookings/9/receipt/ HTTP/1.1" 200 0
+WARNING 2025-11-28 17:48:11,501 __init__ 10612 19396 Ignored `box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2)` at 62:13, unknown property.
+WARNING 2025-11-28 17:48:11,513 media_queries 10612 19396 Expected a media type, got 'screen/**/and/**/(max-width: 768px)'
+WARNING 2025-11-28 17:48:11,514 __init__ 10612 19396 Invalid media type ' screen and (max-width: 768px) ' the whole @media rule was ignored at 275:9.
+ERROR 2025-11-28 17:48:21,739 images 10612 19396 Failed to load image at 'https://tawheedumrah.com/assets/TawheedUmrahnew41-BN7AwPTg.png': TimeoutError: The read operation timed out
+INFO 2025-11-28 17:48:22,096 basehttp 10612 19396 "GET /api/bookings/quick-bookings/9/receipt/ HTTP/1.1" 200 26867
+WARNING 2025-11-28 17:48:22,228 __init__ 10612 19396 Ignored `box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2)` at 62:13, unknown property.
+WARNING 2025-11-28 17:48:22,240 media_queries 10612 19396 Expected a media type, got 'screen/**/and/**/(max-width: 768px)'
+WARNING 2025-11-28 17:48:22,240 __init__ 10612 19396 Invalid media type ' screen and (max-width: 768px) ' the whole @media rule was ignored at 275:9.
+INFO 2025-11-28 17:48:23,314 basehttp 10612 19396 "GET /api/bookings/quick-bookings/9/receipt/ HTTP/1.1" 200 136447
+WARNING 2025-11-28 17:48:23,418 __init__ 10612 3212 Ignored `box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2)` at 62:13, unknown property.
+WARNING 2025-11-28 17:48:23,430 media_queries 10612 3212 Expected a media type, got 'screen/**/and/**/(max-width: 768px)'
+WARNING 2025-11-28 17:48:23,431 __init__ 10612 3212 Invalid media type ' screen and (max-width: 768px) ' the whole @media rule was ignored at 275:9.
+INFO 2025-11-28 17:48:24,400 basehttp 10612 3212 "GET /api/bookings/quick-bookings/9/receipt/ HTTP/1.1" 200 136447
+INFO 2025-11-28 17:50:50,355 basehttp 10612 22560 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 17:51:39,901 basehttp 10612 9376 "OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+INFO 2025-11-28 17:51:40,440 basehttp 10612 9376 "POST /api/auth/logout/ HTTP/1.1" 200 37
+INFO 2025-11-28 18:09:29,861 basehttp 10612 17636 "GET /admin/ HTTP/1.1" 200 25159
+INFO 2025-11-28 18:09:30,050 basehttp 10612 14040 "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2025-11-28 18:09:30,056 basehttp 10612 22812 "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2808
+INFO 2025-11-28 18:09:30,076 basehttp 10612 10496 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+INFO 2025-11-28 18:09:30,082 basehttp 10612 1932 "GET /static/admin/css/responsive.css HTTP/1.1" 200 16565
+INFO 2025-11-28 18:09:30,126 basehttp 10612 17636 "GET /static/admin/css/base.css HTTP/1.1" 200 22120
+INFO 2025-11-28 18:09:30,214 basehttp 10612 17636 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO 2025-11-28 18:09:30,214 basehttp 10612 5344 "GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+INFO 2025-11-28 18:09:30,267 basehttp 10612 1932 "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 200 392
+INFO 2025-11-28 18:09:30,267 basehttp 10612 17636 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2025-11-28 18:09:30,268 basehttp 10612 5344 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+WARNING 2025-11-28 18:09:30,500 log 10612 5344 Not Found: /favicon.ico
+WARNING 2025-11-28 18:09:30,503 basehttp 10612 5344 "GET /favicon.ico HTTP/1.1" 404 179
+INFO 2025-11-28 18:09:39,687 basehttp 10612 5344 "GET /admin/bookings/quickbooking/ HTTP/1.1" 200 30189
+INFO 2025-11-28 18:09:39,907 basehttp 10612 5344 "GET /static/admin/css/changelists.css HTTP/1.1" 200 6878
+INFO 2025-11-28 18:09:39,935 basehttp 10612 10496 "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO 2025-11-28 18:09:39,986 basehttp 10612 5344 "GET /static/admin/js/actions.js HTTP/1.1" 200 8076
+INFO 2025-11-28 18:09:39,995 basehttp 10612 14040 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 9777
+INFO 2025-11-28 18:09:39,997 basehttp 10612 10496 "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+INFO 2025-11-28 18:09:39,999 basehttp 10612 22812 "GET /static/admin/js/core.js HTTP/1.1" 200 6208
+INFO 2025-11-28 18:09:40,029 basehttp 10612 22812 "GET /static/admin/img/icon-no.svg HTTP/1.1" 200 560
+INFO 2025-11-28 18:09:40,033 basehttp 10612 10496 "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO 2025-11-28 18:09:40,048 basehttp 10612 5344 "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+INFO 2025-11-28 18:09:40,081 basehttp 10612 17636 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-11-28 18:09:40,163 basehttp 10612 1932 "GET /static/admin/js/vendor/jquery/jquery.min.js HTTP/1.1" 200 87533
+INFO 2025-11-28 18:09:40,207 basehttp 10612 1932 "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2025-11-28 18:09:40,338 basehttp 10612 14040 "GET /static/admin/js/vendor/xregexp/xregexp.min.js HTTP/1.1" 200 163184
+INFO 2025-11-28 18:09:40,370 basehttp 10612 1932 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO 2025-11-28 18:09:40,371 basehttp 10612 14040 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2025-11-28 18:09:43,502 basehttp 10612 14040 "GET /admin/bookings/quickbooking/9/change/ HTTP/1.1" 200 31971
+INFO 2025-11-28 18:09:43,558 basehttp 10612 17636 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-11-28 18:09:43,573 basehttp 10612 14040 "GET /static/admin/css/forms.css HTTP/1.1" 200 8525
+INFO 2025-11-28 18:09:43,579 basehttp 10612 1932 "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+INFO 2025-11-28 18:09:43,600 basehttp 10612 14040 "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+INFO 2025-11-28 18:09:43,610 basehttp 10612 17636 "GET /static/admin/css/widgets.css HTTP/1.1" 200 11991
+INFO 2025-11-28 18:10:05,956 basehttp 10612 17636 "POST /admin/bookings/quickbooking/9/change/ HTTP/1.1" 302 0
+INFO 2025-11-28 18:10:06,057 basehttp 10612 17636 "GET /admin/bookings/quickbooking/ HTTP/1.1" 200 30435
+INFO 2025-11-28 18:10:06,117 basehttp 10612 17636 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-11-28 18:10:06,162 basehttp 10612 17636 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+INFO 2025-11-28 18:10:07,958 basehttp 10612 17636 "GET /admin/bookings/quickbooking/9/change/ HTTP/1.1" 200 31971
+INFO 2025-11-28 18:10:08,019 basehttp 10612 17636 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-11-28 18:10:51,443 basehttp 10612 16888 "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,063 basehttp 10612 16888 "POST /api/auth/login/ HTTP/1.1" 200 1065
+INFO 2025-11-28 18:10:53,351 basehttp 10612 16888 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,361 basehttp 10612 16888 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,368 basehttp 10612 23680 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,372 basehttp 10612 25940 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,383 basehttp 10612 23680 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,384 basehttp 10612 9700 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,387 basehttp 10612 27280 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,391 basehttp 10612 25940 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,394 basehttp 10612 23680 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,396 basehttp 10612 9700 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,398 basehttp 10612 10532 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,399 basehttp 10612 27280 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:53,519 basehttp 10612 16888 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 18:10:53,520 basehttp 10612 23680 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 18:10:53,527 basehttp 10612 25940 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 18:10:53,589 basehttp 10612 16888 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 2
+INFO 2025-11-28 18:10:53,614 basehttp 10612 23680 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1055
+INFO 2025-11-28 18:10:53,675 basehttp 10612 25940 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 18:10:53,721 basehttp 10612 9700 "GET /api/dashboard/stats/ HTTP/1.1" 200 258
+INFO 2025-11-28 18:10:53,734 basehttp 10612 16888 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 2
+INFO 2025-11-28 18:10:53,774 basehttp 10612 23680 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1055
+INFO 2025-11-28 18:10:53,778 basehttp 10612 27280 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 323
+INFO 2025-11-28 18:10:53,884 basehttp 10612 25940 "GET /api/dashboard/stats/ HTTP/1.1" 200 258
+INFO 2025-11-28 18:10:53,894 basehttp 10612 10532 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 496
+INFO 2025-11-28 18:10:53,927 basehttp 10612 23680 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 323
+INFO 2025-11-28 18:10:54,050 basehttp 10612 25940 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 496
+INFO 2025-11-28 18:10:55,260 basehttp 10612 25940 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 18:10:56,381 basehttp 10612 25940 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 18:10:56,576 basehttp 10612 23680 "OPTIONS /api/bookings/my-quick-bookings/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:56,577 basehttp 10612 25940 "OPTIONS /api/bookings/my-quick-bookings/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:10:56,643 basehttp 10612 23680 "GET /api/bookings/my-quick-bookings/ HTTP/1.1" 200 3642
+INFO 2025-11-28 18:10:56,661 basehttp 10612 25940 "GET /api/bookings/my-quick-bookings/ HTTP/1.1" 200 3642
+INFO 2025-11-28 18:11:00,115 basehttp 10612 25940 "OPTIONS /api/bookings/quick-bookings/9/receipt/ HTTP/1.1" 200 0
+WARNING 2025-11-28 18:11:00,254 __init__ 10612 25940 Ignored `box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2)` at 62:13, unknown property.
+WARNING 2025-11-28 18:11:00,284 media_queries 10612 25940 Expected a media type, got 'screen/**/and/**/(max-width: 768px)'
+WARNING 2025-11-28 18:11:00,285 __init__ 10612 25940 Invalid media type ' screen and (max-width: 768px) ' the whole @media rule was ignored at 275:9.
+ERROR 2025-11-28 18:11:10,543 images 10612 25940 Failed to load image at 'https://tawheedumrah.com/assets/TawheedUmrahnew41-BN7AwPTg.png': TimeoutError: The read operation timed out
+INFO 2025-11-28 18:11:10,854 basehttp 10612 25940 "GET /api/bookings/quick-bookings/9/receipt/ HTTP/1.1" 200 26870
+WARNING 2025-11-28 18:11:10,900 __init__ 10612 18672 Ignored `box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2)` at 62:13, unknown property.
+WARNING 2025-11-28 18:11:10,912 media_queries 10612 18672 Expected a media type, got 'screen/**/and/**/(max-width: 768px)'
+WARNING 2025-11-28 18:11:10,913 __init__ 10612 18672 Invalid media type ' screen and (max-width: 768px) ' the whole @media rule was ignored at 275:9.
+INFO 2025-11-28 18:11:11,673 basehttp 10612 18672 "GET /api/bookings/quick-bookings/9/receipt/ HTTP/1.1" 200 136445
+WARNING 2025-11-28 18:11:11,737 __init__ 10612 25940 Ignored `box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2)` at 62:13, unknown property.
+WARNING 2025-11-28 18:11:11,746 media_queries 10612 25940 Expected a media type, got 'screen/**/and/**/(max-width: 768px)'
+WARNING 2025-11-28 18:11:11,747 __init__ 10612 25940 Invalid media type ' screen and (max-width: 768px) ' the whole @media rule was ignored at 275:9.
+INFO 2025-11-28 18:11:12,332 basehttp 10612 25940 "GET /api/bookings/quick-bookings/9/receipt/ HTTP/1.1" 200 136445
+INFO 2025-11-28 18:15:57,836 basehttp 10612 14072 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 18:20:58,774 basehttp 10612 18940 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2025-11-28 18:25:44,345 basehttp 10612 18836 "OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+INFO 2025-11-28 18:25:44,901 basehttp 10612 18836 "POST /api/auth/logout/ HTTP/1.1" 200 37
+INFO 2025-11-28 18:25:47,898 basehttp 10612 24772 "POST /admin/logout/ HTTP/1.1" 200 3568
+INFO 2025-11-28 18:25:47,976 basehttp 10612 24444 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2025-11-28 18:25:47,976 basehttp 10612 24772 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2025-11-28 18:25:47,984 basehttp 10612 14024 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2025-11-28 18:25:48,008 basehttp 10612 15728 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2025-11-28 18:25:48,021 basehttp 10612 4160 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2025-11-28 18:25:48,043 basehttp 10612 4160 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+WARNING 2025-11-28 18:25:48,126 log 10612 4160 Not Found: /favicon.ico
+WARNING 2025-11-28 18:25:48,127 basehttp 10612 4160 "GET /favicon.ico HTTP/1.1" 404 179
+INFO 2026-01-17 17:33:38,294 autoreload 600 24244 Watching for file changes with StatReloader
+INFO 2026-01-17 17:35:12,571 basehttp 600 24208 "GET /admin/ HTTP/1.1" 302 0
+INFO 2026-01-17 17:35:14,793 basehttp 600 24208 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4170
+INFO 2026-01-17 17:35:15,038 basehttp 600 24208 "GET /static/admin/css/login.css HTTP/1.1" 200 951
+WARNING 2026-01-17 17:35:15,243 log 600 24208 Not Found: /favicon.ico
+WARNING 2026-01-17 17:35:15,245 basehttp 600 24208 "GET /favicon.ico HTTP/1.1" 404 179
+INFO 2026-01-17 17:35:27,745 basehttp 600 24208 "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2026-01-17 17:35:27,971 basehttp 600 24208 "GET /admin/ HTTP/1.1" 200 25209
+INFO 2026-01-17 17:35:47,372 basehttp 600 24208 "GET /admin/ HTTP/1.1" 200 25209
+INFO 2026-01-17 17:38:36,804 autoreload 11168 19448 Watching for file changes with StatReloader
+INFO 2026-01-17 17:38:43,762 basehttp 11168 15056 "GET /admin/ HTTP/1.1" 200 27456
+INFO 2026-01-17 17:38:54,944 basehttp 11168 15056 "GET /admin/crm/leadnote/ HTTP/1.1" 200 23803
+INFO 2026-01-17 17:38:55,194 basehttp 11168 18392 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-01-17 17:38:55,255 basehttp 11168 15056 "GET /static/admin/js/vendor/jquery/jquery.min.js HTTP/1.1" 200 87533
+INFO 2026-01-17 17:38:55,329 basehttp 11168 13720 "GET /static/admin/js/vendor/xregexp/xregexp.min.js HTTP/1.1" 200 163184
+INFO 2026-01-17 17:38:57,715 basehttp 11168 13720 "GET /admin/ HTTP/1.1" 200 27456
+INFO 2026-01-17 17:39:07,882 basehttp 11168 13720 "GET /admin/enquiries/homepage/ HTTP/1.1" 200 22361
+INFO 2026-01-17 17:39:07,941 basehttp 11168 13720 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-01-17 17:39:09,736 basehttp 11168 13720 "GET /admin/ HTTP/1.1" 200 27456
+INFO 2026-01-17 17:39:13,603 basehttp 11168 13720 "GET /admin/users/user/ HTTP/1.1" 200 36642
+INFO 2026-01-17 17:39:13,667 basehttp 11168 13720 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2026-01-17 17:39:13,688 log 11168 13720 Not Found: /media/profiles/85fc26ca-40c8-4148-949b-2d2e48279fa4.jpeg
+WARNING 2026-01-17 17:39:13,688 log 11168 15056 Not Found: /media/profiles/HomepageImage.jpg
+WARNING 2026-01-17 17:39:13,689 basehttp 11168 13720 "GET /media/profiles/85fc26ca-40c8-4148-949b-2d2e48279fa4.jpeg HTTP/1.1" 404 179
+WARNING 2026-01-17 17:39:13,691 basehttp 11168 15056 "GET /media/profiles/HomepageImage.jpg HTTP/1.1" 404 179
+INFO 2026-01-17 17:39:38,876 basehttp 11168 18024 "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+WARNING 2026-01-17 17:39:42,128 log 11168 18024 Bad Request: /api/auth/login/
+WARNING 2026-01-17 17:39:42,174 basehttp 11168 18024 "POST /api/auth/login/ HTTP/1.1" 400 44
+INFO 2026-01-17 17:40:12,131 basehttp 11168 18024 "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,094 basehttp 11168 18024 "POST /api/auth/login/ HTTP/1.1" 200 1065
+INFO 2026-01-17 17:40:16,743 basehttp 11168 18024 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,779 basehttp 11168 18024 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,794 basehttp 11168 18024 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,795 basehttp 11168 23272 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,811 basehttp 11168 18024 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,813 basehttp 11168 23272 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,820 basehttp 11168 10420 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,873 basehttp 11168 18024 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,875 basehttp 11168 17660 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,898 basehttp 11168 23272 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,964 basehttp 11168 18024 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,968 basehttp 11168 10420 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,980 basehttp 11168 15304 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:16,997 basehttp 11168 25240 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:17,186 basehttp 11168 18024 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2026-01-17 17:40:17,189 basehttp 11168 17660 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2026-01-17 17:40:17,260 basehttp 11168 23272 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2026-01-17 17:40:17,878 basehttp 11168 15304 "GET /api/dashboard/stats/ HTTP/1.1" 200 238
+INFO 2026-01-17 17:40:18,362 basehttp 11168 15304 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 2
+INFO 2026-01-17 17:40:18,480 basehttp 11168 25240 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 301
+INFO 2026-01-17 17:40:18,506 basehttp 11168 10420 "GET /api/dashboard/stats/ HTTP/1.1" 200 238
+INFO 2026-01-17 17:40:18,846 basehttp 11168 15304 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2026-01-17 17:40:19,044 basehttp 11168 25240 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 2
+INFO 2026-01-17 17:40:19,471 basehttp 11168 15304 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1055
+INFO 2026-01-17 17:40:19,617 basehttp 11168 10420 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 1055
+INFO 2026-01-17 17:40:19,659 basehttp 11168 17660 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 301
+INFO 2026-01-17 17:40:19,678 basehttp 11168 23272 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 481
+INFO 2026-01-17 17:40:19,689 basehttp 11168 18024 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 481
+INFO 2026-01-17 17:40:22,386 basehttp 11168 18024 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:22,540 basehttp 11168 18024 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2026-01-17 17:40:23,662 basehttp 11168 23272 "OPTIONS /api/enquiries/admin/packages/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:23,662 basehttp 11168 18024 "OPTIONS /api/enquiries/admin/packages/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:24,025 basehttp 11168 18024 "GET /api/enquiries/admin/packages/ HTTP/1.1" 200 52
+INFO 2026-01-17 17:40:24,026 basehttp 11168 23272 "GET /api/enquiries/admin/packages/ HTTP/1.1" 200 52
+INFO 2026-01-17 17:40:46,033 basehttp 11168 23272 "OPTIONS /api/enquiries/admin/packages/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:40:48,606 basehttp 11168 23272 "POST /api/enquiries/admin/packages/ HTTP/1.1" 201 432
+WARNING 2026-01-17 17:40:48,704 log 11168 14780 Not Found: /media/package_images/ed6967a8-dcec-4b17-b53f-cc6eeec01fc7.png
+WARNING 2026-01-17 17:40:48,705 basehttp 11168 14780 "GET /media/package_images/ed6967a8-dcec-4b17-b53f-cc6eeec01fc7.png HTTP/1.1" 404 179
+WARNING 2026-01-17 17:41:11,919 log 11168 15856 Not Found: /media/package_images/ed6967a8-dcec-4b17-b53f-cc6eeec01fc7.png
+WARNING 2026-01-17 17:41:11,920 basehttp 11168 15856 "GET /media/package_images/ed6967a8-dcec-4b17-b53f-cc6eeec01fc7.png HTTP/1.1" 404 179
+INFO 2026-01-17 17:41:21,099 basehttp 11168 23272 "OPTIONS /api/enquiries/admin/packages/1/ HTTP/1.1" 200 0
+WARNING 2026-01-17 17:41:21,138 log 11168 23272 Bad Request: /api/enquiries/admin/packages/1/
+WARNING 2026-01-17 17:41:21,141 basehttp 11168 23272 "PUT /api/enquiries/admin/packages/1/ HTTP/1.1" 400 85
+WARNING 2026-01-17 17:41:31,992 log 11168 12632 Not Found: /media/package_images/ed6967a8-dcec-4b17-b53f-cc6eeec01fc7.png
+WARNING 2026-01-17 17:41:31,995 basehttp 11168 12632 "GET /media/package_images/ed6967a8-dcec-4b17-b53f-cc6eeec01fc7.png HTTP/1.1" 404 179
+INFO 2026-01-17 17:41:45,571 basehttp 11168 23272 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:41:45,597 basehttp 11168 23272 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2026-01-17 17:41:45,795 basehttp 11168 23272 "OPTIONS /api/enquiries/admin/homepage/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:41:45,795 basehttp 11168 18024 "OPTIONS /api/enquiries/admin/homepage/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:41:45,928 basehttp 11168 23272 "GET /api/enquiries/admin/homepage/ HTTP/1.1" 200 52
+INFO 2026-01-17 17:41:45,928 basehttp 11168 18024 "GET /api/enquiries/admin/homepage/ HTTP/1.1" 200 52
+INFO 2026-01-17 17:42:33,908 basehttp 11168 18024 "OPTIONS /api/enquiries/admin/homepage/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:42:34,494 basehttp 11168 18024 "POST /api/enquiries/admin/homepage/ HTTP/1.1" 201 444
+INFO 2026-01-17 17:42:51,573 basehttp 11168 18024 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:42:51,705 basehttp 11168 18024 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2026-01-17 17:42:52,003 basehttp 11168 18024 "OPTIONS /api/enquiries/admin/packages/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:42:52,004 basehttp 11168 23272 "OPTIONS /api/enquiries/admin/packages/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:42:52,258 basehttp 11168 18024 "GET /api/enquiries/admin/packages/ HTTP/1.1" 200 484
+INFO 2026-01-17 17:42:52,273 basehttp 11168 23272 "GET /api/enquiries/admin/packages/ HTTP/1.1" 200 484
+WARNING 2026-01-17 17:42:52,529 log 11168 11992 Not Found: /media/package_images/ed6967a8-dcec-4b17-b53f-cc6eeec01fc7.png
+WARNING 2026-01-17 17:42:52,533 basehttp 11168 11992 "GET /media/package_images/ed6967a8-dcec-4b17-b53f-cc6eeec01fc7.png HTTP/1.1" 404 179
+INFO 2026-01-17 17:42:54,163 basehttp 11168 23272 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:42:54,613 basehttp 11168 23272 "POST /api/auth/verify-token/ HTTP/1.1" 200 83
+INFO 2026-01-17 17:42:54,865 basehttp 11168 18024 "OPTIONS /api/enquiries/admin/homepage/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:42:54,866 basehttp 11168 23272 "OPTIONS /api/enquiries/admin/homepage/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:42:54,950 basehttp 11168 23272 "GET /api/enquiries/admin/homepage/ HTTP/1.1" 200 496
+INFO 2026-01-17 17:42:54,950 basehttp 11168 18024 "GET /api/enquiries/admin/homepage/ HTTP/1.1" 200 496
+WARNING 2026-01-17 17:42:55,140 log 11168 13116 Not Found: /media/homepage_images/6bfd5b65-07e2-4d6c-b598-c66f40a2ec79.png
+WARNING 2026-01-17 17:42:55,144 basehttp 11168 13116 "GET /media/homepage_images/6bfd5b65-07e2-4d6c-b598-c66f40a2ec79.png HTTP/1.1" 404 179
+WARNING 2026-01-17 17:42:55,187 log 11168 22504 Not Found: /media/homepage_videos/7c669922-c630-475f-bdf4-98d7a62cec2b.mp4
+WARNING 2026-01-17 17:42:55,192 basehttp 11168 22504 "GET /media/homepage_videos/7c669922-c630-475f-bdf4-98d7a62cec2b.mp4 HTTP/1.1" 404 179
+INFO 2026-01-17 17:43:02,335 basehttp 11168 18024 "OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:02,591 basehttp 11168 18024 "POST /api/auth/logout/ HTTP/1.1" 200 37
+INFO 2026-01-17 17:43:20,601 basehttp 11168 18024 "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,291 basehttp 11168 18024 "POST /api/auth/login/ HTTP/1.1" 200 1062
+INFO 2026-01-17 17:43:23,669 basehttp 11168 18024 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,679 basehttp 11168 18024 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,683 basehttp 11168 23272 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,716 basehttp 11168 25240 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,721 basehttp 11168 15304 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,721 basehttp 11168 23272 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,722 basehttp 11168 10420 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,722 basehttp 11168 17660 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,732 basehttp 11168 25240 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,740 basehttp 11168 15304 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,768 basehttp 11168 23272 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,789 basehttp 11168 18024 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 17:43:23,865 basehttp 11168 10420 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,865 basehttp 11168 17660 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:23,864 basehttp 11168 25240 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:24,023 basehttp 11168 18024 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 17:43:24,048 basehttp 11168 25240 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 17:43:24,238 basehttp 11168 25240 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2026-01-17 17:43:24,251 basehttp 11168 17660 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2026-01-17 17:43:24,312 basehttp 11168 15304 "GET /api/dashboard/stats/ HTTP/1.1" 200 237
+INFO 2026-01-17 17:43:24,409 basehttp 11168 18024 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 688
+INFO 2026-01-17 17:43:24,550 basehttp 11168 23272 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 301
+INFO 2026-01-17 17:43:24,551 basehttp 11168 15304 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 17:43:24,551 basehttp 11168 25240 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 688
+INFO 2026-01-17 17:43:24,930 basehttp 11168 17660 "GET /api/dashboard/stats/ HTTP/1.1" 200 237
+INFO 2026-01-17 17:43:24,999 basehttp 11168 15304 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 301
+INFO 2026-01-17 17:43:25,098 basehttp 11168 10420 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 481
+INFO 2026-01-17 17:43:25,196 basehttp 11168 18024 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 481
+INFO 2026-01-17 17:43:26,409 basehttp 11168 18024 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:26,832 basehttp 11168 18024 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 17:43:27,375 basehttp 11168 18024 "OPTIONS /api/enquiries/admin/packages/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:27,393 basehttp 11168 10420 "OPTIONS /api/enquiries/admin/packages/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:27,627 basehttp 11168 18024 "GET /api/enquiries/admin/packages/ HTTP/1.1" 200 52
+INFO 2026-01-17 17:43:27,679 basehttp 11168 10420 "GET /api/enquiries/admin/packages/ HTTP/1.1" 200 52
+INFO 2026-01-17 17:43:29,521 basehttp 11168 10420 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:29,561 basehttp 11168 10420 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 17:43:29,916 basehttp 11168 18024 "OPTIONS /api/enquiries/admin/homepage/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:29,917 basehttp 11168 10420 "OPTIONS /api/enquiries/admin/homepage/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:29,963 basehttp 11168 10420 "GET /api/enquiries/admin/homepage/ HTTP/1.1" 200 52
+INFO 2026-01-17 17:43:29,963 basehttp 11168 18024 "GET /api/enquiries/admin/homepage/ HTTP/1.1" 200 52
+INFO 2026-01-17 17:43:49,170 basehttp 11168 18024 "OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:43:49,376 basehttp 11168 18024 "POST /api/auth/logout/ HTTP/1.1" 200 37
+INFO 2026-01-17 17:55:53,513 basehttp 11168 17324 "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,101 basehttp 11168 17324 "POST /api/auth/login/ HTTP/1.1" 200 1062
+INFO 2026-01-17 17:55:57,554 basehttp 11168 17324 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,592 basehttp 11168 17324 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,605 basehttp 11168 17324 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,621 basehttp 11168 3780 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,659 basehttp 11168 17324 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,660 basehttp 11168 18708 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,661 basehttp 11168 3780 "OPTIONS /api/dashboard/stats/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,661 basehttp 11168 21400 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,663 basehttp 11168 1828 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,742 basehttp 11168 17324 "OPTIONS /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,745 basehttp 11168 18708 "OPTIONS /api/dashboard/booking-revenue/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,757 basehttp 11168 3780 "OPTIONS /api/dashboard/recent-activities/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,773 basehttp 11168 8572 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 17:55:57,775 basehttp 11168 21400 "OPTIONS /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,796 basehttp 11168 1828 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:55:57,898 basehttp 11168 3780 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 17:55:57,903 basehttp 11168 8572 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 17:55:58,064 basehttp 11168 18708 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 688
+INFO 2026-01-17 17:55:58,066 basehttp 11168 8572 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2026-01-17 17:55:58,275 basehttp 11168 17324 "GET /api/dashboard/stats/ HTTP/1.1" 200 237
+INFO 2026-01-17 17:55:58,351 basehttp 11168 21400 "GET /api/dashboard/stats/ HTTP/1.1" 200 237
+INFO 2026-01-17 17:55:58,393 basehttp 11168 1828 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 301
+INFO 2026-01-17 17:55:58,491 basehttp 11168 17324 "GET /api/dashboard/recent-activities/ HTTP/1.1" 200 688
+INFO 2026-01-17 17:55:58,527 basehttp 11168 1828 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 17:55:58,593 basehttp 11168 21400 "GET /api/dashboard/enquiry-distribution/ HTTP/1.1" 200 48
+INFO 2026-01-17 17:55:58,646 basehttp 11168 18708 "GET /api/dashboard/chart-data/?period=monthly&type=income HTTP/1.1" 200 301
+INFO 2026-01-17 17:55:58,660 basehttp 11168 3780 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 481
+INFO 2026-01-17 17:55:58,851 basehttp 11168 8572 "GET /api/dashboard/booking-revenue/ HTTP/1.1" 200 481
+INFO 2026-01-17 17:56:01,650 basehttp 11168 8572 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:56:01,664 basehttp 11168 8572 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 17:56:02,164 basehttp 11168 3780 "OPTIONS /api/api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:56:02,165 basehttp 11168 8572 "OPTIONS /api/api/crm/leads/ HTTP/1.1" 200 0
+WARNING 2026-01-17 17:56:02,226 log 11168 3780 Not Found: /api/api/crm/leads/
+WARNING 2026-01-17 17:56:02,232 log 11168 8572 Not Found: /api/api/crm/leads/
+WARNING 2026-01-17 17:56:02,239 basehttp 11168 8572 "GET /api/api/crm/leads/ HTTP/1.1" 404 179
+WARNING 2026-01-17 17:56:02,241 basehttp 11168 3780 "GET /api/api/crm/leads/ HTTP/1.1" 404 179
+INFO 2026-01-17 17:57:08,263 basehttp 11168 3780 "OPTIONS /api//crm/leads/ HTTP/1.1" 200 0
+WARNING 2026-01-17 17:57:08,274 log 11168 3780 Not Found: /api//crm/leads/
+WARNING 2026-01-17 17:57:08,279 basehttp 11168 3780 "GET /api//crm/leads/ HTTP/1.1" 404 179
+INFO 2026-01-17 17:57:09,574 basehttp 11168 3780 "OPTIONS /api//crm/leads/ HTTP/1.1" 200 0
+WARNING 2026-01-17 17:57:09,589 log 11168 3780 Not Found: /api//crm/leads/
+WARNING 2026-01-17 17:57:09,594 basehttp 11168 3780 "GET /api//crm/leads/ HTTP/1.1" 404 179
+INFO 2026-01-17 17:57:52,746 basehttp 11168 3780 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:57:53,059 basehttp 11168 3780 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 17:57:53,924 basehttp 11168 3780 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:57:53,960 basehttp 11168 3780 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 17:58:27,175 basehttp 11168 3780 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:58:27,327 basehttp 11168 3780 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 17:59:13,799 basehttp 11168 3780 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 17:59:13,847 basehttp 11168 3780 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:00:21,215 basehttp 11168 3780 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:00:22,265 basehttp 11168 3780 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:00:22,346 basehttp 11168 3780 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:00:22,626 basehttp 11168 3780 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:00:50,533 basehttp 11168 3780 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:00:50,602 basehttp 11168 3780 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:00:50,641 basehttp 11168 3780 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:00:50,698 basehttp 11168 3780 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:01:02,563 basehttp 11168 3780 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:01:03,851 basehttp 11168 3780 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 18:02:13,503 basehttp 11168 3780 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:02:13,875 basehttp 11168 3780 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:02:13,913 basehttp 11168 3780 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:02:13,989 basehttp 11168 3780 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:06:27,496 basehttp 11168 10680 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:06:31,195 basehttp 11168 10680 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 18:06:37,669 basehttp 11168 10680 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:06:38,188 basehttp 11168 13056 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:06:38,229 basehttp 11168 13056 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:06:38,269 basehttp 11168 13056 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:06:38,270 basehttp 11168 10680 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 18:06:38,274 basehttp 11168 20960 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:06:38,276 basehttp 11168 14556 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:06:38,322 basehttp 11168 18368 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:06:38,442 basehttp 11168 11432 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:06:38,443 basehttp 11168 13056 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 18:06:38,526 basehttp 11168 10680 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 18:06:38,576 basehttp 11168 18368 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:06:38,605 basehttp 11168 11432 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:06:38,610 basehttp 11168 14556 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 18:06:38,638 basehttp 11168 13056 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 18:06:38,643 basehttp 11168 20960 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 18:07:29,431 basehttp 11168 21812 "GET /admin/users/user/ HTTP/1.1" 200 36642
+INFO 2026-01-17 18:07:33,184 basehttp 11168 21812 "GET /admin/crm/lead/ HTTP/1.1" 200 24689
+INFO 2026-01-17 18:07:34,615 basehttp 11168 23256 "GET /static/admin/js/vendor/jquery/jquery.min.js HTTP/1.1" 304 0
+INFO 2026-01-17 18:07:34,618 basehttp 11168 24112 "GET /static/admin/js/vendor/xregexp/xregexp.min.js HTTP/1.1" 304 0
+INFO 2026-01-17 18:07:34,758 basehttp 11168 21812 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-01-17 18:07:48,927 basehttp 11168 20960 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:07:49,160 basehttp 11168 20960 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:07:49,200 basehttp 11168 20960 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:07:49,275 basehttp 11168 20960 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:08:11,388 basehttp 11168 20960 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:08:11,422 basehttp 11168 20960 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:08:11,449 basehttp 11168 20960 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:08:11,498 basehttp 11168 20960 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:10:47,436 basehttp 11168 20960 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:10:47,901 basehttp 11168 20960 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:10:47,936 basehttp 11168 20960 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:10:47,988 basehttp 11168 20960 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:11:39,726 basehttp 11168 20960 "OPTIONS /api/auth/verify-token/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:11:40,096 basehttp 11168 20960 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 18:12:18,175 basehttp 11168 20960 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:12:18,247 basehttp 11168 20960 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:12:18,273 basehttp 11168 20960 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:12:18,319 basehttp 11168 20960 "GET /api/crm/leads/ HTTP/1.1" 200 52
+INFO 2026-01-17 18:14:48,951 basehttp 11168 20960 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:14:50,098 basehttp 11168 20960 "POST /api/crm/leads/ HTTP/1.1" 201 236
+INFO 2026-01-17 18:14:50,155 basehttp 11168 20960 "OPTIONS /api/crm/leads/ HTTP/1.1" 200 0
+INFO 2026-01-17 18:14:50,473 basehttp 11168 20960 "GET /api/crm/leads/ HTTP/1.1" 200 288
+INFO 2026-01-17 18:16:36,728 basehttp 11168 20960 "OPTIONS /api/crm/leads/1/update-status/ HTTP/1.1" 200 0
+WARNING 2026-01-17 18:16:36,899 log 11168 20960 Method Not Allowed: /api/crm/leads/1/update-status/
+WARNING 2026-01-17 18:16:36,900 basehttp 11168 20960 "GET /api/crm/leads/1/update-status/ HTTP/1.1" 405 40
+INFO 2026-01-17 18:16:40,286 basehttp 11168 20960 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 18:17:44,284 basehttp 11168 20960 "PATCH /api/crm/leads/1/update-status/ HTTP/1.1" 200 50
+INFO 2026-01-17 18:21:41,700 basehttp 11168 20960 "POST /api/auth/verify-token/ HTTP/1.1" 200 87
+INFO 2026-01-17 18:25:16,034 basehttp 11168 20960 "GET /api/crm/leads/ HTTP/1.1" 200 394
+INFO 2026-01-17 18:25:26,501 basehttp 11168 20960 "PATCH /api/crm/leads/1/update-status/ HTTP/1.1" 200 47
+INFO 2026-01-17 18:25:51,895 basehttp 11168 20960 "PATCH /api/crm/leads/1/update-status/ HTTP/1.1" 200 63
+INFO 2026-01-17 18:26:42,720 basehttp 11168 20960 "POST /api/auth/verify-token/ HTTP/1.1" 200 87

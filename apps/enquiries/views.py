@@ -4,11 +4,12 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
-from .models import APIKey, Package, HomePage, ContactUs
+from .models import APIKey, Package, HomePage, ContactUs, GalleryImage
 from .serializers import (
     APIKeySerializer, PackageSerializer, PackageUpdateSerializer,
     HomePageSerializer, HomePageUpdateSerializer, 
-    ContactUsSerializer, ContactUsListSerializer
+    ContactUsSerializer, ContactUsListSerializer,
+    GalleryImageSerializer
 )
 from .authentication import APIKeyAuthentication
 from .permissions import HasValidAPIKey
@@ -52,7 +53,10 @@ class PackageListCreateView(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication, SessionAuthentication]
     
     def get_queryset(self):
-        return Package.objects.all().order_by('-created_at')
+        return Package.objects.filter(user=self.request.user).order_by('-created_at')
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -65,7 +69,7 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'pk'
     
     def get_queryset(self):
-        return Package.objects.all()
+        return Package.objects.filter(user=self.request.user)
     
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -87,7 +91,9 @@ class PackageListAPIView(generics.ListAPIView):
     Get all active packages for external websites - Requires API Key
     """
     serializer_class = PackageSerializer
-    queryset = Package.objects.filter(is_active=True)
+    
+    def get_queryset(self):
+        return Package.objects.filter(user=self.request.user, is_active=True)
     authentication_classes = [APIKeyAuthentication]
     permission_classes = [HasValidAPIKey]
 
@@ -97,7 +103,9 @@ class PackageDetailAPIView(generics.RetrieveAPIView):
     """
     serializer_class = PackageSerializer
     lookup_field = 'package_type'
-    queryset = Package.objects.filter(is_active=True)
+    
+    def get_queryset(self):
+        return Package.objects.filter(user=self.request.user, is_active=True)
     authentication_classes = [APIKeyAuthentication]
     permission_classes = [HasValidAPIKey]
 
@@ -111,12 +119,12 @@ class HomePageListCreateView(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication, SessionAuthentication]
     
     def get_queryset(self):
-        return HomePage.objects.all().order_by('-created_at')
+        return HomePage.objects.filter(user=self.request.user).order_by('-created_at')
     
     def perform_create(self, serializer):
-        # Deactivate all existing homepage content before creating new one
-        HomePage.objects.filter(is_active=True).update(is_active=False)
-        serializer.save(is_active=True)
+        # Deactivate all existing homepage content for THIS user before creating new one
+        HomePage.objects.filter(user=self.request.user, is_active=True).update(is_active=False)
+        serializer.save(user=self.request.user, is_active=True)
 
 class HomePageDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -127,7 +135,7 @@ class HomePageDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication, SessionAuthentication]
     
     def get_queryset(self):
-        return HomePage.objects.all()
+        return HomePage.objects.filter(user=self.request.user)
     
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -145,7 +153,9 @@ class HomePageAPIView(generics.ListAPIView):
     Get homepage content for external websites - Requires API Key
     """
     serializer_class = HomePageSerializer
-    queryset = HomePage.objects.filter(is_active=True)
+    
+    def get_queryset(self):
+        return HomePage.objects.filter(user=self.request.user, is_active=True)
     authentication_classes = [APIKeyAuthentication]
     permission_classes = [HasValidAPIKey]
 
@@ -326,3 +336,42 @@ def api_health_check(request):
         'api_key_valid': True,
         'website_url': request.auth.website_url
     })
+
+# Gallery Management Views
+class GalleryImageListCreateView(generics.ListCreateAPIView):
+    """
+    List gallery images for the authenticated user or upload a new one.
+    """
+    serializer_class = GalleryImageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication, SessionAuthentication]
+
+    def get_queryset(self):
+        return GalleryImage.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class GalleryImageDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Update or delete a gallery image.
+    """
+    serializer_class = GalleryImageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication, SessionAuthentication]
+
+    def get_queryset(self):
+        return GalleryImage.objects.filter(user=self.request.user)
+
+# Gallery API for External Websites
+class GalleryImageAPIView(generics.ListAPIView):
+    """
+    Get gallery images for external websites - Requires API Key.
+    Only shows images belonging to the API key owner.
+    """
+    serializer_class = GalleryImageSerializer
+    authentication_classes = [APIKeyAuthentication]
+    permission_classes = [HasValidAPIKey]
+
+    def get_queryset(self):
+        return GalleryImage.objects.filter(user=self.request.user, is_active=True)

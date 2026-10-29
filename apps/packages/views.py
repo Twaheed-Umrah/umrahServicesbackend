@@ -4,11 +4,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
-from .models import Package
+from .models import Package, PackageDeparture, Supplier
 from .serializers import (
     PackageSerializer, 
     PackageListSerializer, 
-    PackageCreateUpdateSerializer
+    PackageCreateUpdateSerializer,
+    PackageDepartureSerializer,
+    SupplierSerializer
 )
 
 
@@ -550,3 +552,54 @@ class SuperAdminPackageDeleteView(generics.DestroyAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
+class PackageDepartureListCreateView(generics.ListCreateAPIView):
+    serializer_class = PackageDepartureSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = PackageDeparture.objects.all().select_related('package')
+        package_id = self.request.query_params.get('package_id')
+        if package_id:
+            qs = qs.filter(package_id=package_id)
+        if user.role != 'superadmin':
+            qs = qs.filter(package__created_by=user)
+        return qs
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+
+class PackageDepartureDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PackageDepartureSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = PackageDeparture.objects.all().select_related('package')
+        if user.role != 'superadmin':
+            qs = qs.filter(package__created_by=user)
+        return qs
+
+
+class SupplierListCreateView(generics.ListCreateAPIView):
+    """Module 14: Supplier & Contract Management"""
+    serializer_class = SupplierSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'superadmin':
+            return Supplier.objects.all()
+        return Supplier.objects.filter(created_by=user)
+
+
+class SupplierDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = SupplierSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'superadmin':
+            return Supplier.objects.all()
+        return Supplier.objects.filter(created_by=user)

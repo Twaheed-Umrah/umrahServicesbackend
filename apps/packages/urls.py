@@ -11,4 +11,10 @@ urlpatterns = [
     path('packages/assigned/', views.AssignedPackagesView.as_view(), name='assigned-packages'),
     path('packages/delete/<int:pk>/', views.SuperAdminPackageDeleteView.as_view(), name='superadmin-package-delete'),
 
+    # Package Departures
+    path('departures/', views.PackageDepartureListCreateView.as_view(), name='departure-list-create'),
+    path('departures/<int:pk>/', views.PackageDepartureDetailView.as_view(), name='departure-detail'),
+    # Supplier & Contract Management (Module 14)
+    path('suppliers/', views.SupplierListCreateView.as_view(), name='supplier-list-create'),
+    path('suppliers/<int:pk>/', views.SupplierDetailView.as_view(), name='supplier-detail'),
 ]

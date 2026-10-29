@@ -22,43 +22,7 @@ class APIKey(models.Model):
             self.key = str(uuid.uuid4()).replace('-', '')
         super().save(*args, **kwargs)
 
-class Package(models.Model):
-    PACKAGE_TYPES = [
-        ('umrah_classic', 'Classic Umrah Package'),
-        ('umrah_delux', 'Delux Umrah Package'),
-        ('umrah_luxury', 'Luxury Umrah Package'),
-        ('hajj_classic', 'Classic Hajj Package'),
-        ('hajj_delux', 'Delux Hajj Package'),
-        ('hajj_luxury', 'Luxury Hajj Package'),
-        ('ramadan_early', 'Early Ramadan Package'),
-        ('ramadan_laylat', 'Laylat al-Qadr Package'),
-        ('ramadan_full', 'Full Month Ramadan Package'),
-    ]
-    
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='enquiry_packages', null=True, blank=True)
-    package_type = models.CharField(max_length=20, choices=PACKAGE_TYPES)
-    title = models.CharField(max_length=200)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    currency = models.CharField(max_length=10, default='INR', blank=True, null=True)
-    image = models.ImageField(upload_to='package_images/', blank=True, null=True)
-    features = models.TextField(help_text="Enter features separated by new lines", blank=True)
-    duration_days = models.IntegerField(default=7)
-    is_active = models.BooleanField(default=True)
-    is_featured = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ['package_type']
-        unique_together = ['user', 'package_type']
-
-    def __str__(self):
-        return self.title
-
-    def get_features_list(self):
-        """Return features as a list"""
-        return [feature.strip() for feature in self.features.split('\n') if feature.strip()]
+from apps.packages.models import Package
 
 class HomePage(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='home_pages', null=True, blank=True)

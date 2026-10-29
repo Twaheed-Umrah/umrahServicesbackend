@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quick Quotation - {{ quotation.quotation_number }}</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 8mm 10mm 8mm 10mm;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 9px;
+            line-height: 1.35;
+            color: #1e293b;
+            background: #ffffff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .container {
+            width: 100%;
+            max-width: 780px;
+            margin: 0 auto;
+        }
+        /* Vibrant Top Banner */
+        .top-banner {
+            background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 14px;
+            display: table;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .banner-left {
+            display: table-cell;
+            width: 65%;
+            vertical-align: middle;
+        }
+        .banner-right {
+            display: table-cell;
+            width: 35%;
+            vertical-align: middle;
+            text-align: right;
+        }
+        .brand-name {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .brand-subtitle {
+            font-size: 8px;
+            color: #a7f3d0;
+            margin-top: 1px;
+        }
+        .quote-ref-badge {
+            background: #fef3c7;
+            color: #92400e;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            display: inline-block;
+        }
+        .quote-validity {
+            font-size: 7.5px;
+            color: #d1fae5;
+            margin-top: 2px;
+        }
+
+        /* Pilgrim Bar */
+        .pilgrim-bar {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+            display: table;
+            width: 100%;
+        }
+        .pilgrim-col {
+            display: table-cell;
+            width: 33.333%;
+            vertical-align: middle;
+            font-size: 8.5px;
+        }
+
+        /* 4-Pill Highlights */
+        .pills-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .pill-cell {
+            display: table-cell;
+            width: 25%;
+            padding: 0 3px;
+        }
+        .pill-cell:first-child { padding-left: 0; }
+        .pill-cell:last-child { padding-right: 0; }
+        .pill-box {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 5px;
+            padding: 5px 6px;
+            text-align: center;
+        }
+        .pill-label {
+            font-size: 7px;
+            font-weight: 700;
+            color: #166534;
+            text-transform: uppercase;
+        }
+        .pill-val {
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #064e3b;
+            margin-top: 1px;
+        }
+
+        /* Side-by-side Hotel Cards */
+        .hotels-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .hotel-half {
+            display: table-cell;
+            width: 50%;
+            padding: 0 4px;
+            vertical-align: top;
+        }
+        .hotel-half:first-child { padding-left: 0; }
+        .hotel-half:last-child { padding-right: 0; }
+        .hotel-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            padding: 6px 8px;
+            background: #fafafa;
+        }
+        .hotel-tag {
+            font-size: 7.5px;
+            font-weight: 700;
+            color: #059669;
+            text-transform: uppercase;
+        }
+        .hotel-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 1px 0;
+        }
+        .hotel-sub {
+            font-size: 8px;
+            color: #475569;
+        }
+
+        /* Flight & Transport Strip */
+        .strip-card {
+            background: #f1f5f9;
+            border-radius: 5px;
+            padding: 6px 8px;
+            margin-bottom: 8px;
+            font-size: 8px;
+            line-height: 1.35;
+        }
+
+        /* Inclusions / Exclusions Mini */
+        .scope-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .scope-cell {
+            display: table-cell;
+            width: 50%;
+            padding: 0 4px;
+            vertical-align: top;
+        }
+        .scope-cell:first-child { padding-left: 0; }
+        .scope-cell:last-child { padding-right: 0; }
+        .scope-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            padding: 5px 8px;
+            background: #ffffff;
+            font-size: 7.5px;
+            line-height: 1.35;
+        }
+
+        /* High Impact Price Callout */
+        .price-cta-box {
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 8px 12px;
+            display: table;
+            width: 100%;
+            margin-bottom: 6px;
+        }
+        .cta-left {
+            display: table-cell;
+            width: 60%;
+            vertical-align: middle;
+        }
+        .cta-right {
+            display: table-cell;
+            width: 40%;
+            vertical-align: middle;
+            text-align: right;
+        }
+        .price-big {
+            font-size: 22px;
+            font-weight: 800;
+            color: #4ade80;
+        }
+        .cta-whatsapp-pill {
+            background: #25d366;
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        /* Footer Compact */
+        .footer-note {
+            font-size: 7px;
+            color: #94a3b8;
+            text-align: center;
+            line-height: 1.25;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Top Banner -->
+    <div class="top-banner">
+        <div class="banner-left">
+            <div class="brand-name">{{ company.name|default:"Masar Umrah Global Services" }}</div>
+            <div class="brand-subtitle">Specialized Hajj & Umrah Tour Organizer &bull; Verified Saudi Partner</div>
+        </div>
+        <div class="banner-right">
+            <div class="quote-ref-badge">{{ quotation.quotation_number }}</div>
+            <div class="quote-validity">Valid: {{ quotation.quotation_date|date:"d M" }} &ndash; {{ quotation.valid_until|date:"d M Y" }}</div>
+        </div>
+    </div>
+
+    <!-- Pilgrim Profile -->
+    <div class="pilgrim-bar">
+        <div class="pilgrim-col">Pilgrim: <strong>{{ quotation.contact_name }}</strong></div>
+        <div class="pilgrim-col">WhatsApp: <strong>{{ quotation.mobile_no }}</strong></div>
+        <div class="pilgrim-col" style="text-align: right;">Group: <strong>{{ quotation.total_travelers }} Pax</strong> ({{ quotation.room_sharing|upper }})</div>
+    </div>
+
+    <!-- 4 High Level Stat Pills -->
+    <div class="pills-grid">
+        <div class="pill-cell">
+            <div class="pill-box">
+                <div class="pill-label">Journey Type</div>
+                <div class="pill-val">{{ quotation.get_journey_type_display|upper }}</div>
+            </div>
+        </div>
+        <div class="pill-cell">
+            <div class="pill-box">
+                <div class="pill-label">Duration</div>
+                <div class="pill-val">{{ quotation.duration_days }} Days</div>
+            </div>
+        </div>
+        <div class="pill-cell">
+            <div class="pill-box">
+                <div class="pill-label">Departure</div>
+                <div class="pill-val">{{ quotation.departure_city }}</div>
+            </div>
+        </div>
+        <div class="pill-cell">
+            <div class="pill-box">
+                <div class="pill-label">Standard</div>
+                <div class="pill-val">{{ quotation.get_package_category_display }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dual Hotels -->
+    <div class="hotels-grid">
+        {% for hotel in quotation.hotels.all %}
+        <div class="hotel-half">
+            <div class="hotel-box">
+                <div class="hotel-tag">{{ hotel.get_city_display }} ({{ hotel.hotel_rating }})</div>
+                <div class="hotel-title">{{ hotel.hotel_name }}</div>
+                <div class="hotel-sub">{{ hotel.nights }} Nights &bull; {{ hotel.distance_to_haram }} &bull; {{ hotel.meal_plan }}</div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="hotel-half">
+            <div class="hotel-box">
+                <div class="hotel-tag">Makkah Mukarramah (5 Star)</div>
+                <div class="hotel-title">Swissôtel / Pullman Zamzam Clock Tower</div>
+                <div class="hotel-sub">8 Nights &bull; Courtyard Haram View &bull; Buffet Breakfast</div>
+            </div>
+        </div>
+        <div class="hotel-half">
+            <div class="hotel-box">
+                <div class="hotel-tag">Madinah Munawwarah (5 Star)</div>
+                <div class="hotel-title">Dar Al Taqwa / Anwar Al Madinah Mövenpick</div>
+                <div class="hotel-sub">7 Nights &bull; 150m from Prophet's Mosque &bull; Buffet Breakfast</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Flight & Transport Strip -->
+    <div class="strip-card">
+        <strong>Aviation:</strong> {{ quotation.airline }} &bull; {{ quotation.flight_routing }} ({{ quotation.baggage_allowance }})<br/>
+        <strong>Transport & Ziyarat:</strong> {{ quotation.transport_type }} ({{ quotation.transport_route }}) &bull; Holy Ziyarat included.
+    </div>
+
+    <!-- Inclusions / Exclusions -->
+    <div class="scope-grid">
+        <div class="scope-cell">
+            <div class="scope-box">
+                <strong style="color: #059669;">Package Inclusions:</strong><br/>
+                {{ quotation.inclusions|linebreaksbr }}
+            </div>
+        </div>
+        <div class="scope-cell">
+            <div class="scope-box">
+                <strong style="color: #ef4444;">Exclusions & Conditions:</strong><br/>
+                {{ quotation.exclusions|linebreaksbr }}
+            </div>
+        </div>
+    </div>
+
+    <!-- High Impact Price & WhatsApp CTA -->
+    <div class="price-cta-box">
+        <div class="cta-left">
+            <div style="font-size: 8px; color: #94a3b8; text-transform: uppercase;">All-Inclusive Special Package Price</div>
+            <div class="price-big">{{ quotation.currency }} {{ quotation.total_customer_price|floatformat:2 }}</div>
+            <div style="font-size: 8px; color: #cbd5e1;">Token to book: {{ quotation.currency }} {{ quotation.deposit_amount|floatformat:2 }} | Balance prior to departure</div>
+        </div>
+        <div class="cta-right">
+            <div style="font-size: 8px; color: #cbd5e1;">Ready to Confirm?</div>
+            <div class="cta-whatsapp-pill">💬 Contact on WhatsApp</div>
+            <div style="font-size: 7.5px; color: #94a3b8; margin-top: 2px;">{{ company.phone|default:"+91 98765 43210" }}</div>
+        </div>
+    </div>
+
+    <!-- Compact Disclaimer -->
+    <div class="footer-note">
+        * Passports must have min 6 months validity. Rates subject to hotel room and flight seat availability until token received.
+        Issued by {{ quotation.prepared_by_name|default:"Masar Umrah Advisor" }} &bull; Masar Umrah CRM
+    </div>
+</div>
+</body>
+</html>

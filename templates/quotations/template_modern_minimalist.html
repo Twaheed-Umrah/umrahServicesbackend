@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Proposal - {{ quotation.quotation_number }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 12mm 15mm 15mm 15mm;
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-size: 8px;
+                color: #94a3b8;
+                font-family: 'Helvetica Neue', Arial, sans-serif;
+            }
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 9.5px;
+            line-height: 1.45;
+            color: #0f172a;
+            background: #ffffff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .container {
+            width: 100%;
+            max-width: 780px;
+            margin: 0 auto;
+        }
+        .header {
+            display: table;
+            width: 100%;
+            padding-bottom: 14px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .header-brand {
+            display: table-cell;
+            width: 58%;
+            vertical-align: top;
+        }
+        .header-meta {
+            display: table-cell;
+            width: 42%;
+            vertical-align: top;
+            text-align: right;
+        }
+        .brand-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+        .brand-sub {
+            font-size: 8.5px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+        .meta-tag {
+            display: inline-block;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+        .meta-line {
+            font-size: 8.5px;
+            color: #475569;
+        }
+
+        /* 3-Column Highlights Grid */
+        .summary-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+        .summary-col {
+            display: table-cell;
+            width: 33.333%;
+            padding: 0 4px;
+            vertical-align: top;
+        }
+        .summary-col:first-child { padding-left: 0; }
+        .summary-col:last-child { padding-right: 0; }
+        .summary-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 10px;
+        }
+        .summary-title {
+            font-size: 8px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+        .summary-value {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .summary-desc {
+            font-size: 8px;
+            color: #475569;
+            margin-top: 2px;
+        }
+
+        /* Section Headings */
+        .block-header {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 12px 0 6px 0;
+            display: flex;
+            align-items: center;
+        }
+        .block-header span {
+            color: #4f46e5;
+            margin-right: 4px;
+        }
+
+        /* Hotel Cards */
+        .hotel-cards {
+            display: table;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .hotel-card-cell {
+            display: table-cell;
+            width: 50%;
+            padding: 0 4px;
+            vertical-align: top;
+        }
+        .hotel-card-cell:first-child { padding-left: 0; }
+        .hotel-card-cell:last-child { padding-right: 0; }
+        .hotel-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 10px;
+            background: #ffffff;
+            border-top: 3px solid #4f46e5;
+        }
+        .hotel-city {
+            font-size: 8px;
+            font-weight: 700;
+            color: #4f46e5;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .hotel-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 2px 0;
+        }
+        .hotel-meta-row {
+            font-size: 8.5px;
+            color: #475569;
+            margin-top: 2px;
+        }
+
+        /* Logistics Table */
+        .logistics-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+        }
+        .logistics-row {
+            display: table;
+            width: 100%;
+            padding: 3px 0;
+            font-size: 8.5px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .logistics-row:last-child { border-bottom: none; }
+        .logistics-label {
+            display: table-cell;
+            width: 25%;
+            font-weight: 600;
+            color: #64748b;
+        }
+        .logistics-value {
+            display: table-cell;
+            width: 75%;
+            color: #0f172a;
+        }
+
+        /* Inclusions */
+        .dual-columns {
+            display: table;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .dual-col {
+            display: table-cell;
+            width: 50%;
+            padding: 0 4px;
+            vertical-align: top;
+        }
+        .dual-col:first-child { padding-left: 0; }
+        .dual-col:last-child { padding-right: 0; }
+        .dual-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 8px;
+            line-height: 1.4;
+        }
+
+        /* Pricing Card */
+        .price-banner {
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 12px 14px;
+            display: table;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .price-banner-left {
+            display: table-cell;
+            width: 60%;
+            vertical-align: middle;
+        }
+        .price-banner-right {
+            display: table-cell;
+            width: 40%;
+            vertical-align: middle;
+            text-align: right;
+        }
+        .price-hero-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+        }
+        .price-hero-amt {
+            font-size: 24px;
+            font-weight: 800;
+            color: #38bdf8;
+            letter-spacing: -0.5px;
+        }
+        .price-pill-stat {
+            font-size: 8.5px;
+            color: #cbd5e1;
+            margin-top: 2px;
+        }
+
+        /* Footer Notes */
+        .fine-print {
+            font-size: 7.5px;
+            color: #94a3b8;
+            line-height: 1.35;
+            margin-top: 8px;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 6px;
+        }
+        .footer-action {
+            display: table;
+            width: 100%;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .footer-cell {
+            display: table-cell;
+            width: 50%;
+            font-size: 8.5px;
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-brand">
+            <div class="brand-title">{{ company.name|default:"Masar Umrah Global Services" }}</div>
+            <div class="brand-sub">{{ company.address|default:"Premium Pilgrim & B2B Travel Operations" }}</div>
+            <div class="brand-sub">Direct: {{ company.phone|default:"+91 98765 43210" }} &bull; {{ company.email|default:"contact@hajumrahservice.com" }}</div>
+        </div>
+        <div class="header-meta">
+            <div class="meta-tag">{{ quotation.quotation_number }}</div>
+            <div class="meta-line">Issue Date: <strong>{{ quotation.quotation_date|date:"d M Y" }}</strong></div>
+            <div class="meta-line">Validity: <strong>{{ quotation.valid_until|date:"d M Y" }}</strong></div>
+            <div class="meta-line">Status: <strong>{{ quotation.get_status_display|upper }}</strong></div>
+        </div>
+    </div>
+
+    <!-- 3-Column Quick Highlights -->
+    <div class="summary-grid">
+        <div class="summary-col">
+            <div class="summary-card">
+                <div class="summary-title">Lead Pilgrim / Guest</div>
+                <div class="summary-value">{{ quotation.contact_name }}</div>
+                <div class="summary-desc">{{ quotation.mobile_no }} &bull; {{ quotation.city|default:"Mumbai" }}</div>
+            </div>
+        </div>
+        <div class="summary-col">
+            <div class="summary-card">
+                <div class="summary-title">Journey & Duration</div>
+                <div class="summary-value">{{ quotation.get_journey_type_display|upper }} ({{ quotation.duration_days }}D)</div>
+                <div class="summary-desc">{{ quotation.departure_city }} &bull; {{ quotation.departure_date|date:"d M Y"|default:"TBD" }}</div>
+            </div>
+        </div>
+        <div class="summary-col">
+            <div class="summary-card">
+                <div class="summary-title">Group & Category</div>
+                <div class="summary-value">{{ quotation.adults_count }} Ad / {{ quotation.children_count }} Ch / {{ quotation.infants_count }} Inf</div>
+                <div class="summary-desc">{{ quotation.get_package_category_display }} &bull; {{ quotation.room_sharing|upper }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accommodation Itinerary Cards -->
+    <div class="block-header"><span>■</span> Curated Luxury Accommodations</div>
+    <div class="hotel-cards">
+        {% for hotel in quotation.hotels.all %}
+        <div class="hotel-card-cell">
+            <div class="hotel-card">
+                <div class="hotel-city">{{ hotel.get_city_display }}</div>
+                <div class="hotel-name">{{ hotel.hotel_name }}</div>
+                <div class="hotel-meta-row">★ Rating: <strong>{{ hotel.hotel_rating }}</strong> &bull; Distance: {{ hotel.distance_to_haram }}</div>
+                <div class="hotel-meta-row">Dates: {{ hotel.check_in|date:"d M"|default:"-" }} to {{ hotel.check_out|date:"d M"|default:"-" }} (<strong>{{ hotel.nights }} Nights</strong>)</div>
+                <div class="hotel-meta-row">Rooms: {{ hotel.room_count }} x {{ hotel.room_type }} &bull; Meals: {{ hotel.meal_plan }}</div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="hotel-card-cell">
+            <div class="hotel-card">
+                <div class="hotel-city">Makkah Mukarramah</div>
+                <div class="hotel-name">Swissôtel / Pullman Zamzam Clock Tower</div>
+                <div class="hotel-meta-row">★ Rating: <strong>5 Star Luxury</strong> &bull; Direct Haram Access</div>
+                <div class="hotel-meta-row">Nights: <strong>8 Nights</strong> &bull; Quad Sharing</div>
+                <div class="hotel-meta-row">Meal: Buffet Breakfast Included</div>
+            </div>
+        </div>
+        <div class="hotel-card-cell">
+            <div class="hotel-card">
+                <div class="hotel-city">Madinah Munawwarah</div>
+                <div class="hotel-name">Dar Al Taqwa / Anwar Al Madinah Mövenpick</div>
+                <div class="hotel-meta-row">★ Rating: <strong>5 Star Luxury</strong> &bull; 150m from Prophet's Mosque</div>
+                <div class="hotel-meta-row">Nights: <strong>7 Nights</strong> &bull; Quad Sharing</div>
+                <div class="hotel-meta-row">Meal: Buffet Breakfast Included</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Logistics & Aviation -->
+    <div class="block-header"><span>■</span> Aviation & Ground Transfers</div>
+    <div class="logistics-card">
+        <div class="logistics-row">
+            <div class="logistics-label">Airline & Flights</div>
+            <div class="logistics-value"><strong>{{ quotation.airline }}</strong> &mdash; {{ quotation.flight_routing }}</div>
+        </div>
+        <div class="logistics-row">
+            <div class="logistics-label">Baggage</div>
+            <div class="logistics-value">{{ quotation.baggage_allowance }}</div>
+        </div>
+        <div class="logistics-row">
+            <div class="logistics-label">Ground Transport</div>
+            <div class="logistics-value">{{ quotation.transport_type }} &mdash; {{ quotation.transport_route }}</div>
+        </div>
+        <div class="logistics-row">
+            <div class="logistics-label">Holy Ziyarat</div>
+            <div class="logistics-value">{{ quotation.ziyarat_details }}</div>
+        </div>
+    </div>
+
+    <!-- Inclusions / Exclusions -->
+    <div class="block-header"><span>■</span> Scope of Services</div>
+    <div class="dual-columns">
+        <div class="dual-col">
+            <div class="dual-box">
+                <strong style="color: #4f46e5;">Included with Package:</strong><br/>
+                {{ quotation.inclusions|linebreaksbr }}
+            </div>
+        </div>
+        <div class="dual-col">
+            <div class="dual-box">
+                <strong style="color: #64748b;">Not Included / Excluded:</strong><br/>
+                {{ quotation.exclusions|linebreaksbr }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Dark Price Banner -->
+    <div class="price-banner">
+        <div class="price-banner-left">
+            <div class="price-hero-label">Total Package Quotation</div>
+            <div class="price-pill-stat">Base: {{ quotation.currency }} {{ quotation.selling_price|floatformat:2 }} {% if quotation.discount_amount > 0 %}| Discount: -{{ quotation.currency }} {{ quotation.discount_amount|floatformat:2 }}{% endif %} {% if quotation.tax_amount > 0 %}| Tax: +{{ quotation.currency }} {{ quotation.tax_amount|floatformat:2 }}{% endif %}</div>
+            <div class="price-pill-stat" style="color: #38bdf8; margin-top: 4px;">
+                Token Deposit: <strong>{{ quotation.currency }} {{ quotation.deposit_amount|floatformat:2 }}</strong> {% if quotation.deposit_due_date %}by {{ quotation.deposit_due_date|date:"d M Y" }}{% endif %}
+            </div>
+        </div>
+        <div class="price-banner-right">
+            <div class="price-hero-label">Net Payable Investment</div>
+            <div class="price-hero-amt">{{ quotation.currency }} {{ quotation.total_customer_price|floatformat:2 }}</div>
+            <small style="color: #94a3b8; font-size: 7.5px;">All inclusive for {{ quotation.total_travelers }} pilgrim(s)</small>
+        </div>
+    </div>
+
+    <!-- Fine Print -->
+    <div class="fine-print">
+        <strong>Terms & Saudi Regulatory Framework:</strong> {{ quotation.terms_and_conditions }}
+    </div>
+
+    <div class="footer-action">
+        <div class="footer-cell">
+            <strong>Issued by:</strong> {{ quotation.prepared_by_name|default:"Masar Umrah Consultant" }} ({{ quotation.branch }})
+        </div>
+        <div class="footer-cell" style="text-align: right;">
+            <strong>Approved & Accepted by Pilgrim:</strong> ____________________________
+        </div>
+    </div>
+</div>
+</body>
+</html>

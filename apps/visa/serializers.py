@@ -168,6 +168,7 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = [
+            'booking',
             'payment_amount', 
             'payment_mode', 
             'no_of_travelers',
@@ -194,6 +195,7 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
 
 class PaymentListSerializer(serializers.ModelSerializer):
     """Serializer for listing payments (SuperAdmin view)"""
+    booking_number = serializers.CharField(source='booking.booking_number', read_only=True)
     paid_by_name = serializers.CharField(source='paid_by.get_full_name', read_only=True)
     paid_by_email = serializers.CharField(source='paid_by.email', read_only=True)
     processed_by_name = serializers.CharField(source='processed_by.get_full_name', read_only=True)
@@ -204,6 +206,8 @@ class PaymentListSerializer(serializers.ModelSerializer):
         model = Payment
         fields = [
             'id', 
+            'booking',
+            'booking_number',
             'payment_amount', 
             'payment_mode', 
             'payment_mode_display',
@@ -222,6 +226,7 @@ class PaymentListSerializer(serializers.ModelSerializer):
 
 class PaymentDetailSerializer(serializers.ModelSerializer):
     """Serializer for detailed payment view (SuperAdmin)"""
+    booking_number = serializers.CharField(source='booking.booking_number', read_only=True)
     paid_by_name = serializers.CharField(source='paid_by.get_full_name', read_only=True)
     paid_by_email = serializers.CharField(source='paid_by.email', read_only=True)
     paid_by_phone = serializers.CharField(source='paid_by.phone_number', read_only=True)
@@ -233,6 +238,8 @@ class PaymentDetailSerializer(serializers.ModelSerializer):
         model = Payment
         fields = [
             'id', 
+            'booking',
+            'booking_number',
             'payment_amount', 
             'payment_mode', 
             'payment_mode_display',
@@ -297,6 +304,8 @@ class UserPaymentHistorySerializer(serializers.ModelSerializer):
         model = Payment
         fields = [
             'id', 
+            'booking',
+            'booking_number',
             'payment_amount', 
             'payment_mode',
             'payment_mode_display',

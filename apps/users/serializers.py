@@ -86,6 +86,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'username', 'email', 'first_name', 'last_name', 'role',
             'phone', 'address', 'profile_image', 'is_active',
             'bio', 'website', 'company_name', 'agreement_letter', 'company_logo',
+            'is_present', 'caller_status', 'daily_lead_quota',
             'password'
         ]
         extra_kwargs = {
@@ -276,27 +277,27 @@ class VerifyOTPSerializer(serializers.Serializer):
         return value
 
 
-class CertificateSerializer(serializers.ModelSerializer):
-    """Serializer for certificate data"""
+# CertificateSerializer removed
+
+class CallerAttendanceSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
-    company_name = serializers.SerializerMethodField()
-    company_logo = serializers.SerializerMethodField()
+    assigned_leads_count = serializers.SerializerMethodField()
     
     class Meta:
         model = User
         fields = [
-            'id', 'username', 'email', 'first_name', 'last_name', 
-            'role', 'date_joined', 'full_name', 'company_name', 'company_logo','role','address'
+            'id', 'username', 'first_name', 'last_name', 'full_name',
+            'email', 'phone', 'role', 'is_present', 'caller_status',
+            'daily_lead_quota', 'assigned_leads_count'
         ]
-    
+        
     def get_full_name(self, obj):
-        """Get user's full name"""
-        return f"{obj.first_name} {obj.last_name}".strip() or obj.username
-    
-    def get_company_name(self, obj):
-        return (obj.company_name or '').strip() or 'Your Travel Company'
+        return f'{obj.first_name} {obj.last_name}'.strip() or obj.username
+        
+    def get_assigned_leads_count(self, obj):
+        return obj.assigned_leads.count() if hasattr(obj, 'assigned_leads') else 0
 
-    def get_company_logo(self, obj):
-       if obj.company_logo and hasattr(obj.company_logo, 'url'):
-          return obj.company_logo.url
-       return None
+class CallerAttendanceUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['is_present', 'caller_status']

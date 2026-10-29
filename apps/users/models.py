@@ -9,8 +9,10 @@ class User(AbstractUser, TimestampMixin):
         ('superadmin', 'SuperAdmin'),
         ('agencyadmin', 'AgencyAdmin'),
         ('franchisesadmin', 'FranchisesAdmin'),
-        ('freelancer', 'Freelancer'),
+        ('operations', 'Operations Coordinator'),
         ('accountant', 'Accountant'),
+        ('caller', 'Telecaller'),
+        ('sales_agent', 'Sales Agent'),
     ]
     
     # Basic user fields
@@ -21,6 +23,26 @@ class User(AbstractUser, TimestampMixin):
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
     created_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    
+    # Telecaller & Attendance fields
+    is_present = models.BooleanField(
+        default=True, 
+        help_text="Attendance status: If False, Round-Robin lead assignment strictly skips this caller."
+    )
+    caller_status = models.CharField(
+        max_length=20,
+        choices=[
+            ('available', 'Available'),
+            ('on_call', 'On Call'),
+            ('break', 'On Break'),
+            ('absent', 'Absent / Off Duty'),
+        ],
+        default='available'
+    )
+    daily_lead_quota = models.PositiveIntegerField(
+        default=50, 
+        help_text="Maximum leads that can be assigned per day"
+    )
     
     # Profile fields (merged from UserProfile)
     bio = models.TextField(blank=True, null=True)
@@ -40,18 +62,17 @@ class OTPVerification(TimestampMixin):
     VERIFICATION_TYPE_CHOICES = [
         ('email', 'Email Verification'),
         ('phone', 'Phone Verification'),
-        ('password_reset', 'Password Reset'),  # Add this line
+        ('password_reset', 'Password Reset'),
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otp_verifications')
-    verification_type = models.CharField(max_length=20, choices=VERIFICATION_TYPE_CHOICES)  # Increase max_length
+    verification_type = models.CharField(max_length=20, choices=VERIFICATION_TYPE_CHOICES)
     otp = models.CharField(max_length=6)
     new_value = models.CharField(max_length=255, help_text="New email or phone number to be verified")
     expires_at = models.DateTimeField()
     is_verified = models.BooleanField(default=False)
     
     class Meta:
-        # Remove unique_together to allow multiple OTP records for different purposes
         ordering = ['-created_at']
     
     def __str__(self):

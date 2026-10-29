@@ -98,6 +98,8 @@ class Payment(TimestampMixin):
         ('other', 'Other'),
     ]
     
+    # Linked Booking for installment collections (Module 15)
+    booking = models.ForeignKey('bookings.Booking', on_delete=models.SET_NULL, null=True, blank=True, related_name='installment_payments')
     payment_amount = models.DecimalField(max_digits=12, decimal_places=2)
     payment_mode = models.CharField(max_length=20, choices=PAYMENT_MODE_CHOICES)
     no_of_travelers = models.PositiveIntegerField()

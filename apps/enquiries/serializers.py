@@ -127,21 +127,29 @@ class APIKeySerializer(serializers.ModelSerializer):
 
 class PackageSerializer(serializers.ModelSerializer):
     features_list = serializers.ReadOnlyField(source='get_features_list')
-    image=CustomBase64ImageField(required=False)
-    username = serializers.CharField(source='user.username', read_only=True)
+    image = CustomBase64ImageField(required=False)
+    username = serializers.CharField(source='created_by.username', read_only=True)
+    title = serializers.CharField(source='name', required=False)
+
     class Meta:
         model = Package
         fields = [
-            'id', 'package_type', 'title', 'description', 'price', 'currency',
+            'id', 'name', 'package_type', 'title', 'description', 'price', 'currency',
             'image', 'features', 'features_list', 'duration_days', 'is_active',
             'is_featured', 'created_at', 'updated_at', 'username'
         ]
 
+    def create(self, validated_data):
+        if 'name' not in validated_data and 'title' in self.initial_data:
+            validated_data['name'] = self.initial_data['title']
+        return super().create(validated_data)
+
 class PackageUpdateSerializer(serializers.ModelSerializer):
-    
+    title = serializers.CharField(source='name', required=False)
+
     class Meta:
         model = Package
-        fields = ['title', 'description', 'image','price', 'currency', 'features', 'duration_days', 'is_featured']
+        fields = ['name', 'title', 'description', 'image', 'price', 'currency', 'features', 'duration_days', 'is_featured']
 
 class HomePageSerializer(serializers.ModelSerializer):
     background_image = CustomBase64ImageField(required=False)

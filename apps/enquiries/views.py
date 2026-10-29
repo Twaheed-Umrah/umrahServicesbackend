@@ -33,7 +33,7 @@ class APIKeyListCreateView(generics.ListCreateAPIView):
         return APIKey.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(created_by=self.request.user)
 
 class APIKeyDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = APIKeySerializer
@@ -53,10 +53,10 @@ class PackageListCreateView(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication, SessionAuthentication]
     
     def get_queryset(self):
-        return Package.objects.filter(user=self.request.user).order_by('-created_at')
+        return Package.objects.filter(created_by=self.request.user).order_by('-created_at')
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(created_by=self.request.user)
 
 
 class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -69,7 +69,7 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'pk'
     
     def get_queryset(self):
-        return Package.objects.filter(user=self.request.user)
+        return Package.objects.filter(created_by=self.request.user)
     
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -93,7 +93,7 @@ class PackageListAPIView(generics.ListAPIView):
     serializer_class = PackageSerializer
     
     def get_queryset(self):
-        return Package.objects.filter(user=self.request.user, is_active=True)
+        return Package.objects.filter(created_by=self.request.user, is_active=True)
     authentication_classes = [APIKeyAuthentication]
     permission_classes = [HasValidAPIKey]
 
@@ -105,7 +105,7 @@ class PackageDetailAPIView(generics.RetrieveAPIView):
     lookup_field = 'package_type'
     
     def get_queryset(self):
-        return Package.objects.filter(user=self.request.user, is_active=True)
+        return Package.objects.filter(created_by=self.request.user, is_active=True)
     authentication_classes = [APIKeyAuthentication]
     permission_classes = [HasValidAPIKey]
 
@@ -350,7 +350,7 @@ class GalleryImageListCreateView(generics.ListCreateAPIView):
         return GalleryImage.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(created_by=self.request.user)
 
 class GalleryImageDetailView(generics.RetrieveUpdateDestroyAPIView):
     """

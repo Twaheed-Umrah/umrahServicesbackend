@@ -6,7 +6,7 @@ class IsSuperAdmin(BasePermission):
 
 class IsAgencyAdmin(BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role in ['superadmin', 'agencyadmin']
+        return request.user.is_authenticated and request.user.role in ['superadmin', 'agencyadmin', 'franchisesadmin']
 
 class IsFranchiseAdmin(BasePermission):
     def has_permission(self, request, view):
@@ -34,5 +34,5 @@ class IsFranchiseOrAgencyAdmin(BasePermission):
     def has_permission(self, request, view):
         return (
             request.user.is_authenticated and 
-            request.user.role in ['superadmin', 'agencyadmin', 'franchisesadmin', 'accountant']
+            request.user.role in ['superadmin', 'agencyadmin', 'franchisesadmin', 'accountant', 'caller', 'sales_agent', 'booking_executive']
         )

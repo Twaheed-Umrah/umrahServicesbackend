@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import (
     BookingListCreateView,
     BookingDetailView,
@@ -13,6 +13,19 @@ from .views import (
     AllQuickBookingDetailView,
     UserBookingDetailView,
     UserQuickBookingDetailView,
+    PassengerManifestView,
+    HotelVoucherPDFView,
+    TransportVoucherPDFView,
+    SupportTicketListCreateView,
+    SupportTicketDetailView,
+    # Module 6: Quotations
+    QuotationListCreateView,
+    QuotationDetailView,
+    QuotationCloneView,
+    QuotationConvertToBookingView,
+    QuotationApproveDiscountView,
+    QuotationPDFView,
+    QuotationStatsView
 )
 
 urlpatterns = [
@@ -32,4 +45,20 @@ urlpatterns = [
     path('my-quick-bookings/', AllQuickBookingDetailView.as_view(), name='user-all-quick-bookings'),
     path('my-bookings/<int:id>/', UserBookingDetailView.as_view(), name='user-booking-detail'),
     path('my-quick-bookings/<int:id>/', UserQuickBookingDetailView.as_view(), name='user-quick-booking-detail'),
+    # Vouchers and Manifests (Modules 4, 12, 13, 17, 21)
+    path('bookings/<int:pk>/manifest/', PassengerManifestView.as_view(), name='passenger-manifest'),
+    path('bookings/<int:pk>/hotel-voucher/', HotelVoucherPDFView.as_view(), name='hotel-voucher'),
+    path('bookings/<int:pk>/transport-voucher/', TransportVoucherPDFView.as_view(), name='transport-voucher'),
+    # Support Tickets & Complaints (Module 20)
+    path('support-tickets/', SupportTicketListCreateView.as_view(), name='support-ticket-list-create'),
+    path('support-tickets/<int:pk>/', SupportTicketDetailView.as_view(), name='support-ticket-detail'),
+
+    # Module 6: Quotation & Costing URLs
+    path('quotations/', QuotationListCreateView.as_view(), name='quotation-list-create'),
+    path('quotations/stats/', QuotationStatsView.as_view(), name='quotation-stats'),
+    path('quotations/<int:pk>/', QuotationDetailView.as_view(), name='quotation-detail'),
+    path('quotations/<int:pk>/clone/', QuotationCloneView.as_view(), name='quotation-clone'),
+    path('quotations/<int:pk>/convert/', QuotationConvertToBookingView.as_view(), name='quotation-convert'),
+    path('quotations/<int:pk>/approve-discount/', QuotationApproveDiscountView.as_view(), name='quotation-approve-discount'),
+    path('quotations/<int:pk>/pdf/', QuotationPDFView.as_view(), name='quotation-pdf'),
 ]

@@ -32,3 +32,4 @@ staticfiles/
 *.sqlite3
 *.db
 logs/
+gtk_runtime/

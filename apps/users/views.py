@@ -25,7 +25,7 @@ import string
 from .models import OTPVerification
 from .serializers import (
     LoginSerializer, UserSerializer,
-    ChangePasswordSerializer, SendOTPSerializer, VerifyOTPSerializer,CertificateSerializer,ResetPasswordSerializer
+    ChangePasswordSerializer, SendOTPSerializer, VerifyOTPSerializer,ResetPasswordSerializer
 )
 
 User = get_user_model()
@@ -156,7 +156,10 @@ class RegisterView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        if request.user and request.user.is_authenticated:
+            user = serializer.save(created_by=request.user)
+        else:
+            user = serializer.save()
 
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
@@ -583,7 +586,7 @@ class GetAgencyUsersView(APIView):
         # Corrected 'user_type' to 'role'
         users = User.objects.filter(
             Q(created_by=request.user) & 
-            Q(role__in=['franchisesadmin', 'freelancer'])
+            Q(role__in=['franchisesadmin', 'operations', 'sales_agent', 'caller', 'accountant'])
         ).order_by('-date_joined')
 
         serializer = UserSerializer(users, many=True)
@@ -615,51 +618,240 @@ class GetUserDetailsByIdView(APIView):
             )
         
        
-class DownloadCertificateView(APIView):
+# DownloadCertificateView removed
+
+class GetAgencyCallersView(APIView):
+    """Get all telecallers created by or belonging to logged-in agency/admin"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if request.user.role == 'superadmin':
+            tenant_id = request.query_params.get('tenant_id', None)
+            if tenant_id and tenant_id != 'all':
+                callers = User.objects.filter(created_by_id=tenant_id, role__in=['caller', 'sales_agent']).order_by('-date_joined')
+            else:
+                callers = User.objects.filter(role__in=['caller', 'sales_agent']).order_by('-date_joined')
+        else:
+            callers = User.objects.filter(
+                Q(created_by=request.user) & Q(role__in=['caller', 'sales_agent'])
+            ).order_by('-date_joined')
+
+        from .serializers import CallerAttendanceSerializer
+        serializer = CallerAttendanceSerializer(callers, many=True)
+        return Response({
+            'success': True,
+            'count': callers.count(),
+            'callers': serializer.data
+        })
+
+
+class ToggleCallerAttendanceView(APIView):
+    """Toggle caller attendance status (Present vs Absent)"""
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, user_id):
+        try:
+            if request.user.role == 'superadmin':
+                caller = User.objects.get(id=user_id, role__in=['caller', 'sales_agent'])
+            else:
+                caller = User.objects.get(id=user_id, created_by=request.user, role__in=['caller', 'sales_agent'])
+        except User.DoesNotExist:
+            return Response({'error': 'Caller not found or permission denied'}, status=status.HTTP_404_NOT_FOUND)
+
+        is_present = request.data.get('is_present')
+        if is_present is not None:
+            caller.is_present = bool(is_present)
+            caller.caller_status = 'available' if caller.is_present else 'absent'
+        
+        caller_status = request.data.get('caller_status')
+        if caller_status:
+            caller.caller_status = caller_status
+            if caller_status == 'absent':
+                caller.is_present = False
+
+        caller.save()
+        from .serializers import CallerAttendanceSerializer
+        status_text = 'PRESENT' if caller.is_present else 'ABSENT'
+        return Response({
+            'success': True,
+            'message': f"Caller '{caller.username}' is now {status_text}",
+            'caller': CallerAttendanceSerializer(caller).data
+        })
+
+
+class TenantListView(APIView):
     """
-    GET: Generate and return user certificate as PDF
+    SuperAdmin Multi-Tenant SaaS Hub:
+    List all subscribed Tenants (franchisesadmin & agencyadmin) with staff and business statistics.
     """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        try:
-            user = request.user
+        if request.user.role != 'superadmin':
+            return Response({'detail': 'Only SuperAdmin can access Tenant SaaS Hub.'}, status=status.HTTP_403_FORBIDDEN)
 
-            # Serialize user data including full_name, company_name, and company_logo
-            serializer = CertificateSerializer(user)
-            user_data = serializer.data
-            print(user_data)
-            # No need to separately construct company_details
-            context = {
-                'user': user_data,
-                'company': {
-                    'name': user_data.get('company_name'),
-                    'logo_url': user_data.get('company_logo'),
+        tenants = User.objects.filter(role__in=['franchisesadmin', 'agencyadmin']).order_by('-date_joined')
+        
+        from apps.crm.models import Lead
+        from apps.bookings.models import Booking, Quotation
+
+        data = []
+        for t in tenants:
+            staff_qs = User.objects.filter(created_by=t)
+            op_count = staff_qs.filter(role='operations').count()
+            sales_count = staff_qs.filter(role='sales_agent').count()
+            caller_count = staff_qs.filter(role='caller').count()
+            acct_count = staff_qs.filter(role='accountant').count()
+            total_staff = staff_qs.count()
+
+            lead_count = Lead.objects.filter(Q(user=t) | Q(assigned_caller__created_by=t)).count()
+            booking_qs = Booking.objects.filter(Q(created_by=t) | Q(created_by__created_by=t))
+            booking_count = booking_qs.count()
+            total_rev = booking_qs.aggregate(models.Sum('total_price'))['total_price__sum'] or 0
+            quote_count = Quotation.objects.filter(Q(created_by=t) | Q(created_by__created_by=t)).count()
+
+            data.append({
+                'id': t.id,
+                'company_name': t.company_name or t.get_full_name() or t.username,
+                'owner_name': t.get_full_name() or t.username,
+                'email': t.email,
+                'phone': t.phone or 'N/A',
+                'role': t.role,
+                'role_display': t.get_role_display(),
+                'address': t.address or '',
+                'date_joined': t.date_joined.strftime('%Y-%m-%d') if t.date_joined else '',
+                'is_active': t.is_active,
+                'staff': {
+                    'operations': op_count,
+                    'sales_agents': sales_count,
+                    'callers': caller_count,
+                    'accountants': acct_count,
+                    'total': total_staff,
+                },
+                'metrics': {
+                    'leads_count': lead_count,
+                    'bookings_count': booking_count,
+                    'quotations_count': quote_count,
+                    'total_revenue': float(total_rev),
                 }
+            })
+
+        return Response({
+            'total_tenants': len(data),
+            'active_tenants': sum(1 for x in data if x['is_active']),
+            'total_staff': sum(x['staff']['total'] for x in data),
+            'total_leads': sum(x['metrics']['leads_count'] for x in data),
+            'total_revenue': sum(x['metrics']['total_revenue'] for x in data),
+            'tenants': data
+        })
+
+
+class TenantDetailView(APIView):
+    """
+    SuperAdmin Multi-Tenant SaaS Hub:
+    Deep-dive into a specific tenant: their staff, leads, bookings, quotes, and profile.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, tenant_id):
+        if request.user.role != 'superadmin':
+            return Response({'detail': 'Only SuperAdmin can access Tenant details.'}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            tenant = User.objects.get(id=tenant_id, role__in=['franchisesadmin', 'agencyadmin'])
+        except User.DoesNotExist:
+            return Response({'detail': 'Tenant not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        from apps.crm.models import Lead
+        from apps.bookings.models import Booking, Quotation
+
+        staff_qs = User.objects.filter(created_by=tenant).order_by('role', '-date_joined')
+        staff_list = []
+        for s in staff_qs:
+            staff_list.append({
+                'id': s.id,
+                'name': s.get_full_name() or s.username,
+                'email': s.email,
+                'phone': s.phone or 'N/A',
+                'role': s.role,
+                'role_display': s.get_role_display(),
+                'is_present': s.is_present,
+                'caller_status': s.caller_status,
+                'date_joined': s.date_joined.strftime('%Y-%m-%d') if s.date_joined else '',
+            })
+
+        leads_qs = Lead.objects.filter(Q(user=tenant) | Q(assigned_caller__created_by=tenant)).order_by('-created_at')[:50]
+        leads_data = []
+        for l in leads_qs:
+            leads_data.append({
+                'id': l.id,
+                'name': l.name,
+                'mobile': l.mobile_number,
+                'email': l.email,
+                'city': l.city,
+                'status': l.status,
+                'assigned_caller_name': l.assigned_caller.get_full_name() if l.assigned_caller else 'In Agency Pool',
+                'created_at': l.created_at.strftime('%Y-%m-%d'),
+            })
+
+        status_counts = dict(Lead.objects.filter(Q(user=tenant) | Q(assigned_caller__created_by=tenant)).values_list('status').annotate(models.Count('status')))
+
+        booking_qs = Booking.objects.filter(Q(created_by=tenant) | Q(created_by__created_by=tenant)).order_by('-created_at')[:20]
+        bookings_data = []
+        for b in booking_qs:
+            bookings_data.append({
+                'id': b.id,
+                'booking_number': b.booking_number,
+                'customer_name': f"{b.first_name} {b.last_name}",
+                'travel_month': b.travel_month,
+                'package_name': b.package_name,
+                'total_price': float(b.total_price or 0),
+                'payable_amount': float(b.payable_amount or 0),
+                'balance': float(b.balance or 0),
+                'status': b.status,
+                'created_at': b.created_at.strftime('%Y-%m-%d'),
+            })
+
+        quote_qs = Quotation.objects.filter(Q(created_by=tenant) | Q(created_by__created_by=tenant)).order_by('-created_at')[:20]
+        quotes_data = []
+        for q in quote_qs:
+            quotes_data.append({
+                'id': q.id,
+                'quotation_number': q.quotation_number,
+                'contact_name': q.contact_name,
+                'package_name': q.package_name,
+                'total_customer_price': float(q.total_customer_price or 0),
+                'gross_margin_percentage': float(q.gross_margin_percentage or 0),
+                'status': q.status,
+                'created_at': q.created_at.strftime('%Y-%m-%d'),
+            })
+
+        return Response({
+            'tenant': {
+                'id': tenant.id,
+                'company_name': tenant.company_name or tenant.get_full_name() or tenant.username,
+                'owner_name': tenant.get_full_name() or tenant.username,
+                'email': tenant.email,
+                'phone': tenant.phone,
+                'role': tenant.role,
+                'address': tenant.address,
+                'website': tenant.website,
+                'is_active': tenant.is_active,
+                'date_joined': tenant.date_joined.strftime('%Y-%m-%d') if tenant.date_joined else '',
+            },
+            'staff': staff_list,
+            'leads': {
+                'total_count': Lead.objects.filter(Q(user=tenant) | Q(assigned_caller__created_by=tenant)).count(),
+                'status_breakdown': status_counts,
+                'recent': leads_data
+            },
+            'bookings': {
+                'total_count': Booking.objects.filter(Q(created_by=tenant) | Q(created_by__created_by=tenant)).count(),
+                'total_revenue': float(Booking.objects.filter(Q(created_by=tenant) | Q(created_by__created_by=tenant)).aggregate(models.Sum('total_price'))['total_price__sum'] or 0),
+                'recent': bookings_data
+            },
+            'quotations': {
+                'total_count': Quotation.objects.filter(Q(created_by=tenant) | Q(created_by__created_by=tenant)).count(),
+                'recent': quotes_data
             }
-
-            # Render HTML template with context
-            html_string = render_to_string('certificate.html', context)
-
-            # Generate PDF using WeasyPrint
-            html_doc = HTML(string=html_string)
-            pdf_bytes = html_doc.write_pdf()
-            if not pdf_bytes:
-                return Response(
-                    {'detail': 'Generated PDF is empty.'},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
-
-            # Create and return HTTP response
-            response = HttpResponse(pdf_bytes, content_type='application/pdf')
-            response['Content-Disposition'] = f'inline; filename="certificate_{user.username}.pdf"'
-            response['Content-Length'] = len(pdf_bytes)
-
-            return response
-
-        except Exception as e:
-            print(f"Error generating certificate PDF: {str(e)}")
-            return Response(
-                {'detail': 'An error occurred while generating the certificate.'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        })

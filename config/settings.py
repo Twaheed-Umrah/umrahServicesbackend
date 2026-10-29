@@ -12,16 +12,30 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from decouple import config
 from corsheaders.defaults import default_headers
+
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Configure GTK runtime for WeasyPrint on Windows
+if sys.platform == 'win32':
+    gtk_path = BASE_DIR / 'gtk_runtime'
+    if gtk_path.exists():
+        os.environ['WEASYPRINT_DLL_DIRECTORIES'] = str(gtk_path)
+        try:
+            os.add_dll_directory(str(gtk_path))
+        except (AttributeError, OSError):
+            pass
+        os.environ['PATH'] = str(gtk_path) + os.pathsep + os.environ.get('PATH', '')
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'hajj-umrah-tawheed-786-services'
+SECRET_KEY = config('SECRET_KEY', default='masar-umrah-global-786-services')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = [
     "crmweb.hajumrahservice.com",
@@ -32,7 +46,7 @@ ALLOWED_HOSTS = [
     "tawheedumrah.com",
     "faizanumrah.com",
     "almakkahmadinah.com",
-    "huzaifahajjumrah.com",
+    "huzaifamasarumrah.com",
     "drpervezumrah.com",
     ]
 
@@ -64,7 +78,6 @@ LOCAL_APPS = [
     'apps.visa',
     'apps.dashboard',
     'apps.poster_generator',
-    'apps.hajjumarhlead',
     'apps.crm'
 
 ]
@@ -248,19 +261,13 @@ CSRF_TRUSTED_ORIGINS = [
     'https://hajumrahservice.com',
     "https://tawheedumrah.com",
     "https://faizanumrah.com",
-    "https://www.huzaifahajjumrah.com",
+    "https://www.huzaifamasarumrah.com",
     "https://www.drpervezumrah.com",
     "https://almakkahmadinah.com",
     "http://localhost:3000",
     "http://localhost:5173",
 ]
 
-ALLOWED_HOSTS = [
-    "51.20.91.180",
-    "crmweb.hajumrahservice.com",  # your backend domain
-    "localhost",
-    "127.0.0.1",
-]
 # Swagger Settings
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
@@ -277,7 +284,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'hajjumrahservice072@gmail.com'
+EMAIL_HOST_USER = 'masarumrahservice072@gmail.com'
 EMAIL_HOST_PASSWORD = 'pjrnsuqeoqnglohc'  
 
 
@@ -316,6 +323,11 @@ LOGGING = {
         'django': {
             'handlers': ['console', 'file'],
             'level': 'INFO',
+            'propagate': False,
+        },
+        'weasyprint': {
+            'handlers': ['console', 'file'],
+            'level': 'ERROR',
             'propagate': False,
         },
     },

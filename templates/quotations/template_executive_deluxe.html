@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Executive Travel Quotation - {{ quotation.quotation_number }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 12mm 15mm 15mm 15mm;
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-size: 8px;
+                color: #64748b;
+                font-family: Arial, sans-serif;
+            }
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Times New Roman', Times, Georgia, serif;
+            font-size: 10px;
+            line-height: 1.4;
+            color: #1e293b;
+            background: #ffffff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .container {
+            width: 100%;
+            max-width: 780px;
+            margin: 0 auto;
+        }
+        .letterhead {
+            border-bottom: 2px solid #1e3a8a;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+            display: table;
+            width: 100%;
+        }
+        .lh-left {
+            display: table-cell;
+            width: 65%;
+            vertical-align: middle;
+        }
+        .lh-right {
+            display: table-cell;
+            width: 35%;
+            vertical-align: middle;
+            text-align: right;
+            font-family: Arial, sans-serif;
+        }
+        .corp-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e3a8a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .corp-sub {
+            font-size: 9px;
+            color: #475569;
+            font-family: Arial, sans-serif;
+        }
+        .doc-title-badge {
+            background: #1e3a8a;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 2px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+        .meta-line {
+            font-size: 8.5px;
+            color: #334155;
+        }
+
+        /* 2-Column Info Table */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 8.5px;
+        }
+        .info-table td {
+            padding: 4px 6px;
+            border: 1px solid #cbd5e1;
+            vertical-align: top;
+        }
+        .info-table .bg-gray {
+            background: #f1f5f9;
+            font-weight: bold;
+            color: #1e3a8a;
+            width: 18%;
+        }
+
+        /* Tables */
+        .corp-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 8.5px;
+        }
+        .corp-table th {
+            background: #1e3a8a;
+            color: #ffffff;
+            padding: 5px 6px;
+            text-align: left;
+            font-size: 8px;
+            text-transform: uppercase;
+            border: 1px solid #1e3a8a;
+        }
+        .corp-table td {
+            padding: 5px 6px;
+            border: 1px solid #cbd5e1;
+        }
+        .corp-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        /* Highlights */
+        .section-header {
+            font-size: 11px;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin: 8px 0 4px 0;
+            text-transform: uppercase;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 2px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Inclusions */
+        .grid-box {
+            display: table;
+            width: 100%;
+            margin-bottom: 10px;
+            font-family: Arial, sans-serif;
+        }
+        .grid-cell {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+            padding: 0 4px;
+        }
+        .grid-cell:first-child { padding-left: 0; }
+        .grid-cell:last-child { padding-right: 0; }
+        .box-inner {
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            padding: 6px 8px;
+            font-size: 8px;
+            line-height: 1.35;
+            min-height: 80px;
+        }
+
+        /* Commercial Schedule */
+        .commercial-box {
+            display: table;
+            width: 100%;
+            background: #f8fafc;
+            border: 1.5px solid #1e3a8a;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            font-family: Arial, sans-serif;
+        }
+        .comm-left {
+            display: table-cell;
+            width: 60%;
+            vertical-align: middle;
+            font-size: 8.5px;
+        }
+        .comm-right {
+            display: table-cell;
+            width: 40%;
+            vertical-align: middle;
+            text-align: right;
+        }
+        .total-amount-box {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+
+        /* Payment Bank Details */
+        .bank-info-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 4px;
+            padding: 6px 8px;
+            font-family: Arial, sans-serif;
+            font-size: 8px;
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+
+        /* Sign-off */
+        .terms-note {
+            font-size: 7.5px;
+            color: #64748b;
+            font-family: Arial, sans-serif;
+            line-height: 1.3;
+        }
+        .signoff-table {
+            width: 100%;
+            margin-top: 14px;
+            display: table;
+            font-family: Arial, sans-serif;
+        }
+        .signoff-cell {
+            display: table-cell;
+            width: 50%;
+            font-size: 8px;
+        }
+        .signoff-line {
+            width: 170px;
+            border-bottom: 1px solid #64748b;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Letterhead -->
+    <div class="letterhead">
+        <div class="lh-left">
+            <div class="corp-name">{{ company.name|default:"Masar Umrah Global Services" }}</div>
+            <div class="corp-sub">Approved Hajj & Umrah Tour Operator | License # MOWS/SA/2026</div>
+            <div class="corp-sub">{{ company.address|default:"Corporate Tower, Masar Umrah Complex" }} &bull; Phone: {{ company.phone|default:"+91 98765 43210" }} &bull; {{ company.email|default:"operations@hajumrahservice.com" }}</div>
+        </div>
+        <div class="lh-right">
+            <div class="doc-title-badge">OFFICIAL QUOTATION</div>
+            <div class="meta-line">Ref: <strong>{{ quotation.quotation_number }}</strong></div>
+            <div class="meta-line">Date: {{ quotation.quotation_date|date:"d F Y" }}</div>
+            <div class="meta-line">Valid Till: {{ quotation.valid_until|date:"d F Y" }}</div>
+        </div>
+    </div>
+
+    <!-- Client & Trip Profile -->
+    <table class="info-table">
+        <tr>
+            <td class="bg-gray">Client Name:</td>
+            <td style="width: 32%;"><strong>{{ quotation.contact_name }}</strong></td>
+            <td class="bg-gray">Package Category:</td>
+            <td style="width: 32%;">{{ quotation.get_package_category_display }}</td>
+        </tr>
+        <tr>
+            <td class="bg-gray">Contact Number:</td>
+            <td>{{ quotation.mobile_no }}</td>
+            <td class="bg-gray">Destination / Routing:</td>
+            <td>{{ quotation.departure_city }} &rarr; Makkah & Madinah &rarr; {{ quotation.departure_city }}</td>
+        </tr>
+        <tr>
+            <td class="bg-gray">Email Address:</td>
+            <td>{{ quotation.email|default:"N/A" }}</td>
+            <td class="bg-gray">Travel Duration:</td>
+            <td>{{ quotation.duration_days }} Days ({{ quotation.departure_date|date:"d M Y"|default:"TBD" }} to {{ quotation.return_date|date:"d M Y"|default:"TBD" }})</td>
+        </tr>
+        <tr>
+            <td class="bg-gray">Pilgrims Group:</td>
+            <td>{{ quotation.adults_count }} Adult(s), {{ quotation.children_count }} Child, {{ quotation.infants_count }} Infant</td>
+            <td class="bg-gray">Room Sharing:</td>
+            <td>{{ quotation.room_sharing|upper }} Occupancy</td>
+        </tr>
+    </table>
+
+    <!-- Hotel Accommodations -->
+    <div class="section-header">Accommodation Schedule</div>
+    <table class="corp-table">
+        <thead>
+            <tr>
+                <th style="width: 20%;">City</th>
+                <th style="width: 35%;">Hotel Name & Category</th>
+                <th style="width: 15%;">Check-In</th>
+                <th style="width: 15%;">Check-Out</th>
+                <th style="width: 15%;">Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hotel in quotation.hotels.all %}
+            <tr>
+                <td><strong>{{ hotel.get_city_display }}</strong></td>
+                <td>{{ hotel.hotel_name }} ({{ hotel.hotel_rating }})<br/><small style="color: #64748b;">{{ hotel.distance_to_haram }} &bull; {{ hotel.meal_plan }}</small></td>
+                <td>{{ hotel.check_in|date:"d M Y"|default:"-" }}</td>
+                <td>{{ hotel.check_out|date:"d M Y"|default:"-" }}</td>
+                <td><strong>{{ hotel.nights }} Nights</strong> ({{ hotel.room_count }} Room)</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td><strong>Makkah</strong></td>
+                <td>Swissôtel Makkah Clock Tower (5 Star Deluxe)<br/><small style="color: #64748b;">Direct Haram courtyard access &bull; Breakfast included</small></td>
+                <td>{{ quotation.departure_date|date:"d M Y"|default:"TBD" }}</td>
+                <td>-</td>
+                <td><strong>8 Nights</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Madinah</strong></td>
+                <td>Dar Al Taqwa / Mövenpick Hotel (5 Star Deluxe)<br/><small style="color: #64748b;">Central Northern Haram Area &bull; Breakfast included</small></td>
+                <td>-</td>
+                <td>{{ quotation.return_date|date:"d M Y"|default:"TBD" }}</td>
+                <td><strong>7 Nights</strong></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Flight & Ground Transport Schedule -->
+    <div class="section-header">Flight & Ground Transport Logistics</div>
+    <table class="corp-table">
+        <tr>
+            <td style="width: 25%; font-weight: bold; background: #f8fafc;">Aviation Services:</td>
+            <td>{{ quotation.airline }} &bull; {{ quotation.flight_routing }} (Allowance: {{ quotation.baggage_allowance }})</td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold; background: #f8fafc;">Ground Fleet:</td>
+            <td>{{ quotation.transport_type }} &bull; {{ quotation.transport_route }}</td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold; background: #f8fafc;">Holy Ziyarat:</td>
+            <td>{{ quotation.ziyarat_details }}</td>
+        </tr>
+    </table>
+
+    <!-- Inclusions / Exclusions -->
+    <div class="section-header">Service Scope</div>
+    <div class="grid-box">
+        <div class="grid-cell">
+            <div class="box-inner">
+                <strong style="color: #1e3a8a;">Inclusions:</strong><br/>
+                {{ quotation.inclusions|linebreaksbr }}
+            </div>
+        </div>
+        <div class="grid-cell">
+            <div class="box-inner">
+                <strong style="color: #dc2626;">Exclusions:</strong><br/>
+                {{ quotation.exclusions|linebreaksbr }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Commercial Breakdown -->
+    <div class="section-header">Commercial Terms & Payment Plan</div>
+    <div class="commercial-box">
+        <div class="comm-left">
+            <div>Standard Package Fee: <strong>{{ quotation.currency }} {{ quotation.selling_price|floatformat:2 }}</strong></div>
+            {% if quotation.discount_amount > 0 %}
+            <div style="color: #059669;">Special Courtesy Discount: <strong>- {{ quotation.currency }} {{ quotation.discount_amount|floatformat:2 }}</strong></div>
+            {% endif %}
+            {% if quotation.tax_amount > 0 %}
+            <div>Applicable Taxes ({{ quotation.tax_percentage }}%): <strong>+ {{ quotation.currency }} {{ quotation.tax_amount|floatformat:2 }}</strong></div>
+            {% endif %}
+            <div style="margin-top: 4px; color: #1e3a8a; font-weight: bold;">
+                Stage 1 Deposit: {{ quotation.currency }} {{ quotation.deposit_amount|floatformat:2 }} (Due: {{ quotation.deposit_due_date|date:"d M Y"|default:"Immediate" }})
+            </div>
+            <div style="color: #475569;">
+                Balance Payment: {{ quotation.currency }} {{ quotation.balance_amount|floatformat:2 }} (Due: {{ quotation.balance_due_date|date:"d M Y"|default:"Prior to travel" }})
+            </div>
+        </div>
+        <div class="comm-right">
+            <div style="font-size: 9px; text-transform: uppercase; color: #64748b;">Total Net Payable</div>
+            <div class="total-amount-box">{{ quotation.currency }} {{ quotation.total_customer_price|floatformat:2 }}</div>
+            <small style="color: #64748b;">(For {{ quotation.total_travelers }} Pilgrim Passengers)</small>
+        </div>
+    </div>
+
+    <!-- Bank Details -->
+    <div class="bank-info-box">
+        <strong>Bank Remittance Details:</strong> Bank: State Bank of India / HDFC Bank &bull; A/C Name: Masar Umrah Global Services &bull; A/C No: 987654321098 &bull; IFSC: HDFC0001234 &bull; Swift: HDFCINBBXXX
+    </div>
+
+    <div class="terms-note">
+        {{ quotation.terms_and_conditions }}
+    </div>
+
+    <div class="signoff-table">
+        <div class="signoff-cell">
+            <div class="signoff-line"></div>
+            <strong>Authorized Officer:</strong> {{ quotation.prepared_by_name|default:"Travel Counselor" }}<br/>
+            Masar Umrah Operations Dept.
+        </div>
+        <div class="signoff-cell" style="text-align: right;">
+            <div class="signoff-line" style="margin-left: auto;"></div>
+            <strong>Client Acceptance Sign & Date</strong>
+        </div>
+    </div>
+</div>
+</body>
+</html>

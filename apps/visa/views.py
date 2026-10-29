@@ -29,48 +29,41 @@ def get_accessible_queryset(user, queryset):
     """
     Helper function to filter queryset based on user role.
     - Superadmin: sees everything
-    - AgencyAdmin/FranchisesAdmin: sees their own data AND data created by their accountants
+    - AgencyAdmin/FranchisesAdmin: sees their own data AND data created by their staff/subordinates
     - Accountant: sees data created by their parent admin AND their own data
     """
     if user.is_superuser or (hasattr(user, 'role') and user.role == 'superadmin'):
         return queryset
+    elif hasattr(user, 'role') and user.role in ['agencyadmin', 'franchiseadmin']:
+        return queryset.filter(
+            Q(applied_by=user) | Q(applied_by__created_by=user)
+        )
     elif hasattr(user, 'role') and user.role == 'accountant':
-        # Accountant sees data created by their parent admin AND themselves
         if user.created_by:
             return queryset.filter(applied_by__in=[user.created_by, user])
         else:
             return queryset.filter(applied_by=user)
     else:
-        # Agency/Franchise admin sees their own data AND data created by their accountants
-        return queryset.filter(
-            Q(applied_by=user) | Q(applied_by__created_by=user, applied_by__role='accountant')
-        )
+        return queryset.filter(applied_by=user)
 
 
 def check_access_permission(user, obj):
     """
     Check if user has permission to access an object.
-    - Superadmin: can access all
-    - Creator: can access their own
-    - Accountant: can access if created by their parent admin OR themselves
-    - Parent admin: can access their own OR if created by their accountants
     """
     if user.is_superuser or (hasattr(user, 'role') and user.role == 'superadmin'):
         return True
+    elif hasattr(user, 'role') and user.role in ['agencyadmin', 'franchiseadmin']:
+        if obj.applied_by == user:
+            return True
+        return hasattr(obj.applied_by, 'created_by') and obj.applied_by.created_by == user
     elif hasattr(user, 'role') and user.role == 'accountant':
-        # Accountant can access their parent admin's data AND their own
         if user.created_by:
             return obj.applied_by in [user.created_by, user]
         else:
             return obj.applied_by == user
     else:
-        # Agency/Franchise admin can access their own AND their accountants' data
-        if obj.applied_by == user:
-            return True
-        # Check if created by one of their accountants
-        return (hasattr(obj.applied_by, 'created_by') and 
-                obj.applied_by.created_by == user and 
-                obj.applied_by.role == 'accountant')
+        return obj.applied_by == user
 
 
 def can_modify(user):

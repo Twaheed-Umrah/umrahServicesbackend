@@ -33,7 +33,7 @@ def get_user_specific_queryset(user, model_class):
             # If accountant has no parent, return empty queryset
             return model_class.objects.none()
     else:
-        # Other users (agencyadmin, franchisesadmin, freelancer) see only their own data
+        # Other users (franchisesadmin) see only their own data
         return model_class.objects.filter(created_by=user)
 
 

@@ -3,7 +3,7 @@ from .views import (
     LoginView, MeView, UpdateProfileView, ChangePasswordView,
     SendEmailOTPView, VerifyEmailOTPView, SendPhoneOTPView, 
     VerifyPhoneOTPView, RegisterView, LogoutView, GetAllUsersView,
-    GetAgencyUsersView, GetUserDetailsByIdView,
+    GetTenantUsersView, GetUserDetailsByIdView,
     ForgotPasswordSendOTPView, ForgotPasswordVerifyOTPView, ResetPasswordView,
     RefreshTokenView, VerifyTokenView, GetAgencyCallersView, ToggleCallerAttendanceView,
     TenantListView, TenantDetailView
@@ -37,7 +37,7 @@ urlpatterns = [
 
     # Team & Caller management
     path('users/all/', GetAllUsersView.as_view(), name='get-all-users'),
-    path('users/agency/', GetAgencyUsersView.as_view(), name='get-agency-users'),
+    path('users/agency/', GetTenantUsersView.as_view(), name='get-agency-users'),
     path('callers/', GetAgencyCallersView.as_view(), name='get-agency-callers'),
     path('callers/<int:user_id>/toggle-attendance/', ToggleCallerAttendanceView.as_view(), name='toggle-caller-attendance'),
     path('users/<int:user_id>/', GetUserDetailsByIdView.as_view(), name='get-user-details'),

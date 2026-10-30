@@ -33,13 +33,13 @@ class PackageListCreateView(generics.ListCreateAPIView):
             # SuperAdmin can see all packages
             return Package.objects.all().select_related('created_by', 'assigned_to')
         
-        elif user.role == 'agencyadmin':
-            # AgencyAdmin can see:
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
+            # FranchiseAdmin can see:
             # 1. Packages they created
-            # 2. Packages assigned to their franchises/freelancers
-            # 3. Packages created by their franchises/freelancers
+            # 2. Packages assigned to their franchises
+            # 3. Packages created by their franchises
             
-            # Get all users created by this agency admin (franchises and freelancers)
+            # Get all users created by this agency admin (franchises)
             subordinate_users = user.created_users.all()
             subordinate_user_ids = list(subordinate_users.values_list('id', flat=True))
             subordinate_user_ids.append(user.id)  # Include agency admin themselves
@@ -49,13 +49,13 @@ class PackageListCreateView(generics.ListCreateAPIView):
                 Q(assigned_to_id__in=subordinate_user_ids)
             ).select_related('created_by', 'assigned_to').distinct()
         
-        elif user.role == 'franchiseadmin':
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
             # FranchiseAdmin can see:
             # 1. Packages they created (if their creator allows them to create)
             # 2. Packages assigned to them
-            # 3. Packages created by their freelancers
+            # 3. Packages created by their team
             
-            # Get freelancers created by this franchise admin
+            # Get users created by this franchise admin
             subordinate_users = user.created_users.all()
             subordinate_user_ids = list(subordinate_users.values_list('id', flat=True))
             subordinate_user_ids.append(user.id)  # Include franchise admin themselves
@@ -65,12 +65,6 @@ class PackageListCreateView(generics.ListCreateAPIView):
                 Q(assigned_to_id__in=subordinate_user_ids)
             ).select_related('created_by', 'assigned_to').distinct()
         
-        elif user.role == 'freelanceradmin':
-            # FreelancerAdmin can only see packages assigned to them
-            return Package.objects.filter(
-                assigned_to=user
-            ).select_related('created_by', 'assigned_to')
-        
         else:
             # Default: return empty queryset for unknown roles
             return Package.objects.none()
@@ -79,8 +73,6 @@ class PackageListCreateView(generics.ListCreateAPIView):
         user = self.request.user
         
         # Check if user has permission to create packages
-        if user.role == 'freelanceradmin':
-            raise PermissionDenied("Freelancers do not have permission to create packages.")
         
         # Set the created_by field to current user
         serializer.save(created_by=user)
@@ -170,7 +162,7 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
         if user.role == 'superadmin':
             return Package.objects.all().select_related('created_by', 'assigned_to')
         
-        elif user.role == 'agencyadmin':
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
             subordinate_users = user.created_users.all()
             subordinate_user_ids = list(subordinate_users.values_list('id', flat=True))
             subordinate_user_ids.append(user.id)
@@ -180,7 +172,7 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
                 Q(assigned_to_id__in=subordinate_user_ids)
             ).select_related('created_by', 'assigned_to').distinct()
         
-        elif user.role == 'franchiseadmin':
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
             subordinate_users = user.created_users.all()
             subordinate_user_ids = list(subordinate_users.values_list('id', flat=True))
             subordinate_user_ids.append(user.id)
@@ -189,11 +181,6 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
                 Q(created_by_id__in=subordinate_user_ids) |
                 Q(assigned_to_id__in=subordinate_user_ids)
             ).select_related('created_by', 'assigned_to').distinct()
-        
-        elif user.role == 'freelanceradmin':
-            return Package.objects.filter(
-                assigned_to=user
-            ).select_related('created_by', 'assigned_to')
         
         else:
             return Package.objects.none()
@@ -212,8 +199,6 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
         
         # Check if user has permission to update this package
         user = request.user
-        if user.role == 'freelanceradmin':
-            raise PermissionDenied("Freelancers do not have permission to update packages.")
         
         # For non-superadmin users, check if they can update this package
         if user.role != 'superadmin':
@@ -255,8 +240,6 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
         user = request.user
         
         # Check permissions
-        if user.role == 'freelanceradmin':
-            raise PermissionDenied("Freelancers do not have permission to delete packages.")
         
         if user.role != 'superadmin' and instance.created_by != user:
             raise PermissionDenied("You can only delete packages you created.")
@@ -281,7 +264,7 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
         if user.role == 'superadmin':
             return Package.objects.all().select_related('created_by', 'assigned_to')
         
-        elif user.role == 'agencyadmin':
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
             subordinate_users = user.created_users.all()
             subordinate_user_ids = list(subordinate_users.values_list('id', flat=True))
             subordinate_user_ids.append(user.id)
@@ -291,7 +274,7 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
                 Q(assigned_to_id__in=subordinate_user_ids)
             ).select_related('created_by', 'assigned_to').distinct()
         
-        elif user.role == 'franchiseadmin':
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
             subordinate_users = user.created_users.all()
             subordinate_user_ids = list(subordinate_users.values_list('id', flat=True))
             subordinate_user_ids.append(user.id)
@@ -300,11 +283,6 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
                 Q(created_by_id__in=subordinate_user_ids) |
                 Q(assigned_to_id__in=subordinate_user_ids)
             ).select_related('created_by', 'assigned_to').distinct()
-        
-        elif user.role == 'freelanceradmin':
-            return Package.objects.filter(
-                assigned_to=user
-            ).select_related('created_by', 'assigned_to')
         
         else:
             return Package.objects.none()
@@ -319,16 +297,14 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
         package = self.get_object()
         
         # Check if user has permission to update this package
-        if user.role == 'freelanceradmin':
-            raise PermissionDenied("Freelancers do not have permission to update packages.")
         
         # SuperAdmin can update any package
         if user.role == 'superadmin':
             serializer.save()
             return
         
-        # AgencyAdmin can update packages they created or assigned to their network
-        if user.role == 'agencyadmin':
+        # FranchiseAdmin can update packages they created or assigned to their network
+        if user.role in ['franchisesadmin', 'franchiseadmin']:
             subordinate_users = user.created_users.all()
             subordinate_user_ids = list(subordinate_users.values_list('id', flat=True))
             subordinate_user_ids.append(user.id)
@@ -338,8 +314,8 @@ class PackageDetailView(generics.RetrieveUpdateDestroyAPIView):
                 serializer.save()
                 return
         
-        # FranchiseAdmin can update packages they created or assigned to them/their freelancers
-        if user.role == 'franchiseadmin':
+        # FranchiseAdmin can update packages they created or assigned to them
+        if user.role in ['franchisesadmin', 'franchiseadmin']:
             subordinate_users = user.created_users.all()
             subordinate_user_ids = list(subordinate_users.values_list('id', flat=True))
             subordinate_user_ids.append(user.id)

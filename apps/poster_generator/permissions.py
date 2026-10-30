@@ -2,7 +2,7 @@ from rest_framework import permissions
 
 class CanCreatePosterPermission(permissions.BasePermission):
     """
-    Custom permission to only allow AgencyAdmin and FranchisesAdmin to create posters.
+    Custom permission to only allow Franchise Admin (Tenant) and SuperAdmin to create posters.
     """
     
     def has_permission(self, request, view):
@@ -13,5 +13,5 @@ class CanCreatePosterPermission(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         
-        # Only allow AgencyAdmin and FranchisesAdmin to create/modify
-        return request.user.role in ['agencyadmin', 'franchisesadmin']
+        # Only allow Franchise Admin (Tenant) and SuperAdmin to create/modify
+        return request.user.role in ['franchisesadmin', 'superadmin']

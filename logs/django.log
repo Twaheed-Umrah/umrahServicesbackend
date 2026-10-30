@@ -1810,3 +1810,28 @@ WARNING 2026-10-30 14:08:17,385 log 8096 1244 Bad Request: /api/auth/login/
 WARNING 2026-10-30 14:08:23,738 log 8096 1244 Forbidden: /api/auth/tenants/
 WARNING 2026-10-30 14:08:31,266 log 8096 1244 Not Found: /api/auth/callers/3/toggle-attendance/
 WARNING 2026-10-30 14:08:39,147 log 8096 1244 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 14:56:53,275 log 12684 4684 Bad Request: /api/auth/login/
+WARNING 2026-10-30 14:56:56,167 log 12684 4684 Bad Request: /api/auth/login/
+WARNING 2026-10-30 14:57:02,053 log 12684 4684 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 14:57:10,076 log 12684 4684 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 14:57:18,677 log 12684 4684 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 15:00:44,894 log 10152 8764 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:00:48,016 log 10152 8764 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:00:53,429 log 10152 8764 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 15:01:01,467 log 10152 8764 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 15:01:09,759 log 10152 8764 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 15:05:51,358 log 18304 4584 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:05:56,005 log 18304 4584 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:06:03,219 log 18304 4584 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 15:06:13,123 log 18304 4584 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 15:06:24,588 log 18304 4584 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 15:06:27,736 log 18304 4584 Bad Request: /api/crm/leads/
+WARNING 2026-10-30 15:06:49,428 log 18304 4584 Not Found: /api/crm/leads/1/
+WARNING 2026-10-30 15:06:49,434 log 18304 4584 Not Found: /api/crm/leads/1/update-status/
+WARNING 2026-10-30 15:06:57,394 log 18304 4584 Unauthorized: /api/crm/leads/
+WARNING 2026-10-30 15:07:14,266 log 18304 4584 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-10-30 15:07:16,550 log 18304 4584 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 15:07:19,336 log 18304 4584 Not Found: /api/bookings/quotations/999999/convert/
+WARNING 2026-10-30 15:07:46,766 log 18304 4584 Not Found: /api/bookings/quotations/1/
+WARNING 2026-10-30 15:07:46,770 log 18304 4584 Not Found: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 15:07:49,895 log 18304 4584 Unauthorized: /api/bookings/quotations/

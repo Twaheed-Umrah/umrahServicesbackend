@@ -29,7 +29,7 @@ from .serializers import (
     BookingSerializer, BookingTravelerSerializer, QuickBookingSerializer,
     BookingReceiptSerializer, QuickBookingReceiptSerializer
 )
-from apps.common.permissions import IsFranchiseOrAgencyAdmin
+from apps.common.permissions import IsTenantOrStaff
 
 
 class BookingListCreateView(generics.ListCreateAPIView):
@@ -39,7 +39,7 @@ class BookingListCreateView(generics.ListCreateAPIView):
     """
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'travel_month', 'payment_type']
     search_fields = ['booking_number', 'first_name', 'last_name', 'email']
@@ -76,7 +76,7 @@ class BookingDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     
     def get_queryset(self):
         from django.db.models import Q
@@ -105,7 +105,7 @@ class QuickBookingListCreateView(generics.ListCreateAPIView):
     """
     queryset = QuickBooking.objects.all()
     serializer_class = QuickBookingSerializer
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['preferred_payment', 'is_converted_to_full_booking']
     search_fields = ['booking_number', 'first_name', 'last_name', 'email', 'destination']
@@ -139,7 +139,7 @@ class QuickBookingDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = QuickBooking.objects.all()
     serializer_class = QuickBookingSerializer
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     
     def get_queryset(self):
         from django.db.models import Q
@@ -197,7 +197,7 @@ class BookingConfirmView(APIView):
     """
     POST: Confirm a booking
     """
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     
     def post(self, request, pk):
         try:
@@ -247,7 +247,7 @@ class BookingCancelView(APIView):
     """
     POST: Cancel a booking
     """
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     
     def post(self, request, pk):
         try:
@@ -297,7 +297,7 @@ class BookingReceiptView(APIView):
     """
     GET: Generate and return booking receipt/bill as PDF
     """
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     
     def get(self, request, pk):
         try:
@@ -395,7 +395,7 @@ class BookingReceiptView(APIView):
 
 
 class QuickBookingReceiptView(APIView):
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     
     def get(self, request, pk):
         try:
@@ -492,7 +492,7 @@ class ConvertQuickBookingView(APIView):
     """
     POST: Convert quick booking to full booking
     """
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     
     def post(self, request, pk):
         try:
@@ -575,7 +575,7 @@ class AllBookingDetailView(generics.ListAPIView):
     GET: List all bookings created by the logged-in user
     """
     serializer_class = BookingSerializer
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'travel_month', 'payment_type']
     search_fields = ['booking_number', 'first_name', 'last_name', 'email']
@@ -612,7 +612,7 @@ class AllQuickBookingDetailView(generics.ListAPIView):
     GET: List all quick bookings created by the logged-in user
     """
     serializer_class = QuickBookingSerializer
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['preferred_payment', 'is_converted_to_full_booking']
     search_fields = ['booking_number', 'first_name', 'last_name', 'email', 'destination']
@@ -646,7 +646,7 @@ class UserBookingDetailView(generics.RetrieveAPIView):
     GET: Retrieve a specific booking by ID for the logged-in user
     """
     serializer_class = BookingSerializer
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     lookup_field = 'id'
     
     def get_queryset(self):
@@ -687,7 +687,7 @@ class UserQuickBookingDetailView(generics.RetrieveAPIView):
     GET: Retrieve a specific quick booking by ID for the logged-in user
     """
     serializer_class = QuickBookingSerializer
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     lookup_field = 'id'
     
     def get_queryset(self):
@@ -728,7 +728,7 @@ from io import StringIO
 
 class PassengerManifestView(APIView):
     """Module 4 & 21: Official Departure Passenger Manifest (JSON or CSV export)"""
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
     renderer_classes = [renderers.JSONRenderer, CSVRenderer]
 
     def get(self, request, pk):
@@ -787,7 +787,7 @@ class PassengerManifestView(APIView):
 
 class HotelVoucherPDFView(APIView):
     """Module 12 & 17: Official Hotel Check-in Service Voucher"""
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
 
     def get(self, request, pk):
         try:
@@ -820,7 +820,7 @@ class HotelVoucherPDFView(APIView):
 
 class TransportVoucherPDFView(APIView):
     """Module 13 & 17: Official Transport & Ziyarat Voucher"""
-    permission_classes = [IsFranchiseOrAgencyAdmin]
+    permission_classes = [IsTenantOrStaff]
 
     def get(self, request, pk):
         try:
@@ -860,7 +860,7 @@ class SupportTicketListCreateView(generics.ListCreateAPIView):
         user = self.request.user
         if user.role == 'superadmin':
             return SupportTicket.objects.all().select_related('booking', 'created_by', 'assigned_to')
-        elif user.role in ['agencyadmin', 'franchiseadmin']:
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
             return SupportTicket.objects.filter(
                 Q(created_by=user) | Q(booking__created_by=user)
             ).select_related('booking', 'created_by', 'assigned_to')
@@ -908,7 +908,7 @@ class QuotationListCreateView(generics.ListCreateAPIView):
             if tenant_id and tenant_id != 'all':
                 queryset = queryset.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id) | Q(lead__user_id=tenant_id))
             return queryset
-        elif user.role in ['agencyadmin', 'franchisesadmin']:
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
             return Quotation.objects.filter(
                 models.Q(created_by=user) | models.Q(created_by__created_by=user) | models.Q(lead__user=user)
             ).prefetch_related('hotels', 'activities').select_related('created_by', 'lead')
@@ -929,7 +929,7 @@ class QuotationDetailView(generics.RetrieveUpdateDestroyAPIView):
         user = self.request.user
         if user.role == 'superadmin':
             return Quotation.objects.all().prefetch_related('hotels', 'activities')
-        elif user.role in ['agencyadmin', 'franchisesadmin']:
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
             return Quotation.objects.filter(
                 models.Q(created_by=user) | models.Q(created_by__created_by=user) | models.Q(lead__user=user)
             ).prefetch_related('hotels', 'activities')
@@ -1145,7 +1145,7 @@ class QuotationApproveDiscountView(APIView):
         except Quotation.DoesNotExist:
             return Response({'detail': 'Quotation not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        if request.user.role not in ['superadmin', 'agencyadmin', 'franchisesadmin']:
+        if request.user.role not in ['superadmin', 'franchisesadmin']:
             return Response({'detail': 'Only Agency Head or Franchise Admin can approve low-margin discounts.'}, status=status.HTTP_403_FORBIDDEN)
 
         quotation.is_approved = True
@@ -1230,7 +1230,7 @@ class QuotationStatsView(APIView):
 
     def get(self, request):
         user = request.user
-        if user.role in ['superadmin', 'agencyadmin', 'franchisesadmin']:
+        if user.role in ['superadmin', 'franchisesadmin']:
             quotes = Quotation.objects.all()
         else:
             quotes = Quotation.objects.filter(Q(created_by=user) | Q(lead__assigned_caller=user))

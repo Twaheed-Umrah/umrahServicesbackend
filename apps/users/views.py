@@ -18,7 +18,7 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import logout
-from apps.common.permissions import IsSuperAdmin, IsAgencyAdmin
+from apps.common.permissions import IsSuperAdmin, IsFranchiseAdmin
 from .emailformate import send_password_reset_otp
 import random
 import string
@@ -579,9 +579,9 @@ class GetAllUsersView(APIView):
             'users': serializer.data
         })
 
-class GetAgencyUsersView(APIView):
-    """Get all franchise admins and freelancers created by logged-in agency admin"""
-    permission_classes = [IsAgencyAdmin]
+class GetTenantUsersView(APIView):
+    """Get all franchise admins created by logged-in agency admin"""
+    permission_classes = [IsFranchiseAdmin]
 
     def get(self, request):
         # Corrected 'user_type' to 'role'
@@ -683,7 +683,7 @@ class ToggleCallerAttendanceView(APIView):
 class TenantListView(APIView):
     """
     SuperAdmin Multi-Tenant SaaS Hub:
-    List all subscribed Tenants (franchisesadmin & agencyadmin) with staff and business statistics.
+    List all subscribed Tenants (franchisesadmin) with staff and business statistics.
     """
     permission_classes = [IsAuthenticated]
 
@@ -691,7 +691,7 @@ class TenantListView(APIView):
         if request.user.role != 'superadmin':
             return Response({'detail': 'Only SuperAdmin can access Tenant SaaS Hub.'}, status=status.HTTP_403_FORBIDDEN)
 
-        tenants = User.objects.filter(role__in=['franchisesadmin', 'agencyadmin']).order_by('-date_joined')
+        tenants = User.objects.filter(role='franchisesadmin').order_by('-date_joined')
         
         from apps.crm.models import Lead
         from apps.bookings.models import Booking, Quotation
@@ -759,7 +759,7 @@ class TenantDetailView(APIView):
             return Response({'detail': 'Only SuperAdmin can access Tenant details.'}, status=status.HTTP_403_FORBIDDEN)
 
         try:
-            tenant = User.objects.get(id=tenant_id, role__in=['franchisesadmin', 'agencyadmin'])
+            tenant = User.objects.get(id=tenant_id, role='franchisesadmin')
         except User.DoesNotExist:
             return Response({'detail': 'Tenant not found.'}, status=status.HTTP_404_NOT_FOUND)
 

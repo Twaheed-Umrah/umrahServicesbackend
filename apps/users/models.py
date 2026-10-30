@@ -7,8 +7,7 @@ from apps.common.mixins import TimestampMixin
 class User(AbstractUser, TimestampMixin):
     ROLE_CHOICES = [
         ('superadmin', 'SuperAdmin'),
-        ('agencyadmin', 'AgencyAdmin'),
-        ('franchisesadmin', 'FranchisesAdmin'),
+        ('franchisesadmin', 'Franchise Admin / Tenant'),
         ('operations', 'Operations Coordinator'),
         ('accountant', 'Accountant'),
         ('caller', 'Telecaller'),

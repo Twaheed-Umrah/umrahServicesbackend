@@ -431,7 +431,7 @@ class TaskListCreateView(generics.ListCreateAPIView):
         user = self.request.user
         if user.role == 'superadmin':
             return Task.objects.all().select_related('assigned_to', 'created_by', 'related_lead')
-        elif user.role in ['agencyadmin', 'franchiseadmin']:
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
             return Task.objects.filter(
                 Q(created_by=user) | Q(assigned_to=user) | Q(assigned_to__created_by=user)
             ).select_related('assigned_to', 'created_by', 'related_lead')

@@ -5,8 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, Sum, Count
 from django.utils import timezone
-from .models import Payment
-from apps.common.permissions import IsAgencyAdmin, IsSuperAdmin
+from apps.common.permissions import IsFranchiseAdmin, IsSuperAdmin
 from .models import VisaApplication, VisaDocument
 from .serializers import (
     VisaApplicationListSerializer,
@@ -16,25 +15,19 @@ from .serializers import (
     VisaApplicationStatusUpdateSerializer,
     VisaApplicationSubmitSerializer,
     VisaDocumentSerializer,
-    VisaDocumentUploadSerializer,
-    PaymentCreateSerializer,
-    PaymentListSerializer,
-    PaymentDetailSerializer,
-    PaymentStatusUpdateSerializer,
-    UserPaymentHistorySerializer
-)
+    VisaDocumentUploadSerializer)
 
 
 def get_accessible_queryset(user, queryset):
     """
     Helper function to filter queryset based on user role.
     - Superadmin: sees everything
-    - AgencyAdmin/FranchisesAdmin: sees their own data AND data created by their staff/subordinates
+    - Franchise Admin / Tenant: sees their own data AND data created by their staff/subordinates
     - Accountant: sees data created by their parent admin AND their own data
     """
     if user.is_superuser or (hasattr(user, 'role') and user.role == 'superadmin'):
         return queryset
-    elif hasattr(user, 'role') and user.role in ['agencyadmin', 'franchiseadmin']:
+    elif hasattr(user, 'role') and user.role in ['franchisesadmin']:
         return queryset.filter(
             Q(applied_by=user) | Q(applied_by__created_by=user)
         )
@@ -53,7 +46,7 @@ def check_access_permission(user, obj):
     """
     if user.is_superuser or (hasattr(user, 'role') and user.role == 'superadmin'):
         return True
-    elif hasattr(user, 'role') and user.role in ['agencyadmin', 'franchiseadmin']:
+    elif hasattr(user, 'role') and user.role in ['franchisesadmin']:
         if obj.applied_by == user:
             return True
         return hasattr(obj.applied_by, 'created_by') and obj.applied_by.created_by == user
@@ -71,7 +64,7 @@ def can_modify(user):
     Check if user can modify data (accountants CAN modify now)
     """
     # Both accountants and admins can modify
-    return hasattr(user, 'role') and user.role in ['accountant', 'agencyadmin', 'franchiseadmin']
+    return hasattr(user, 'role') and user.role in ['accountant', 'franchisesadmin']
 
 
 class VisaApplicationListView(generics.ListAPIView):
@@ -119,13 +112,13 @@ class VisaApplicationDetailView(generics.RetrieveAPIView):
 class VisaApplicationCreateView(generics.CreateAPIView):
     """Create new visa application (Agency and Accountants can create)"""
     serializer_class = VisaApplicationCreateSerializer
-    permission_classes = [IsAgencyAdmin]
+    permission_classes = [IsFranchiseAdmin]
 
 
 class VisaApplicationUpdateView(generics.UpdateAPIView):
     """Update visa application (Agency and Accountants can update, draft status only)"""
     serializer_class = VisaApplicationUpdateSerializer
-    permission_classes = [IsAgencyAdmin]
+    permission_classes = [IsFranchiseAdmin]
     
     def get_queryset(self):
         user = self.request.user
@@ -135,7 +128,7 @@ class VisaApplicationUpdateView(generics.UpdateAPIView):
 
 class VisaApplicationDeleteView(generics.DestroyAPIView):
     """Delete visa application (Agency and Accountants can delete, draft status only)"""
-    permission_classes = [IsAgencyAdmin]
+    permission_classes = [IsFranchiseAdmin]
     
     def get_queryset(self):
         user = self.request.user
@@ -144,7 +137,7 @@ class VisaApplicationDeleteView(generics.DestroyAPIView):
 
 
 @api_view(['POST'])
-@permission_classes([IsAgencyAdmin])
+@permission_classes([IsFranchiseAdmin])
 def submit_visa_application(request, pk):
     """Submit visa application for review (Accountants and Admins can submit)"""
     user = request.user
@@ -238,7 +231,7 @@ class VisaDocumentListView(generics.ListAPIView):
 class VisaDocumentUploadView(generics.CreateAPIView):
     """Upload document for visa application (Agency and Accountants can upload)"""
     serializer_class = VisaDocumentUploadSerializer
-    permission_classes = [IsAgencyAdmin]
+    permission_classes = [IsFranchiseAdmin]
     
     def perform_create(self, serializer):
         application_id = self.kwargs['application_id']
@@ -256,7 +249,7 @@ class VisaDocumentUploadView(generics.CreateAPIView):
 
 class VisaDocumentDeleteView(generics.DestroyAPIView):
     """Delete document (Agency and Accountants can delete, draft status only)"""
-    permission_classes = [IsAgencyAdmin]
+    permission_classes = [IsFranchiseAdmin]
     
     def get_queryset(self):
         application_id = self.kwargs['application_id']
@@ -328,229 +321,3 @@ def get_payment_accessible_queryset(user, queryset):
         )
 
 
-class PaymentCreateView(generics.CreateAPIView):
-    """Create new payment (authenticated users including accountants can create)"""
-    serializer_class = PaymentCreateSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        payment = serializer.save()
-        
-        return Response({
-            'message': 'Payment submitted successfully',
-            'payment_id': payment.id,
-            'status': 'inprocess'
-        }, status=status.HTTP_201_CREATED)
-
-
-class PaymentListView(generics.ListAPIView):
-    """List all payments (All authenticated users can view based on their role)"""
-    serializer_class = PaymentListSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        user = self.request.user
-        queryset = Payment.objects.all()
-        queryset = get_payment_accessible_queryset(user, queryset)
-        
-        # Filter by status if provided
-        status_filter = self.request.query_params.get('status')
-        if status_filter:
-            queryset = queryset.filter(status=status_filter)
-        
-        # Filter by payment mode if provided
-        payment_mode_filter = self.request.query_params.get('payment_mode')
-        if payment_mode_filter:
-            queryset = queryset.filter(payment_mode=payment_mode_filter)
-        
-        # Date range filter
-        start_date = self.request.query_params.get('start_date')
-        end_date = self.request.query_params.get('end_date')
-        if start_date:
-            queryset = queryset.filter(created_at__date__gte=start_date)
-        if end_date:
-            queryset = queryset.filter(created_at__date__lte=end_date)
-        
-        # Search functionality
-        search = self.request.query_params.get('search')
-        if search:
-            queryset = queryset.filter(
-                Q(paid_by__first_name__icontains=search) |
-                Q(paid_by__last_name__icontains=search) |
-                Q(paid_by__email__icontains=search) |
-                Q(reference_number__icontains=search)
-            )
-        
-        return queryset
-
-
-class PaymentDetailView(generics.RetrieveAPIView):
-    """Get detailed payment information (All authenticated users can view based on their role)"""
-    serializer_class = PaymentDetailSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        user = self.request.user
-        queryset = Payment.objects.all()
-        return get_payment_accessible_queryset(user, queryset)
-
-
-class PaymentStatusUpdateView(generics.UpdateAPIView):
-    """Update payment status (SuperAdmin only)"""
-    serializer_class = PaymentStatusUpdateSerializer
-    permission_classes = [IsSuperAdmin]
-    queryset = Payment.objects.all()
-    
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        
-        return Response({
-            'message': f'Payment status updated to {instance.status}',
-            'payment_id': instance.id,
-            'status': instance.status
-        })
-
-
-class UserPaymentHistoryView(generics.ListAPIView):
-    """Get user's own payment history or parent admin's for accountants"""
-    serializer_class = UserPaymentHistorySerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        user = self.request.user
-        queryset = Payment.objects.all()
-        return get_payment_accessible_queryset(user, queryset)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def payment_dashboard(request):
-    """Payment dashboard data (All authenticated users can access based on their role)"""
-    user = request.user
-    
-    queryset = Payment.objects.all()
-    queryset = get_payment_accessible_queryset(user, queryset)
-    
-    total_payments = queryset.count()
-    inprocess_payments = queryset.filter(status='inprocess').count()
-    completed_payments = queryset.filter(status='completed').count()
-    rejected_payments = queryset.filter(status='rejected').count()
-    
-    # Total amounts
-    total_amount = queryset.aggregate(total=Sum('payment_amount'))['total'] or 0
-    completed_amount = queryset.filter(status='completed').aggregate(
-        total=Sum('payment_amount')
-    )['total'] or 0
-    inprocess_amount = queryset.filter(status='inprocess').aggregate(
-        total=Sum('payment_amount')
-    )['total'] or 0
-    
-    # Payment mode breakdown
-    payment_mode_stats = {}
-    for choice in Payment.PAYMENT_MODE_CHOICES:
-        mode_count = queryset.filter(payment_mode=choice[0]).count()
-        mode_amount = queryset.filter(payment_mode=choice[0]).aggregate(
-            total=Sum('payment_amount')
-        )['total'] or 0
-        payment_mode_stats[choice[0]] = {
-            'label': choice[1],
-            'count': mode_count,
-            'amount': mode_amount
-        }
-    
-    # Recent payments (last 10)
-    recent_payments = queryset.select_related('paid_by', 'processed_by')[:10]
-    recent_payments_data = PaymentListSerializer(recent_payments, many=True).data
-    
-    # Monthly stats (current month)
-    current_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    monthly_stats = queryset.filter(created_at__gte=current_month).aggregate(
-        count=Count('id'),
-        amount=Sum('payment_amount')
-    )
-    
-    return Response({
-        'total_payments': total_payments,
-        'status_breakdown': {
-            'inprocess': inprocess_payments,
-            'completed': completed_payments,
-            'rejected': rejected_payments,
-        },
-        'amount_breakdown': {
-            'total_amount': total_amount,
-            'completed_amount': completed_amount,
-            'inprocess_amount': inprocess_amount,
-        },
-        'payment_mode_breakdown': payment_mode_stats,
-        'monthly_stats': {
-            'count': monthly_stats['count'] or 0,
-            'amount': monthly_stats['amount'] or 0,
-        },
-        'recent_payments': recent_payments_data,
-    })
-
-
-@api_view(['POST'])
-@permission_classes([IsSuperAdmin])
-def bulk_update_payments(request):
-    """Bulk update payment status (SuperAdmin only)"""
-    payment_ids = request.data.get('payment_ids', [])
-    new_status = request.data.get('status')
-    notes = request.data.get('notes', '')
-    
-    if not payment_ids:
-        return Response({
-            'error': 'Payment IDs are required'
-        }, status=status.HTTP_400_BAD_REQUEST)
-    
-    if new_status not in ['completed', 'rejected']:
-        return Response({
-            'error': 'Invalid status. Only "completed" or "rejected" allowed for bulk update'
-        }, status=status.HTTP_400_BAD_REQUEST)
-    
-    # Update payments that are currently in process
-    updated_count = Payment.objects.filter(
-        id__in=payment_ids,
-        status='inprocess'
-    ).update(
-        status=new_status,
-        processed_by=request.user,
-        processed_at=timezone.now(),
-        notes=notes
-    )
-    
-    return Response({
-        'message': f'{updated_count} payments updated successfully',
-        'updated_count': updated_count,
-        'status': new_status
-    })
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def payment_modes_list(request):
-    """Get list of available payment modes"""
-    return Response({
-        'payment_modes': [
-            {'value': choice[0], 'label': choice[1]} 
-            for choice in Payment.PAYMENT_MODE_CHOICES
-        ]
-    })
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def payment_status_choices(request):
-    """Get list of payment status choices"""
-    return Response({
-        'status_choices': [
-            {'value': choice[0], 'label': choice[1]} 
-            for choice in Payment.STATUS_CHOICES
-        ]
-    })

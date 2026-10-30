@@ -1835,3 +1835,68 @@ WARNING 2026-10-30 15:07:19,336 log 18304 4584 Not Found: /api/bookings/quotatio
 WARNING 2026-10-30 15:07:46,766 log 18304 4584 Not Found: /api/bookings/quotations/1/
 WARNING 2026-10-30 15:07:46,770 log 18304 4584 Not Found: /api/bookings/quotations/1/convert/
 WARNING 2026-10-30 15:07:49,895 log 18304 4584 Unauthorized: /api/bookings/quotations/
+WARNING 2026-10-30 15:12:54,371 log 1820 10604 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:12:57,311 log 1820 10604 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:13:02,771 log 1820 10604 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 15:13:10,070 log 1820 10604 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 15:13:17,594 log 1820 10604 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 15:20:43,415 log 4716 19224 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:20:46,325 log 4716 19224 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:20:51,885 log 4716 19224 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 15:20:59,695 log 4716 19224 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 15:21:07,368 log 4716 19224 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 15:21:09,744 log 4716 19224 Bad Request: /api/crm/leads/
+WARNING 2026-10-30 15:21:23,959 log 4716 19224 Not Found: /api/crm/leads/1/
+WARNING 2026-10-30 15:21:23,964 log 4716 19224 Not Found: /api/crm/leads/1/update-status/
+WARNING 2026-10-30 15:21:28,602 log 4716 19224 Unauthorized: /api/crm/leads/
+WARNING 2026-10-30 15:21:38,813 log 4716 19224 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-10-30 15:21:40,691 log 4716 19224 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 15:21:42,684 log 4716 19224 Not Found: /api/bookings/quotations/999999/convert/
+WARNING 2026-10-30 15:22:02,402 log 4716 19224 Not Found: /api/bookings/quotations/1/
+WARNING 2026-10-30 15:22:02,407 log 4716 19224 Not Found: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 15:22:04,304 log 4716 19224 Unauthorized: /api/bookings/quotations/
+WARNING 2026-10-30 15:23:38,580 log 12184 2816 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:23:41,314 log 12184 2816 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:23:46,353 log 12184 2816 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 15:23:53,160 log 12184 2816 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 15:24:00,467 log 12184 2816 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 15:24:02,722 log 12184 2816 Bad Request: /api/crm/leads/
+WARNING 2026-10-30 15:24:16,241 log 12184 2816 Not Found: /api/crm/leads/1/
+WARNING 2026-10-30 15:24:16,245 log 12184 2816 Not Found: /api/crm/leads/1/update-status/
+WARNING 2026-10-30 15:24:20,735 log 12184 2816 Unauthorized: /api/crm/leads/
+WARNING 2026-10-30 15:24:30,805 log 12184 2816 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-10-30 15:24:32,875 log 12184 2816 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 15:24:34,709 log 12184 2816 Not Found: /api/bookings/quotations/999999/convert/
+WARNING 2026-10-30 15:24:52,881 log 12184 2816 Not Found: /api/bookings/quotations/1/
+WARNING 2026-10-30 15:24:52,885 log 12184 2816 Not Found: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 15:24:54,671 log 12184 2816 Unauthorized: /api/bookings/quotations/
+WARNING 2026-10-30 15:25:47,710 log 17996 2648 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:25:50,407 log 17996 2648 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:25:55,329 log 17996 2648 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 15:26:02,170 log 17996 2648 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 15:26:09,404 log 17996 2648 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 15:26:11,643 log 17996 2648 Bad Request: /api/crm/leads/
+WARNING 2026-10-30 15:26:25,218 log 17996 2648 Not Found: /api/crm/leads/1/
+WARNING 2026-10-30 15:26:25,221 log 17996 2648 Not Found: /api/crm/leads/1/update-status/
+WARNING 2026-10-30 15:26:29,833 log 17996 2648 Unauthorized: /api/crm/leads/
+WARNING 2026-10-30 15:26:39,924 log 17996 2648 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-10-30 15:26:41,741 log 17996 2648 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 15:26:43,531 log 17996 2648 Not Found: /api/bookings/quotations/999999/convert/
+WARNING 2026-10-30 15:27:01,335 log 17996 2648 Not Found: /api/bookings/quotations/1/
+WARNING 2026-10-30 15:27:01,346 log 17996 2648 Not Found: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 15:27:03,159 log 17996 2648 Unauthorized: /api/bookings/quotations/
+WARNING 2026-10-30 15:30:13,326 log 19276 6640 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:30:16,773 log 19276 6640 Bad Request: /api/auth/login/
+WARNING 2026-10-30 15:30:23,440 log 19276 6640 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 15:30:31,082 log 19276 6640 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 15:30:39,172 log 19276 6640 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 15:30:41,555 log 19276 6640 Bad Request: /api/crm/leads/
+WARNING 2026-10-30 15:30:56,240 log 19276 6640 Not Found: /api/crm/leads/1/
+WARNING 2026-10-30 15:30:56,243 log 19276 6640 Not Found: /api/crm/leads/1/update-status/
+WARNING 2026-10-30 15:31:01,043 log 19276 6640 Unauthorized: /api/crm/leads/
+WARNING 2026-10-30 15:31:11,731 log 19276 6640 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-10-30 15:31:13,841 log 19276 6640 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 15:31:15,891 log 19276 6640 Not Found: /api/bookings/quotations/999999/convert/
+WARNING 2026-10-30 15:31:35,691 log 19276 6640 Not Found: /api/bookings/quotations/1/
+WARNING 2026-10-30 15:31:35,703 log 19276 6640 Not Found: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 15:31:37,702 log 19276 6640 Unauthorized: /api/bookings/quotations/

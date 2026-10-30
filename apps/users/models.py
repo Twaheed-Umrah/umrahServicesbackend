@@ -54,6 +54,11 @@ class User(AbstractUser, TimestampMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']  # Fields required when creating superuser
 
+    def save(self, *args, **kwargs):
+        if not self.username and self.email:
+            self.username = self.email.strip().lower()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})"
 
@@ -74,6 +79,11 @@ class OTPVerification(TimestampMixin):
     class Meta:
         ordering = ['-created_at']
     
+    def save(self, *args, **kwargs):
+        if not self.username and self.email:
+            self.username = self.email.strip().lower()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"OTP for {self.user.username} - {self.get_verification_type_display()}"
     

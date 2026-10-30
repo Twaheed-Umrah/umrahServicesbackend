@@ -74,8 +74,22 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {
             'password': {'write_only': True},
-            'email': {'required': True}
+            'email': {'required': True},
+            'username': {'required': False, 'allow_blank': True}
         }
+
+    def to_internal_value(self, data):
+        # Auto-default username to email if missing or empty
+        if hasattr(data, '_mutable') and not data._mutable:
+            data = data.copy()
+        elif isinstance(data, dict):
+            data = dict(data)
+        
+        email = data.get('email', '')
+        if email and not data.get('username'):
+            data['username'] = email.strip().lower()
+            
+        return super().to_internal_value(data)
 
     def validate_email(self, value):
         """Validate that the email is unique"""
@@ -117,6 +131,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop('password')
+        if not validated_data.get('username') and validated_data.get('email'):
+            validated_data['username'] = validated_data['email'].strip().lower()
         
         # Create user with all fields (including file fields)
         user = User.objects.create(**validated_data)

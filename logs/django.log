@@ -1805,3 +1805,8 @@ WARNING 2026-10-30 12:27:50,529 log 8308 2592 Not Found: /api/bookings/quotation
 WARNING 2026-10-30 12:28:19,999 log 8308 2592 Not Found: /api/bookings/quotations/1/
 WARNING 2026-10-30 12:28:20,006 log 8308 2592 Not Found: /api/bookings/quotations/1/convert/
 WARNING 2026-10-30 12:28:23,953 log 8308 2592 Unauthorized: /api/bookings/quotations/
+WARNING 2026-10-30 14:08:14,356 log 8096 1244 Bad Request: /api/auth/login/
+WARNING 2026-10-30 14:08:17,385 log 8096 1244 Bad Request: /api/auth/login/
+WARNING 2026-10-30 14:08:23,738 log 8096 1244 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 14:08:31,266 log 8096 1244 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 14:08:39,147 log 8096 1244 Unauthorized: /api/auth/users/me/

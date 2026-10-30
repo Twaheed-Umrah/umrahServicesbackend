@@ -10,9 +10,9 @@ After=network.target
 [Service]
 User=ubuntu
 Group=www-data
-WorkingDirectory=/var/www/masarumrahCRM/umrahServicesbackend
-Environment="PATH=/var/www/masarumrahCRM/umrahServicesbackend/.venv/bin"
-ExecStart=/var/www/masarumrahCRM/umrahServicesbackend/.venv/bin/gunicorn \
+WorkingDirectory=/home/ubuntu/umrahServicesbackend
+Environment="PATH=/home/ubuntu/umrahServicesbackend/.venv/bin"
+ExecStart=/home/ubuntu/umrahServicesbackend/.venv/bin/gunicorn \
           --workers 3 \
           --threads 2 \
           --bind 127.0.0.1:8000 \
@@ -27,4 +27,3 @@ PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target
-

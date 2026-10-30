@@ -1397,3 +1397,158 @@ class QuotationStatusUpdateView(APIView):
             'valid_until': quotation.valid_until,
             'next_followup_at': quotation.next_followup_at
         })
+
+
+class AccountingSummaryView(APIView):
+    """
+    Module 15 & 16: Comprehensive Accounting, Financial Analytics & Payment Due Schedule
+    Calculates total gross revenue, paid collections, pending client balances, supplier costs & net profit.
+    """
+    permission_classes = [IsTenantOrStaff]
+
+    def get(self, request):
+        user = request.user
+        tenant_id = request.query_params.get('tenant_id')
+        month = request.query_params.get('month')
+
+        booking_qs = Booking.objects.all()
+        quick_qs = QuickBooking.objects.all()
+
+        if user.role == 'superadmin':
+            if tenant_id and tenant_id != 'all':
+                booking_qs = booking_qs.filter(models.Q(created_by_id=tenant_id) | models.Q(created_by__created_by_id=tenant_id))
+                quick_qs = quick_qs.filter(models.Q(created_by_id=tenant_id) | models.Q(created_by__created_by_id=tenant_id))
+        elif user.role == 'accountant':
+            if user.created_by:
+                booking_qs = booking_qs.filter(created_by__in=[user.created_by, user])
+                quick_qs = quick_qs.filter(created_by__in=[user.created_by, user])
+            else:
+                booking_qs = booking_qs.filter(created_by=user)
+                quick_qs = quick_qs.filter(created_by=user)
+        else:
+            booking_qs = booking_qs.filter(models.Q(created_by=user) | models.Q(created_by__created_by=user))
+            quick_qs = quick_qs.filter(models.Q(created_by=user) | models.Q(created_by__created_by=user))
+
+        if month and month != 'all':
+            booking_qs = booking_qs.filter(travel_month=month)
+            quick_qs = quick_qs.filter(travel_month=month)
+
+        # Revenue & Balance sums
+        b_revenue = booking_qs.aggregate(t=models.Sum('total_price'))['t'] or Decimal('0.00')
+        b_advance = booking_qs.aggregate(t=models.Sum('advance_payment'))['t'] or Decimal('0.00')
+        b_balance = booking_qs.aggregate(t=models.Sum('balance'))['t'] or Decimal('0.00')
+
+        q_budget = quick_qs.aggregate(t=models.Sum('budget'))['t'] or Decimal('0.00')
+        q_payment = quick_qs.aggregate(t=models.Sum('payment'))['t'] or Decimal('0.00')
+        q_dues = quick_qs.aggregate(t=models.Sum('dues'))['t'] or Decimal('0.00')
+
+        total_revenue = float(b_revenue + q_budget)
+        total_paid = float(b_advance + q_payment)
+        total_pending = float(b_balance + q_dues)
+
+        # Direct Supplier costs from confirmed regular bookings
+        cost_hotel = booking_qs.aggregate(t=models.Sum('cost_hotel'))['t'] or Decimal('0.00')
+        cost_flight = booking_qs.aggregate(t=models.Sum('cost_flight'))['t'] or Decimal('0.00')
+        cost_visa = booking_qs.aggregate(t=models.Sum('cost_visa'))['t'] or Decimal('0.00')
+        cost_transport = booking_qs.aggregate(t=models.Sum('cost_transport'))['t'] or Decimal('0.00')
+        cost_other = booking_qs.aggregate(t=models.Sum('cost_other'))['t'] or Decimal('0.00')
+        total_costs = float(cost_hotel + cost_flight + cost_visa + cost_transport + cost_other)
+        gross_profit = float(b_revenue) - total_costs
+        margin_pct = round((gross_profit / float(b_revenue) * 100), 1) if float(b_revenue) > 0 else 0.0
+        collection_rate_pct = round((total_paid / total_revenue * 100), 1) if total_revenue > 0 else 0.0
+
+        # Payment methods breakdown
+        methods = {}
+        for b in booking_qs.values('payment_type').annotate(count=models.Count('id'), sum=models.Sum('advance_payment')):
+            pt = b['payment_type'] or 'cash'
+            methods[pt] = {
+                'count': b['count'],
+                'amount': float(b['sum'] or 0)
+            }
+
+        # Upcoming client payment due schedules ("which date which client is getting date")
+        due_clients = []
+        for b in booking_qs.filter(balance__gt=0).order_by('travel_month')[:60]:
+            due_clients.append({
+                'id': b.id,
+                'booking_number': b.booking_number,
+                'client_name': f"{b.first_name} {b.last_name}",
+                'mobile_no': b.mobile_no,
+                'email': b.email,
+                'travel_month': b.travel_month,
+                'total_price': float(b.total_price),
+                'paid_amount': float(b.advance_payment),
+                'pending_balance': float(b.balance),
+                'payment_type': b.payment_type,
+                'status': b.status,
+                'package_name': b.package_name,
+                'source': 'Regular Booking',
+                'created_at': b.created_at.strftime('%Y-%m-%d') if b.created_at else ''
+            })
+
+        for qb in quick_qs.filter(dues__gt=0).order_by('-created_at')[:30]:
+            due_clients.append({
+                'id': qb.id,
+                'booking_number': qb.booking_number,
+                'client_name': f"{qb.first_name} {qb.last_name}",
+                'mobile_no': qb.mobile,
+                'email': qb.email,
+                'travel_month': qb.travel_month or 'Immediate',
+                'total_price': float(qb.budget or 0),
+                'paid_amount': float(qb.payment or 0),
+                'pending_balance': float(qb.dues or 0),
+                'payment_type': qb.preferred_payment or 'pay_later',
+                'status': qb.payment_status or 'pending',
+                'package_name': qb.destination or 'Umrah Quick Package',
+                'source': 'Quick Voucher',
+                'created_at': qb.created_at.strftime('%Y-%m-%d') if qb.created_at else ''
+            })
+
+        return Response({
+            'kpis': {
+                'total_revenue': total_revenue,
+                'total_paid': total_paid,
+                'total_pending': total_pending,
+                'total_costs': total_costs,
+                'gross_profit': gross_profit,
+                'margin_pct': margin_pct,
+                'collection_rate_pct': collection_rate_pct,
+                'overdue_count': len(due_clients),
+                'cost_breakdown': {
+                    'hotel': float(cost_hotel),
+                    'flight': float(cost_flight),
+                    'visa': float(cost_visa),
+                    'transport': float(cost_transport),
+                    'other': float(cost_other),
+                }
+            },
+            'payment_methods': methods,
+            'due_schedules': due_clients
+        })
+
+
+class BookingTravelerCreateView(APIView):
+    """
+    Module 4: Add new pilgrim/family member to a booking group
+    """
+    permission_classes = [IsTenantOrStaff]
+
+    def post(self, request, booking_id):
+        try:
+            booking = Booking.objects.get(pk=booking_id)
+            serializer = BookingTravelerSerializer(data=request.data)
+            if serializer.is_valid():
+                traveler = serializer.save(booking=booking)
+                return Response(BookingTravelerSerializer(traveler).data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Booking.DoesNotExist:
+            return Response({'detail': 'Booking not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class BookingTravelerDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Module 4: Manage, update or remove a pilgrim from a family group
+    """
+    queryset = BookingTraveler.objects.all()
+    serializer_class = BookingTravelerSerializer
+    permission_classes = [IsTenantOrStaff]

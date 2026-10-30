@@ -96,6 +96,10 @@ class LeadAddNoteView(generics.UpdateAPIView):
     serializer_class = LeadUpdateStatusSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def post(self, request, *args, **kwargs):
+        """Allow POST as an alias for partial update."""
+        return self.partial_update(request, *args, **kwargs)
+
     def get_queryset(self):
         user = self.request.user
         if user.role == 'superadmin':

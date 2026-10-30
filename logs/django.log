@@ -1508,3 +1508,300 @@ INFO 2026-10-27 13:00:03,002 basehttp 19516 19220 "POST /api/auth/verify-token/ 
 INFO 2026-10-27 13:05:04,013 basehttp 19516 6404 "POST /api/auth/verify-token/ HTTP/1.1" 200 79
 INFO 2026-10-27 13:10:05,639 basehttp 19516 716 "POST /api/auth/verify-token/ HTTP/1.1" 200 79
 INFO 2026-10-27 13:15:06,161 basehttp 19516 17920 "POST /api/auth/verify-token/ HTTP/1.1" 200 79
+WARNING 2026-10-30 11:54:02,475 log 4116 16836 Bad Request: /api/crm/leads/
+WARNING 2026-10-30 11:54:07,084 log 4116 16836 Bad Request: /api/crm/leads/reassign-from-pool/
+WARNING 2026-10-30 11:54:14,035 log 4116 16836 Bad Request: /api/crm/tasks/
+WARNING 2026-10-30 11:54:16,317 log 4116 16836 Not Found: /api/crm/leads/1/
+WARNING 2026-10-30 11:54:16,318 log 4116 16836 Method Not Allowed: /api/crm/leads/1/update-status/
+WARNING 2026-10-30 11:54:20,951 log 4116 16836 Unauthorized: /api/crm/leads/
+WARNING 2026-10-30 11:54:23,462 log 4116 16836 Method Not Allowed: /api/crm/leads/1/update-status/
+WARNING 2026-10-30 11:56:50,833 log 8184 13508 Bad Request: /api/crm/leads/
+WARNING 2026-10-30 11:57:05,525 log 8184 13508 Not Found: /api/crm/leads/1/
+WARNING 2026-10-30 11:57:05,533 log 8184 13508 Not Found: /api/crm/leads/1/update-status/
+WARNING 2026-10-30 11:57:10,389 log 8184 13508 Unauthorized: /api/crm/leads/
+WARNING 2026-10-30 12:01:00,669 log 1612 3068 Forbidden: /api/bookings/quotations/1/approve-discount/
+ERROR 2026-10-30 12:01:04,696 log 1612 3068 Internal Server Error: /api/bookings/quotations/1/convert/
+Traceback (most recent call last):
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\apps\bookings\views.py", line 1028, in post
+    per_adult = (quotation.selling_price / Decimal(adults_count)).quantize(Decimal('0.01')) if adults_count > 0 else quotation.selling_price
+                                           ^^^^^^^
+NameError: name 'Decimal' is not defined
+WARNING 2026-10-30 12:01:08,973 log 1612 3068 Not Found: /api/bookings/quotations/999999/convert/
+ERROR 2026-10-30 12:01:16,514 log 1612 3068 Internal Server Error: /api/bookings/quotations/1/clone/
+Traceback (most recent call last):
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\apps\bookings\views.py", line 941, in post
+    cloned.quotation_date = timezone.now().date()
+                            ^^^^^^^^
+NameError: name 'timezone' is not defined
+ERROR 2026-10-30 12:01:20,712 log 1612 3068 Internal Server Error: /api/bookings/quotations/1/convert/
+Traceback (most recent call last):
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\apps\bookings\views.py", line 1028, in post
+    per_adult = (quotation.selling_price / Decimal(adults_count)).quantize(Decimal('0.01')) if adults_count > 0 else quotation.selling_price
+                                           ^^^^^^^
+NameError: name 'Decimal' is not defined
+ERROR 2026-10-30 12:01:24,622 log 1612 3068 Internal Server Error: /api/bookings/quotations/
+Traceback (most recent call last):
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\generics.py", line 246, in post
+    return self.create(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\mixins.py", line 20, in create
+    headers = self.get_success_headers(serializer.data)
+                                       ^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\serializers.py", line 573, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\serializers.py", line 540, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\fields.py", line 1272, in to_representation
+    assert not isinstance(value, datetime.datetime), (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected a `date`, but got a `datetime`. Refusing to coerce, as this may mean losing timezone information. Use a custom read-only field and deal with timezone issues explicitly.
+ERROR 2026-10-30 12:01:40,866 log 1612 3068 Internal Server Error: /api/bookings/quotations/stats/
+Traceback (most recent call last):
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\apps\bookings\views.py", line 1209, in get
+    total_quoted_value = quotes.aggregate(models.Sum('total_customer_price'))['total_customer_price__sum'] or 0
+                                          ^^^^^^
+NameError: name 'models' is not defined
+ERROR 2026-10-30 12:01:44,795 log 1612 3068 Internal Server Error: /api/bookings/quotations/
+Traceback (most recent call last):
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\generics.py", line 246, in post
+    return self.create(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\mixins.py", line 20, in create
+    headers = self.get_success_headers(serializer.data)
+                                       ^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\serializers.py", line 573, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\serializers.py", line 540, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\fields.py", line 1272, in to_representation
+    assert not isinstance(value, datetime.datetime), (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected a `date`, but got a `datetime`. Refusing to coerce, as this may mean losing timezone information. Use a custom read-only field and deal with timezone issues explicitly.
+WARNING 2026-10-30 12:01:51,928 log 1612 3068 Unauthorized: /api/bookings/quotations/
+WARNING 2026-10-30 12:03:32,675 log 9260 19288 Not Found: /api/bookings/bookings/1/manifest/
+WARNING 2026-10-30 12:03:36,662 log 9260 19288 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-10-30 12:03:40,408 log 9260 19288 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 12:03:44,080 log 9260 19288 Not Found: /api/bookings/quotations/999999/convert/
+ERROR 2026-10-30 12:03:51,175 log 9260 19288 Internal Server Error: /api/bookings/quotations/1/clone/
+Traceback (most recent call last):
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\apps\bookings\views.py", line 954, in post
+    cloned.valid_until = cloned.quotation_date + datetime.timedelta(days=7)
+                                                 ^^^^^^^^
+NameError: name 'datetime' is not defined
+WARNING 2026-10-30 12:04:20,227 log 9260 19288 Not Found: /api/bookings/quotations/1/
+WARNING 2026-10-30 12:04:20,236 log 9260 19288 Not Found: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 12:04:23,938 log 9260 19288 Unauthorized: /api/bookings/quotations/
+WARNING 2026-10-30 12:06:08,565 log 7788 12508 Not Found: /api/bookings/bookings/9/manifest/
+WARNING 2026-10-30 12:06:08,567 log 7788 12508 Not Found: /api/bookings/bookings/9/manifest/
+WARNING 2026-10-30 12:08:09,107 log 14960 11212 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-10-30 12:08:12,814 log 14960 11212 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 12:08:16,482 log 14960 11212 Not Found: /api/bookings/quotations/999999/convert/
+WARNING 2026-10-30 12:08:51,657 log 14960 11212 Not Found: /api/bookings/quotations/1/
+WARNING 2026-10-30 12:08:51,675 log 14960 11212 Not Found: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 12:08:55,317 log 14960 11212 Unauthorized: /api/bookings/quotations/
+WARNING 2026-10-30 12:09:26,872 log 7536 16580 Bad Request: /api/auth/login/
+WARNING 2026-10-30 12:09:31,981 log 7536 16580 Bad Request: /api/auth/login/
+WARNING 2026-10-30 12:09:42,126 log 7536 16580 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 12:09:50,583 log 7536 16580 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 12:09:59,916 log 7536 16580 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 12:10:04,555 log 7536 16580 Bad Request: /api/crm/leads/
+WARNING 2026-10-30 12:10:33,414 log 7536 16580 Not Found: /api/crm/leads/1/
+WARNING 2026-10-30 12:10:33,422 log 7536 16580 Not Found: /api/crm/leads/1/update-status/
+WARNING 2026-10-30 12:10:43,005 log 7536 16580 Unauthorized: /api/crm/leads/
+WARNING 2026-10-30 12:11:04,805 log 7536 16580 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-10-30 12:11:08,906 log 7536 16580 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 12:11:13,407 log 7536 16580 Not Found: /api/bookings/quotations/999999/convert/
+WARNING 2026-10-30 12:15:44,164 log 9028 9996 Bad Request: /api/auth/login/
+WARNING 2026-10-30 12:15:46,914 log 9028 9996 Bad Request: /api/auth/login/
+WARNING 2026-10-30 12:15:51,897 log 9028 9996 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 12:15:59,528 log 9028 9996 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 12:16:06,784 log 9028 9996 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 12:16:09,114 log 9028 9996 Bad Request: /api/crm/leads/
+WARNING 2026-10-30 12:16:31,183 log 9028 9996 Not Found: /api/crm/leads/1/
+WARNING 2026-10-30 12:16:31,192 log 9028 9996 Not Found: /api/crm/leads/1/update-status/
+WARNING 2026-10-30 12:16:40,039 log 9028 9996 Unauthorized: /api/crm/leads/
+WARNING 2026-10-30 12:17:00,027 log 9028 9996 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-10-30 12:17:03,704 log 9028 9996 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 12:17:07,659 log 9028 9996 Not Found: /api/bookings/quotations/999999/convert/
+WARNING 2026-10-30 12:17:47,737 log 9028 9996 Not Found: /api/bookings/quotations/1/
+WARNING 2026-10-30 12:17:47,753 log 9028 9996 Not Found: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 12:17:52,080 log 9028 9996 Unauthorized: /api/bookings/quotations/
+WARNING 2026-10-30 12:26:15,576 log 8308 2592 Bad Request: /api/auth/login/
+WARNING 2026-10-30 12:26:18,613 log 8308 2592 Bad Request: /api/auth/login/
+WARNING 2026-10-30 12:26:24,144 log 8308 2592 Forbidden: /api/auth/tenants/
+WARNING 2026-10-30 12:26:31,495 log 8308 2592 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-10-30 12:26:42,070 log 8308 2592 Unauthorized: /api/auth/users/me/
+WARNING 2026-10-30 12:26:47,055 log 8308 2592 Bad Request: /api/crm/leads/
+WARNING 2026-10-30 12:27:14,814 log 8308 2592 Not Found: /api/crm/leads/1/
+WARNING 2026-10-30 12:27:14,817 log 8308 2592 Not Found: /api/crm/leads/1/update-status/
+WARNING 2026-10-30 12:27:24,026 log 8308 2592 Unauthorized: /api/crm/leads/
+WARNING 2026-10-30 12:27:43,880 log 8308 2592 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-10-30 12:27:47,601 log 8308 2592 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 12:27:50,529 log 8308 2592 Not Found: /api/bookings/quotations/999999/convert/
+WARNING 2026-10-30 12:28:19,999 log 8308 2592 Not Found: /api/bookings/quotations/1/
+WARNING 2026-10-30 12:28:20,006 log 8308 2592 Not Found: /api/bookings/quotations/1/convert/
+WARNING 2026-10-30 12:28:23,953 log 8308 2592 Unauthorized: /api/bookings/quotations/

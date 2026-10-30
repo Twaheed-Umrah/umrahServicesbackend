@@ -61,6 +61,10 @@ class CustomBase64FileField(Base64FileField):
         except Exception:
             return 'bin'
 
+    def to_representation(self, value):
+        from apps.common.utils import build_absolute_media_url
+        return build_absolute_media_url(value, self.context.get('request'))
+
 class CustomBase64ImageField(Base64ImageField):
     # Define allowed image types
     ALLOWED_TYPES = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp', 'tiff']
@@ -116,6 +120,10 @@ class CustomBase64ImageField(Base64ImageField):
             if isinstance(e, ValidationError):
                 raise
             raise ValidationError("Error processing image file.")
+
+    def to_representation(self, value):
+        from apps.common.utils import build_absolute_media_url
+        return build_absolute_media_url(value, self.context.get('request'))
 
 class APIKeySerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)

@@ -37,18 +37,44 @@ SECRET_KEY = config('SECRET_KEY', default='masar-umrah-global-786-services')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = [
-    "crmweb.hajumrahservice.com",
-    "51.20.91.180",
-    "localhost",
-    "127.0.0.1",
-   "hajumrahservice.com",
-    "tawheedumrah.com",
-    "faizanumrah.com",
-    "almakkahmadinah.com",
-    "huzaifamasarumrah.com",
-    "drpervezumrah.com",
+# Support environment-driven ALLOWED_HOSTS for AWS ALB, EC2, CloudFront, ECS
+allowed_hosts_env = config('ALLOWED_HOSTS', default='')
+if allowed_hosts_env:
+    ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
+else:
+    ALLOWED_HOSTS = [
+        "umrahdesk.masarumrah.com",
+        ".masarumrah.com",
+        "masarumrah.com",
+        "crmweb.hajumrahservice.com",
+        "51.20.91.180",
+        "localhost",
+        "127.0.0.1",
+        "hajumrahservice.com",
+        "tawheedumrah.com",
+        "faizanumrah.com",
+        "almakkahmadinah.com",
+        "huzaifamasarumrah.com",
+        "drpervezumrah.com",
+        "*",
+    ] if DEBUG else [
+        "umrahdesk.masarumrah.com",
+        ".masarumrah.com",
+        "masarumrah.com",
+        "crmweb.hajumrahservice.com",
+        "51.20.91.180",
+        "localhost",
+        "127.0.0.1",
+        "hajumrahservice.com",
+        "tawheedumrah.com",
+        "faizanumrah.com",
+        "almakkahmadinah.com",
+        "huzaifamasarumrah.com",
+        "drpervezumrah.com",
     ]
+
+# AWS ALB & Reverse Proxy SSL Header
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 DJANGO_APPS = [
@@ -118,12 +144,24 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Database - supports local SQLite and AWS RDS PostgreSQL
+DATABASE_URL = config('DATABASE_URL', default=None)
+if DATABASE_URL:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
@@ -161,8 +199,24 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Media files - supports local storage and AWS S3
+USE_S3 = config('USE_S3', default=False, cast=bool)
+if USE_S3:
+    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default=None)
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default=None)
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='')
+    AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='ap-south-1')
+    AWS_S3_CUSTOM_DOMAIN = config('AWS_S3_CUSTOM_DOMAIN', default=f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com')
+    AWS_DEFAULT_ACL = None
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+else:
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+
+# Base URL used for constructing absolute URLs in API responses
+BACKEND_URL = config('BACKEND_URL', default='https://umrahdesk.masarumrah.com')
 
 # Static files storage for production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -255,18 +309,24 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://crm.hajumrahservice.com",
-    "https://crm.hajumrahservice.com",
-    'https://hajumrahservice.com',
-    "https://tawheedumrah.com",
-    "https://faizanumrah.com",
-    "https://www.huzaifamasarumrah.com",
-    "https://www.drpervezumrah.com",
-    "https://almakkahmadinah.com",
-    "http://localhost:3000",
-    "http://localhost:5173",
-]
+csrf_trusted_env = config('CSRF_TRUSTED_ORIGINS', default='')
+if csrf_trusted_env:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_trusted_env.split(',') if origin.strip()]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        "https://umrahdesk.masarumrah.com",
+        "http://umrahdesk.masarumrah.com",
+        "http://crm.hajumrahservice.com",
+        "https://crm.hajumrahservice.com",
+        'https://hajumrahservice.com',
+        "https://tawheedumrah.com",
+        "https://faizanumrah.com",
+        "https://www.huzaifamasarumrah.com",
+        "https://www.drpervezumrah.com",
+        "https://almakkahmadinah.com",
+        "http://localhost:3000",
+        "http://localhost:5173",
+    ]
 
 # Swagger Settings
 SWAGGER_SETTINGS = {
@@ -280,12 +340,13 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'masarumrahservice072@gmail.com'
-EMAIL_HOST_PASSWORD = 'pjrnsuqeoqnglohc'  
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='masarumrahservice072@gmail.com')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='pjrnsuqeoqnglohc')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='Masar Umrah <masarumrahservice072@gmail.com>')  
 
 
 # Logging Configuration

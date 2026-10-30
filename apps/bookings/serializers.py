@@ -2,7 +2,12 @@ from rest_framework import serializers
 from .models import Booking, BookingTraveler, QuickBooking, SupportTicket, Quotation, QuotationHotel, QuotationActivity
 from apps.packages.serializers import PackageSerializer
 
+from apps.common.utils import AbsoluteFileField, AbsoluteImageField
+
 class BookingTravelerSerializer(serializers.ModelSerializer):
+    passport_scan = AbsoluteFileField(required=False, allow_null=True)
+    photo = AbsoluteImageField(required=False, allow_null=True)
+
     class Meta:
         model = BookingTraveler
         fields = ['id', 'name', 'age', 'gender', 'traveler_type', 'passport_number', 'passport_expiry', 'passport_scan', 'photo', 'visa_status', 'relationship', 'special_assistance', 'is_repeat_pilgrim']

@@ -9,6 +9,8 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+from apps.common.utils import build_absolute_media_url
+
 class Base64ImageField(serializers.ImageField):
     """
     A Django REST framework field for handling image-uploads through raw post data.
@@ -21,6 +23,9 @@ class Base64ImageField(serializers.ImageField):
             filename = f"{uuid.uuid4()}.{ext}"
             data = ContentFile(base64.b64decode(imgstr), name=filename)
         return super().to_internal_value(data)
+
+    def to_representation(self, value):
+        return build_absolute_media_url(value, self.context.get('request'))
 
 
 class PackageDepartureSerializer(serializers.ModelSerializer):

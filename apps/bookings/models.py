@@ -398,7 +398,7 @@ class Quotation(TimestampMixin):
     template_style = models.CharField(max_length=30, choices=TEMPLATE_STYLE_CHOICES, default='royal_emerald')
 
     # Dates
-    quotation_date = models.DateField(default=timezone.now)
+    quotation_date = models.DateField(default=datetime.date.today)
     valid_until = models.DateField(null=True, blank=True)
 
     # Agency & Agent
@@ -582,6 +582,10 @@ class Quotation(TimestampMixin):
             self.requires_discount_approval = False
 
     def save(self, *args, **kwargs):
+        if isinstance(self.quotation_date, datetime.datetime):
+            self.quotation_date = self.quotation_date.date()
+        if self.valid_until and isinstance(self.valid_until, datetime.datetime):
+            self.valid_until = self.valid_until.date()
         if not self.quotation_number:
             self.quotation_number = self.generate_quotation_number()
         

@@ -4,8 +4,11 @@ from .models import VisaApplication, VisaDocument,Payment
 
 User = get_user_model()
 
+from apps.common.utils import AbsoluteFileField
+
 class VisaDocumentSerializer(serializers.ModelSerializer):
     verified_by_name = serializers.CharField(source='verified_by.get_full_name', read_only=True)
+    document_file = AbsoluteFileField(required=False, allow_null=True)
     
     class Meta:
         model = VisaDocument

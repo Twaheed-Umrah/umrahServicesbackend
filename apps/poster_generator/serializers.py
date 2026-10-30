@@ -49,10 +49,8 @@ class Base64ImageField(serializers.ImageField):
         except Exception:
             return None
         
-        request = self.context.get('request')
-        if request is not None:
-            return request.build_absolute_uri(value.url)
-        return value.url
+        from apps.common.utils import build_absolute_media_url
+        return build_absolute_media_url(value, self.context.get('request'))
 
 class PosterTemplateSerializer(serializers.ModelSerializer):
     # Handle both base64 input and URL output for the same field
@@ -112,34 +110,16 @@ class PackagePosterSerializer(serializers.ModelSerializer):
         ]
     
     def get_poster_jpg(self, obj):
-        """Return full URL for JPG poster"""
-        if not obj.poster_jpg:
-            return None
-        
-        request = self.context.get('request')
-        if request is not None:
-            return request.build_absolute_uri(obj.poster_jpg.url)
-        return obj.poster_jpg.url
+        from apps.common.utils import build_absolute_media_url
+        return build_absolute_media_url(obj.poster_jpg, self.context.get('request'))
     
     def get_poster_png(self, obj):
-        """Return full URL for PNG poster"""
-        if not obj.poster_png:
-            return None
-        
-        request = self.context.get('request')
-        if request is not None:
-            return request.build_absolute_uri(obj.poster_png.url)
-        return obj.poster_png.url
+        from apps.common.utils import build_absolute_media_url
+        return build_absolute_media_url(obj.poster_png, self.context.get('request'))
     
     def get_poster_pdf(self, obj):
-        """Return full URL for PDF poster"""
-        if not obj.poster_pdf:
-            return None
-        
-        request = self.context.get('request')
-        if request is not None:
-            return request.build_absolute_uri(obj.poster_pdf.url)
-        return obj.poster_pdf.url
+        from apps.common.utils import build_absolute_media_url
+        return build_absolute_media_url(obj.poster_pdf, self.context.get('request'))
     
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user

@@ -50,16 +50,17 @@ class LeadSerializer(serializers.ModelSerializer):
 
 class LeadUpdateStatusSerializer(serializers.ModelSerializer):
     new_note = serializers.CharField(write_only=True, required=False)
+    note = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = Lead
-        fields = ['status', 'notes', 'new_note', 'assigned_caller']
+        fields = ['status', 'notes', 'new_note', 'note', 'assigned_caller']
 
     def update(self, instance, validated_data):
         request = self.context.get('request')
         user = request.user if request else None
 
-        new_note_text = validated_data.pop('new_note', None)
+        new_note_text = validated_data.pop('new_note', None) or validated_data.pop('note', None)
         old_status = instance.status
         old_caller = instance.assigned_caller
 

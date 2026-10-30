@@ -30,14 +30,9 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
     
     def to_representation(self, value):
-        """Return full URL for the image"""
-        if not value:
-            return None
-        
-        request = self.context.get('request')
-        if request is not None:
-            return request.build_absolute_uri(value.url)
-        return value.url
+        """Return complete absolute URL for the image"""
+        from apps.common.utils import build_absolute_media_url
+        return build_absolute_media_url(value, self.context.get('request'))
 
 
 class Base64FileField(serializers.FileField):
@@ -47,29 +42,17 @@ class Base64FileField(serializers.FileField):
     """
     
     def to_internal_value(self, data):
-        # Check if this is a base64 string
         if isinstance(data, str) and data.startswith('data:'):
-            # Parse the base64 string
             format, filestr = data.split(';base64,')
             ext = format.split('/')[-1]
-            
-            # Generate a unique filename
             filename = f"{uuid.uuid4()}.{ext}"
-            
-            # Decode the base64 string
             data = ContentFile(base64.b64decode(filestr), name=filename)
-        
         return super().to_internal_value(data)
     
     def to_representation(self, value):
-        """Return full URL for the file"""
-        if not value:
-            return None
-        
-        request = self.context.get('request')
-        if request is not None:
-            return request.build_absolute_uri(value.url)
-        return value.url
+        """Return complete absolute URL for the file"""
+        from apps.common.utils import build_absolute_media_url
+        return build_absolute_media_url(value, self.context.get('request'))
 
 
 class UserSerializer(serializers.ModelSerializer):

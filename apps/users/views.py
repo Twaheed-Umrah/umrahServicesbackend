@@ -12,7 +12,8 @@ from django.conf import settings
 from datetime import timedelta
 from django.template.loader import render_to_string
 from weasyprint import HTML, CSS
-from django.db.models import Q
+from django.db import models
+from django.db.models import Q, Sum, Count
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.authentication import JWTAuthentication

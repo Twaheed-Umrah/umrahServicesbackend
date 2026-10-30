@@ -1,0 +1,30 @@
+# ==============================================================================
+# Systemd Service for Masar Umrah CRM on AWS EC2
+# Place in /etc/systemd/system/masarumrah.service
+# ==============================================================================
+
+[Unit]
+Description=Gunicorn daemon for Masar Umrah CRM (umrahdesk.masarumrah.com)
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/var/www/masarumrahCRM/umrahServicesbackend
+Environment="PATH=/var/www/masarumrahCRM/umrahServicesbackend/.venv/bin"
+ExecStart=/var/www/masarumrahCRM/umrahServicesbackend/.venv/bin/gunicorn \
+          --workers 3 \
+          --threads 2 \
+          --bind 127.0.0.1:8000 \
+          --timeout 120 \
+          config.wsgi:application
+
+Restart=always
+RestartSec=5
+
+# Sandboxing & security
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+

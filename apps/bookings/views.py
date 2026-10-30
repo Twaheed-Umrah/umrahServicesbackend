@@ -7,6 +7,20 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from rest_framework import status
 from weasyprint import HTML, CSS
+from decimal import Decimal
+import datetime
+from rest_framework import renderers
+
+class CSVRenderer(renderers.BaseRenderer):
+    media_type = 'text/csv'
+    format = 'csv'
+
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        return data
+from io import StringIO
+import csv
+from django.db import models
+from django.utils import timezone
 import tempfile
 import os
 from .models import Booking, BookingTraveler, QuickBooking, SupportTicket, Quotation, QuotationHotel, QuotationActivity
@@ -715,6 +729,7 @@ from io import StringIO
 class PassengerManifestView(APIView):
     """Module 4 & 21: Official Departure Passenger Manifest (JSON or CSV export)"""
     permission_classes = [IsFranchiseOrAgencyAdmin]
+    renderer_classes = [renderers.JSONRenderer, CSVRenderer]
 
     def get(self, request, pk):
         try:
@@ -887,16 +902,19 @@ class QuotationListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role in ['superadmin', 'agencyadmin', 'franchisesadmin']:
+        if user.role == 'superadmin':
             queryset = Quotation.objects.all().prefetch_related('hotels', 'activities').select_related('created_by', 'lead')
-            if user.role == 'superadmin':
-                tenant_id = self.request.query_params.get('tenant_id', None)
-                if tenant_id and tenant_id != 'all':
-                    queryset = queryset.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id) | Q(lead__user_id=tenant_id))
+            tenant_id = self.request.query_params.get('tenant_id', None)
+            if tenant_id and tenant_id != 'all':
+                queryset = queryset.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id) | Q(lead__user_id=tenant_id))
             return queryset
+        elif user.role in ['agencyadmin', 'franchisesadmin']:
+            return Quotation.objects.filter(
+                models.Q(created_by=user) | models.Q(created_by__created_by=user) | models.Q(lead__user=user)
+            ).prefetch_related('hotels', 'activities').select_related('created_by', 'lead')
         else:
             return Quotation.objects.filter(
-                Q(created_by=user) | Q(lead__assigned_caller=user)
+                models.Q(created_by=user) | models.Q(lead__assigned_caller=user)
             ).prefetch_related('hotels', 'activities').select_related('created_by', 'lead')
 
 
@@ -909,10 +927,14 @@ class QuotationDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role in ['superadmin', 'agencyadmin', 'franchisesadmin']:
+        if user.role == 'superadmin':
             return Quotation.objects.all().prefetch_related('hotels', 'activities')
+        elif user.role in ['agencyadmin', 'franchisesadmin']:
+            return Quotation.objects.filter(
+                models.Q(created_by=user) | models.Q(created_by__created_by=user) | models.Q(lead__user=user)
+            ).prefetch_related('hotels', 'activities')
         return Quotation.objects.filter(
-            Q(created_by=user) | Q(lead__assigned_caller=user)
+            models.Q(created_by=user) | models.Q(lead__assigned_caller=user)
         ).prefetch_related('hotels', 'activities')
 
 
@@ -991,6 +1013,16 @@ class QuotationConvertToBookingView(APIView):
             quotation = Quotation.objects.prefetch_related('hotels').get(pk=pk)
         except Quotation.DoesNotExist:
             return Response({'detail': 'Quotation not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if request.user.role != 'superadmin':
+            user = request.user
+            allowed = (
+                quotation.created_by == user or
+                quotation.created_by.created_by == user or
+                (quotation.lead and quotation.lead.user == user)
+            )
+            if not allowed:
+                return Response({'detail': 'Quotation not found'}, status=status.HTTP_404_NOT_FOUND)
 
         if quotation.converted_booking:
             return Response({
@@ -1236,6 +1268,16 @@ class QuotationSendEmailView(APIView):
             quotation = Quotation.objects.prefetch_related('hotels').get(pk=pk)
         except Quotation.DoesNotExist:
             return Response({'detail': 'Quotation not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if request.user.role != 'superadmin':
+            user = request.user
+            allowed = (
+                quotation.created_by == user or
+                quotation.created_by.created_by == user or
+                (quotation.lead and quotation.lead.user == user)
+            )
+            if not allowed:
+                return Response({'detail': 'Quotation not found'}, status=status.HTTP_404_NOT_FOUND)
 
         recipient_email = request.data.get('email') or quotation.email
         if not recipient_email:

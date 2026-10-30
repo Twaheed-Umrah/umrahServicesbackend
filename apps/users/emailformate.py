@@ -8,9 +8,9 @@ from smtplib import SMTPException
 logger = logging.getLogger(__name__)
 
 def send_password_reset_otp(email, otp, user_name="Valued Customer"):
-    """Send beautiful password reset OTP email for MASAR UMRAH Services"""
+    """Send beautiful password reset OTP email for Umrahdesk Services"""
     
-    subject = '🕋 Secure Your MASAR UMRAH Services Account - Password Reset'
+    subject = '🕋 Secure Your Umrahdesk Services Account - Password Reset'
     
     # Beautiful HTML email template
     html_message = f"""
@@ -40,7 +40,7 @@ def send_password_reset_otp(email, otp, user_name="Valued Customer"):
         <div class="container">
             <div class="header">
                 <div class="kaaba-icon">🕋</div>
-                <h1>MASAR UMRAH Services</h1>
+                <h1>Umrahdesk Services</h1>
                 <p>Your Trusted Partner for Sacred Journeys</p>
             </div>
             
@@ -48,7 +48,7 @@ def send_password_reset_otp(email, otp, user_name="Valued Customer"):
                 <div class="greeting">Assalamu Alaikum, {user_name}</div>
                 
                 <div class="message">
-                    <p>We received a request to reset the password for your MASAR UMRAH Services CRM account. To ensure the security of your sacred journey planning, please use the verification code below to proceed with your password reset.</p>
+                    <p>We received a request to reset the password for your Umrahdesk Services CRM account. To ensure the security of your sacred journey planning, please use the verification code below to proceed with your password reset.</p>
                 </div>
                 
                 <div class="otp-section">
@@ -73,7 +73,7 @@ def send_password_reset_otp(email, otp, user_name="Valued Customer"):
             
             <div class="footer">
                 <div class="footer-text">
-                    <p><strong class="company-name">MASAR UMRAH Services</strong><br>
+                    <p><strong class="company-name">Umrahdesk Services</strong><br>
                     Facilitating Sacred Journeys Since [Year]</p>
                     
                     <p>📧 Email: support@masarumrahservices.com<br>
@@ -95,9 +95,9 @@ def send_password_reset_otp(email, otp, user_name="Valued Customer"):
     plain_message = f"""
     Assalamu Alaikum, {user_name}
     
-    MASAR UMRAH SERVICES - PASSWORD RESET
+    UMRAHDESK SERVICES - PASSWORD RESET
     
-    We received a request to reset your password for your MASAR UMRAH Services CRM account.
+    We received a request to reset your password for your Umrahdesk Services CRM account.
     
     Your verification code is: {otp}
     
@@ -107,7 +107,7 @@ def send_password_reset_otp(email, otp, user_name="Valued Customer"):
     
     May Allah bless your sacred journey preparations.
     
-    MASAR UMRAH Services Team
+    Umrahdesk Services Team
     Your Trusted Partner for Sacred Journeys
     
     Email: support@masarumrahservices.com

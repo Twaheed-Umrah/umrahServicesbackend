@@ -794,7 +794,7 @@ class HotelVoucherPDFView(APIView):
             booking = Booking.objects.get(pk=pk)
             company_user = booking.created_by
             company_details = {
-                'name': company_user.company_name or 'Masar Umrah Travel Agency',
+                'name': company_user.company_name or 'Umrahdesk Travel Agency',
                 'address': company_user.address or '',
                 'phone': company_user.phone or '',
                 'email': company_user.email,
@@ -827,7 +827,7 @@ class TransportVoucherPDFView(APIView):
             booking = Booking.objects.get(pk=pk)
             company_user = booking.created_by
             company_details = {
-                'name': company_user.company_name or 'Masar Umrah Travel Agency',
+                'name': company_user.company_name or 'Umrahdesk Travel Agency',
                 'address': company_user.address or '',
                 'phone': company_user.phone or '',
                 'email': company_user.email,
@@ -1189,7 +1189,7 @@ class QuotationPDFView(APIView):
 
             company_user = quotation.created_by
             company_details = {
-                'name': getattr(company_user, 'company_name', None) or 'Masar Umrah Global Services',
+                'name': getattr(company_user, 'company_name', None) or 'Umrahdesk Global Services',
                 'address': getattr(company_user, 'address', None) or 'Kingdom of Saudi Arabia & Global Offices',
                 'phone': getattr(company_user, 'phone', None) or '+91 98765 43210',
                 'email': company_user.email or 'contact@hajumrahservice.com',
@@ -1292,7 +1292,7 @@ class QuotationSendEmailView(APIView):
             f"Validity: Valid until {quotation.valid_until or '7 days'}.\n\n"
             f"Please review the attached PDF proposal. Contact us for seat confirmation or customized adjustments.\n\n"
             f"Best Regards,\n"
-            f"{quotation.prepared_by_name or 'Masar Umrah Operations'}\n"
+            f"{quotation.prepared_by_name or 'Umrahdesk Operations'}\n"
         )
         template_style = request.data.get('template_style') or quotation.template_style or 'royal_emerald'
 
@@ -1307,7 +1307,7 @@ class QuotationSendEmailView(APIView):
 
             company_user = quotation.created_by
             company_details = {
-                'name': getattr(company_user, 'company_name', None) or 'Masar Umrah Global Services',
+                'name': getattr(company_user, 'company_name', None) or 'Umrahdesk Global Services',
                 'address': getattr(company_user, 'address', None) or 'Kingdom of Saudi Arabia & Global Offices',
                 'phone': getattr(company_user, 'phone', None) or '+91 98765 43210',
                 'email': company_user.email or 'contact@hajumrahservice.com',

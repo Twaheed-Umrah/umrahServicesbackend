@@ -16,5 +16,5 @@ class IsTenantOrStaff(BasePermission):
     def has_permission(self, request, view):
         return (
             request.user.is_authenticated and
-            request.user.role in ['superadmin', 'franchisesadmin', 'accountant', 'caller', 'sales_agent', 'operations']
+            request.user.role in ['superadmin', 'franchisesadmin', 'accountant', 'sells_caller', 'operations']
         )

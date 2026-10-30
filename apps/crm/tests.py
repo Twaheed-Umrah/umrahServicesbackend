@@ -36,7 +36,7 @@ class CRMAndLeadEngineTests(TestCase):
             username='caller_a',
             email='callera@agency.com',
             password='Password123!',
-            role='caller',
+            role='sells_caller',
             phone='+919999900011',
             created_by=self.tenant1,
             is_present=True
@@ -46,7 +46,7 @@ class CRMAndLeadEngineTests(TestCase):
             username='caller_b',
             email='callerb@agency.com',
             password='Password123!',
-            role='caller',
+            role='sells_caller',
             phone='+919999900012',
             created_by=self.tenant1,
             is_present=False  # ABSENT! Must be skipped in Round-Robin

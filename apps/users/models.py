@@ -10,8 +10,7 @@ class User(AbstractUser, TimestampMixin):
         ('franchisesadmin', 'Franchise Admin / Tenant'),
         ('operations', 'Operations Coordinator'),
         ('accountant', 'Accountant'),
-        ('caller', 'Telecaller'),
-        ('sales_agent', 'Sales Agent'),
+        ('sells_caller', 'Sales & Telecaller'),
     ]
     
     # Basic user fields

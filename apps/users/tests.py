@@ -33,7 +33,7 @@ class UserAuthAndTenantTests(TestCase):
             username='caller1',
             email='caller1@agency.com',
             password='Password123!',
-            role='caller',
+            role='sells_caller',
             phone='+919999900003',
             created_by=self.tenant1,
             is_present=True

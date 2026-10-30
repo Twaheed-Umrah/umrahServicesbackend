@@ -40,7 +40,7 @@ class QuotationAndBookingEngineTests(TestCase):
             username='caller_t1',
             email='caller1@agency.com',
             password='Password123!',
-            role='caller',
+            role='sells_caller',
             created_by=self.tenant1,
             is_present=True
         )

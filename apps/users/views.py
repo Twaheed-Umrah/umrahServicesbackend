@@ -587,7 +587,7 @@ class GetTenantUsersView(APIView):
         # Corrected 'user_type' to 'role'
         users = User.objects.filter(
             Q(created_by=request.user) & 
-            Q(role__in=['franchisesadmin', 'operations', 'sales_agent', 'caller', 'accountant'])
+            Q(role__in=['franchisesadmin', 'operations', 'sells_caller', 'accountant'])
         ).order_by('-date_joined')
 
         serializer = UserSerializer(users, many=True)
@@ -629,12 +629,12 @@ class GetAgencyCallersView(APIView):
         if request.user.role == 'superadmin':
             tenant_id = request.query_params.get('tenant_id', None)
             if tenant_id and tenant_id != 'all':
-                callers = User.objects.filter(created_by_id=tenant_id, role__in=['caller', 'sales_agent']).order_by('-date_joined')
+                callers = User.objects.filter(created_by_id=tenant_id, role='sells_caller').order_by('-date_joined')
             else:
-                callers = User.objects.filter(role__in=['caller', 'sales_agent']).order_by('-date_joined')
+                callers = User.objects.filter(role='sells_caller').order_by('-date_joined')
         else:
             callers = User.objects.filter(
-                Q(created_by=request.user) & Q(role__in=['caller', 'sales_agent'])
+                Q(created_by=request.user) & Q(role='sells_caller')
             ).order_by('-date_joined')
 
         from .serializers import CallerAttendanceSerializer
@@ -653,9 +653,9 @@ class ToggleCallerAttendanceView(APIView):
     def patch(self, request, user_id):
         try:
             if request.user.role == 'superadmin':
-                caller = User.objects.get(id=user_id, role__in=['caller', 'sales_agent'])
+                caller = User.objects.get(id=user_id, role='sells_caller')
             else:
-                caller = User.objects.get(id=user_id, created_by=request.user, role__in=['caller', 'sales_agent'])
+                caller = User.objects.get(id=user_id, created_by=request.user, role='sells_caller')
         except User.DoesNotExist:
             return Response({'error': 'Caller not found or permission denied'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -679,6 +679,9 @@ class ToggleCallerAttendanceView(APIView):
             'caller': CallerAttendanceSerializer(caller).data
         })
 
+    def post(self, request, user_id):
+        return self.patch(request, user_id)
+
 
 class TenantListView(APIView):
     """
@@ -700,8 +703,7 @@ class TenantListView(APIView):
         for t in tenants:
             staff_qs = User.objects.filter(created_by=t)
             op_count = staff_qs.filter(role='operations').count()
-            sales_count = staff_qs.filter(role='sales_agent').count()
-            caller_count = staff_qs.filter(role='caller').count()
+            sells_caller_count = staff_qs.filter(role='sells_caller').count()
             acct_count = staff_qs.filter(role='accountant').count()
             total_staff = staff_qs.count()
 
@@ -724,8 +726,8 @@ class TenantListView(APIView):
                 'is_active': t.is_active,
                 'staff': {
                     'operations': op_count,
-                    'sales_agents': sales_count,
-                    'callers': caller_count,
+                    'sells_callers': sells_caller_count,
+                    'callers': sells_caller_count,
                     'accountants': acct_count,
                     'total': total_staff,
                 },

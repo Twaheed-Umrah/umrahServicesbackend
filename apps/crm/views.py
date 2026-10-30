@@ -31,7 +31,7 @@ class LeadListCreateView(generics.ListCreateAPIView):
             tenant_id = self.request.query_params.get('tenant_id', None)
             if tenant_id and tenant_id != 'all':
                 queryset = queryset.filter(Q(user_id=tenant_id) | Q(assigned_caller__created_by_id=tenant_id))
-        elif user.role in ['caller', 'sales_agent']:
+        elif user.role == 'sells_caller':
             # Callers only see their assigned leads
             queryset = queryset.filter(assigned_caller=user)
         else:
@@ -68,7 +68,7 @@ class LeadListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         user = self.request.user
-        agency_head = user if user.role not in ['caller', 'sales_agent'] else user.created_by
+        agency_head = user if user.role != 'sells_caller' else user.created_by
         serializer.save(user=agency_head or user)
 
 
@@ -83,7 +83,7 @@ class LeadDetailView(generics.RetrieveUpdateDestroyAPIView):
         user = self.request.user
         if user.role == 'superadmin':
             return Lead.objects.all()
-        elif user.role in ['caller', 'sales_agent']:
+        elif user.role == 'sells_caller':
             return Lead.objects.filter(assigned_caller=user)
         else:
             return Lead.objects.filter(Q(user=user) | Q(assigned_caller__created_by=user))
@@ -104,7 +104,7 @@ class LeadAddNoteView(generics.UpdateAPIView):
         user = self.request.user
         if user.role == 'superadmin':
             return Lead.objects.all()
-        elif user.role in ['caller', 'sales_agent']:
+        elif user.role == 'sells_caller':
             return Lead.objects.filter(assigned_caller=user)
         else:
             return Lead.objects.filter(Q(user=user) | Q(assigned_caller__created_by=user))
@@ -159,14 +159,14 @@ class ExcelLeadUploadView(APIView):
             return Response({'error': 'The uploaded spreadsheet contains no data rows.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Determine Agency Head
-        agency_head = request.user if request.user.role not in ['caller', 'sales_agent'] else request.user.created_by
+        agency_head = request.user if request.user.role != 'sells_caller' else request.user.created_by
         if not agency_head:
             agency_head = request.user
 
         # Fetch all active Callers for this agency who are PRESENT
         present_callers = list(User.objects.filter(
             created_by=agency_head,
-            role__in=['caller', 'sales_agent'],
+            role='sells_caller',
             is_active=True,
             is_present=True  # Strictly exclude absent callers!
         ).order_by('id'))
@@ -247,7 +247,7 @@ class LeadAssignSingleView(APIView):
 
         try:
             lead = Lead.objects.get(id=lead_id)
-            caller = User.objects.get(id=caller_id, role__in=['caller', 'sales_agent'], is_active=True)
+            caller = User.objects.get(id=caller_id, role='sells_caller', is_active=True)
         except Lead.DoesNotExist:
             return Response({'error': 'Lead not found.'}, status=status.HTTP_404_NOT_FOUND)
         except User.DoesNotExist:
@@ -280,7 +280,7 @@ class LeadRecallToPoolView(APIView):
         lead_ids = request.data.get('lead_ids', [])
 
         user = request.user
-        agency_head = user if user.role not in ['caller', 'sales_agent'] else user.created_by
+        agency_head = user if user.role != 'sells_caller' else user.created_by
 
         leads_to_recall = Lead.objects.filter(user=agency_head)
 
@@ -338,7 +338,7 @@ class LeadReassignFromPoolView(APIView):
         use_round_robin = request.data.get('round_robin', False)
 
         user = request.user
-        agency_head = user if user.role not in ['caller', 'sales_agent'] else user.created_by
+        agency_head = user if user.role != 'sells_caller' else user.created_by
 
         pool_leads = Lead.objects.filter(user=agency_head, is_in_agency_pool=True)
         if lead_ids:
@@ -349,7 +349,7 @@ class LeadReassignFromPoolView(APIView):
 
         if target_caller_id:
             try:
-                target_caller = User.objects.get(id=target_caller_id, role__in=['caller', 'sales_agent'], is_active=True)
+                target_caller = User.objects.get(id=target_caller_id, role='sells_caller', is_active=True)
             except User.DoesNotExist:
                 return Response({'error': 'Target caller not found or inactive.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -375,7 +375,7 @@ class LeadReassignFromPoolView(APIView):
         elif use_round_robin:
             present_callers = list(User.objects.filter(
                 created_by=agency_head,
-                role__in=['caller', 'sales_agent'],
+                role='sells_caller',
                 is_active=True,
                 is_present=True
             ).order_by('id'))
@@ -416,7 +416,7 @@ class LeadAgencyPoolListView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        agency_head = user if user.role not in ['caller', 'sales_agent'] else user.created_by
+        agency_head = user if user.role != 'sells_caller' else user.created_by
         return Lead.objects.filter(
             Q(user=agency_head) & (Q(is_in_agency_pool=True) | Q(assigned_caller__isnull=True))
         ).order_by('-created_at')

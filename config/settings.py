@@ -15,6 +15,7 @@ from datetime import timedelta
 from decouple import config
 from corsheaders.defaults import default_headers
 
+
 import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

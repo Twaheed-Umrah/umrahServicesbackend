@@ -1,15 +1,4 @@
-# .gitignore
-*.pyc
-__pycache__/
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
+  GNU nano 8.7.1                                          .gitignore
 lib64/
 parts/
 sdist/
@@ -33,3 +22,5 @@ staticfiles/
 *.db
 logs/
 gtk_runtime/
+logs/
+*.log

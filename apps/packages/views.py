@@ -1,3 +1,4 @@
+from apps.common.tenancy import apply_date_filters, apply_category_filters, apply_status_filter, get_tenant_scoped_queryset
 from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -30,44 +31,26 @@ class PackageListCreateView(generics.ListCreateAPIView):
         user = self.request.user
         
         if user.role == 'superadmin':
-            # SuperAdmin can see all packages
-            return Package.objects.all().select_related('created_by', 'assigned_to')
-        
+            qs = Package.objects.all().select_related('created_by', 'assigned_to')
+            tenant_id = self.request.query_params.get('tenant_id')
+            if tenant_id and str(tenant_id).lower() != 'all':
+                qs = qs.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id) | Q(assigned_to_id=tenant_id))
+            return qs
         elif user.role in ['franchisesadmin', 'franchiseadmin']:
-            # FranchiseAdmin can see:
-            # 1. Packages they created
-            # 2. Packages assigned to their franchises
-            # 3. Packages created by their franchises
-            
-            # Get all users created by this agency admin (franchises)
             subordinate_users = user.created_users.all()
             subordinate_user_ids = list(subordinate_users.values_list('id', flat=True))
-            subordinate_user_ids.append(user.id)  # Include agency admin themselves
-            
+            subordinate_user_ids.append(user.id)
             return Package.objects.filter(
                 Q(created_by_id__in=subordinate_user_ids) |
                 Q(assigned_to_id__in=subordinate_user_ids)
             ).select_related('created_by', 'assigned_to').distinct()
-        
-        elif user.role in ['franchisesadmin', 'franchiseadmin']:
-            # FranchiseAdmin can see:
-            # 1. Packages they created (if their creator allows them to create)
-            # 2. Packages assigned to them
-            # 3. Packages created by their team
-            
-            # Get users created by this franchise admin
-            subordinate_users = user.created_users.all()
-            subordinate_user_ids = list(subordinate_users.values_list('id', flat=True))
-            subordinate_user_ids.append(user.id)  # Include franchise admin themselves
-            
-            return Package.objects.filter(
-                Q(created_by_id__in=subordinate_user_ids) |
-                Q(assigned_to_id__in=subordinate_user_ids)
-            ).select_related('created_by', 'assigned_to').distinct()
-        
         else:
-            # Default: return empty queryset for unknown roles
-            return Package.objects.none()
+            # Agency Staff (telecallers, operations, accountants) can view packages created by or assigned to their agency head
+            agency_head = user.created_by or user
+            return Package.objects.filter(
+                Q(created_by=agency_head) | Q(created_by=user) |
+                Q(assigned_to=agency_head) | Q(assigned_to=user)
+            ).select_related('created_by', 'assigned_to').distinct()
     
     def perform_create(self, serializer):
         user = self.request.user
@@ -538,8 +521,18 @@ class PackageDepartureListCreateView(generics.ListCreateAPIView):
         package_id = self.request.query_params.get('package_id')
         if package_id:
             qs = qs.filter(package_id=package_id)
-        if user.role != 'superadmin':
-            qs = qs.filter(package__created_by=user)
+
+        if user.role == 'superadmin':
+            tenant_id = self.request.query_params.get('tenant_id')
+            if tenant_id and str(tenant_id).lower() != 'all':
+                qs = qs.filter(Q(package__created_by_id=tenant_id) | Q(package__created_by__created_by_id=tenant_id))
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
+            qs = qs.filter(Q(package__created_by=user) | Q(package__created_by__created_by=user))
+        else:
+            agency_head = user.created_by or user
+            qs = qs.filter(Q(package__created_by=agency_head) | Q(package__created_by=user))
+
+        qs = apply_date_filters(qs, self.request, date_field='departure_date')
         return qs
 
     def perform_create(self, serializer):
@@ -553,8 +546,14 @@ class PackageDepartureDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         user = self.request.user
         qs = PackageDeparture.objects.all().select_related('package')
-        if user.role != 'superadmin':
+        if user.role == 'superadmin':
+            pass  # superadmin sees all
+        elif user.role in ('franchisesadmin', 'franchiseadmin'):
             qs = qs.filter(package__created_by=user)
+        else:
+            # staff: scope to agency head
+            agency_head = getattr(user, 'created_by', None) or user
+            qs = qs.filter(package__created_by=agency_head)
         return qs
 
 
@@ -566,8 +565,16 @@ class SupplierListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         user = self.request.user
         if user.role == 'superadmin':
-            return Supplier.objects.all()
-        return Supplier.objects.filter(created_by=user)
+            qs = Supplier.objects.all()
+            tenant_id = self.request.query_params.get('tenant_id')
+            if tenant_id and str(tenant_id).lower() != 'all':
+                qs = qs.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id))
+            return qs
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
+            return Supplier.objects.filter(Q(created_by=user) | Q(created_by__created_by=user))
+        else:
+            agency_head = user.created_by or user
+            return Supplier.objects.filter(Q(created_by=agency_head) | Q(created_by=user))
 
 
 class SupplierDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -578,4 +585,8 @@ class SupplierDetailView(generics.RetrieveUpdateDestroyAPIView):
         user = self.request.user
         if user.role == 'superadmin':
             return Supplier.objects.all()
-        return Supplier.objects.filter(created_by=user)
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
+            return Supplier.objects.filter(Q(created_by=user) | Q(created_by__created_by=user))
+        else:
+            agency_head = user.created_by or user
+            return Supplier.objects.filter(Q(created_by=agency_head) | Q(created_by=user))

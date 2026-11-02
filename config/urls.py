@@ -6,6 +6,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 from apps.common.views import HealthCheckView
+from apps.users.views import TenantListView, TenantDetailView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -24,11 +25,12 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('api/auth/', include('apps.users.urls')),
+    path('api/tenants/', TenantListView.as_view(), name='tenant-list-root-alias'),
+    path('api/tenants/<int:tenant_id>/', TenantDetailView.as_view(), name='tenant-detail-root-alias'),
     path('api/packages/', include('apps.packages.urls')),
     path('api/bookings/', include('apps.bookings.urls')),
     path('api/quotations/', include('apps.bookings.quotation_urls')),
     path('api/enquiries/', include('apps.enquiries.urls')),
-    path('api/visa/', include('apps.visa.urls')),
     path('api/dashboard/', include('apps.dashboard.urls')),
     path('api/posters-generate/', include('apps.poster_generator.urls')), 
     path('api/crm/', include('apps.crm.urls')),

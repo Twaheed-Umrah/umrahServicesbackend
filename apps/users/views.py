@@ -93,7 +93,13 @@ class VerifyTokenView(APIView):
                 'message': 'Token is valid',
                 'is_valid': True,
                 'user_id': user.id,
-                'username': user.username
+                'username': user.username,
+                'role': user.role,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'company_name': user.company_name,
+                'phone': user.phone
             })
             
         except TokenError as e:
@@ -570,6 +576,9 @@ class GetAllUsersView(APIView):
     def get(self, request):
         # Get all users
         users = User.objects.all().order_by('-date_joined')
+        tenant_id = request.query_params.get('tenant_id', None)
+        if tenant_id and str(tenant_id).lower() != 'all':
+            users = users.filter(Q(id=tenant_id) | Q(created_by_id=tenant_id))
         # Pass request context to serializer for building absolute URLs
         serializer = UserSerializer(users, many=True, context={'request': request})
         
@@ -857,4 +866,117 @@ class TenantDetailView(APIView):
                 'total_count': Quotation.objects.filter(Q(created_by=tenant) | Q(created_by__created_by=tenant)).count(),
                 'recent': quotes_data
             }
+        })
+
+
+# ==============================================================================
+# Token Blacklist & Session Governance Engine
+# ==============================================================================
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+
+class TokenManagementView(APIView):
+    """
+    Module: JWT Token Blacklist & Active Session Governance
+    - SuperAdmin: oversees all platform sessions, filters by tenant, user, date range, and blacklist status.
+    - Tenant Admin: strictly manages sessions for themselves and their staff.
+    """
+    permission_classes = [IsFranchiseAdmin]
+
+    def get(self, request):
+        user = request.user
+        qs = OutstandingToken.objects.all().select_related('user').order_by('-created_at')
+
+        if user.role == 'superadmin':
+            tenant_id = request.query_params.get('tenant_id')
+            if tenant_id and str(tenant_id).lower() != 'all':
+                qs = qs.filter(Q(user_id=tenant_id) | Q(user__created_by_id=tenant_id))
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
+            qs = qs.filter(Q(user=user) | Q(user__created_by=user))
+        else:
+            qs = qs.filter(user=user)
+
+        # Filters
+        is_blacklisted = request.query_params.get('is_blacklisted')
+        if is_blacklisted is not None:
+            if is_blacklisted.lower() in ['true', '1']:
+                qs = qs.filter(blacklistedtoken__isnull=False)
+            elif is_blacklisted.lower() in ['false', '0']:
+                qs = qs.filter(blacklistedtoken__isnull=True)
+
+        user_id = request.query_params.get('user_id')
+        if user_id:
+            qs = qs.filter(user_id=user_id)
+
+        search = request.query_params.get('search')
+        if search:
+            qs = qs.filter(
+                Q(user__email__icontains=search) |
+                Q(user__username__icontains=search) |
+                Q(user__first_name__icontains=search) |
+                Q(user__last_name__icontains=search)
+            )
+
+        # Date range
+        from apps.common.tenancy import apply_date_filters
+        qs = apply_date_filters(qs, request, date_field='created_at')
+
+        blacklisted_token_ids = set(BlacklistedToken.objects.values_list('token_id', flat=True))
+
+        data = []
+        for t in qs[:100]:
+            is_bl = t.id in blacklisted_token_ids
+            bl_time = None
+            if is_bl:
+                bl_obj = getattr(t, 'blacklistedtoken', None)
+                bl_time = bl_obj.blacklisted_at.strftime('%Y-%m-%d %H:%M:%S') if bl_obj else None
+
+            data.append({
+                'id': t.id,
+                'jti': t.jti,
+                'user': {
+                    'id': t.user.id if t.user else None,
+                    'email': t.user.email if t.user else '',
+                    'name': t.user.get_full_name() if t.user else '',
+                    'role': getattr(t.user, 'role', '') if t.user else '',
+                    'company_name': getattr(t.user, 'company_name', '') if t.user else ''
+                },
+                'created_at': t.created_at.strftime('%Y-%m-%d %H:%M:%S') if t.created_at else None,
+                'expires_at': t.expires_at.strftime('%Y-%m-%d %H:%M:%S') if t.expires_at else None,
+                'is_blacklisted': is_bl,
+                'blacklisted_at': bl_time
+            })
+
+        return Response({
+            'total_count': qs.count(),
+            'results': data
+        })
+
+
+class TokenBlacklistView(APIView):
+    """
+    Revoke/blacklist a specific outstanding token or user session.
+    """
+    permission_classes = [IsFranchiseAdmin]
+
+    def post(self, request, token_id):
+        user = request.user
+        try:
+            token_obj = OutstandingToken.objects.select_related('user').get(pk=token_id)
+        except OutstandingToken.DoesNotExist:
+            return Response({'error': 'Token not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Verify access permission
+        if user.role != 'superadmin':
+            if user.role in ['franchisesadmin', 'franchiseadmin']:
+                if token_obj.user != user and getattr(token_obj.user, 'created_by', None) != user:
+                    return Response({'error': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
+            else:
+                if token_obj.user != user:
+                    return Response({'error': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
+
+        bl_obj, created = BlacklistedToken.objects.get_or_create(token=token_obj)
+        return Response({
+            'success': True,
+            'message': 'Token successfully blacklisted.',
+            'blacklisted_at': bl_obj.blacklisted_at.strftime('%Y-%m-%d %H:%M:%S')
         })

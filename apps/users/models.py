@@ -48,6 +48,8 @@ class User(AbstractUser, TimestampMixin):
     company_name = models.CharField(max_length=255, blank=True, null=True)
     agreement_letter = models.FileField(upload_to='agreement_letters/', blank=True, null=True)
     company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    signature_image = models.ImageField(upload_to='signatures/', blank=True, null=True, help_text="Tenant official signature image for booking vouchers and payment receipts.")
+    stamp_image = models.ImageField(upload_to='stamps/', blank=True, null=True, help_text="Tenant official agency seal/stamp for receipts and invoices.")
 
     # Override the USERNAME_FIELD to use email for authentication
     USERNAME_FIELD = 'email'

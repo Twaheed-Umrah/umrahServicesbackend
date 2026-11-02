@@ -1,3 +1,4 @@
+from apps.common.tenancy import apply_date_filters, apply_category_filters
 from rest_framework import generics, status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -5,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, Sum, Count
 from django.utils import timezone
-from apps.common.permissions import IsFranchiseAdmin, IsSuperAdmin
+from apps.common.permissions import IsFranchiseAdmin, IsSuperAdmin, IsTenantOrStaff
 from .models import VisaApplication, VisaDocument
 from .serializers import (
     VisaApplicationListSerializer,
@@ -75,16 +76,26 @@ class VisaApplicationListView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         queryset = VisaApplication.objects.all()
-        queryset = get_accessible_queryset(user, queryset)
         
+        if user.role == 'superadmin':
+            tenant_id = self.request.query_params.get('tenant_id')
+            if tenant_id and str(tenant_id).lower() != 'all':
+                queryset = queryset.filter(Q(applied_by_id=tenant_id) | Q(applied_by__created_by_id=tenant_id))
+        else:
+            queryset = get_accessible_queryset(user, queryset)
+        
+        # Apply date filters (travel_date or created_at)
+        queryset = apply_date_filters(queryset, self.request, date_field='travel_date')
+        queryset = apply_date_filters(queryset, self.request, date_field='created_at')
+
         # Filter by status if provided
         status_filter = self.request.query_params.get('status')
-        if status_filter:
+        if status_filter and status_filter.lower() != 'all':
             queryset = queryset.filter(status=status_filter)
         
         # Filter by visa type if provided
-        visa_type_filter = self.request.query_params.get('visa_type')
-        if visa_type_filter:
+        visa_type_filter = self.request.query_params.get('visa_type') or self.request.query_params.get('category')
+        if visa_type_filter and visa_type_filter.lower() != 'all':
             queryset = queryset.filter(visa_type=visa_type_filter)
         
         # Search functionality
@@ -110,9 +121,26 @@ class VisaApplicationDetailView(generics.RetrieveAPIView):
 
 
 class VisaApplicationCreateView(generics.CreateAPIView):
-    """Create new visa application (Agency and Accountants can create)"""
+    """Create new visa application (Agency head and agency staff can create)"""
     serializer_class = VisaApplicationCreateSerializer
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsTenantOrStaff]
+
+    def perform_create(self, serializer):
+        from apps.users.models import User
+        user = self.request.user
+        tenant_id = self.request.data.get('tenant_id') or self.request.query_params.get('tenant_id')
+        if user.role == 'superadmin':
+            if tenant_id and str(tenant_id).lower() != 'all':
+                target_tenant = User.objects.filter(id=tenant_id, role__in=['franchisesadmin', 'franchiseadmin']).first()
+                applied_by = target_tenant or user
+            else:
+                applied_by = User.objects.filter(role__in=['franchisesadmin', 'franchiseadmin']).first() or user
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
+            applied_by = user
+        else:
+            # Agency staff
+            applied_by = user.created_by or user
+        serializer.save(applied_by=applied_by)
 
 
 class VisaApplicationUpdateView(generics.UpdateAPIView):
@@ -229,9 +257,9 @@ class VisaDocumentListView(generics.ListAPIView):
 
 
 class VisaDocumentUploadView(generics.CreateAPIView):
-    """Upload document for visa application (Agency and Accountants can upload)"""
+    """Upload document for visa application (Agency and team staff can upload)"""
     serializer_class = VisaDocumentUploadSerializer
-    permission_classes = [IsFranchiseAdmin]
+    permission_classes = [IsTenantOrStaff]
     
     def perform_create(self, serializer):
         application_id = self.kwargs['application_id']
@@ -248,8 +276,8 @@ class VisaDocumentUploadView(generics.CreateAPIView):
 
 
 class VisaDocumentDeleteView(generics.DestroyAPIView):
-    """Delete document (Agency and Accountants can delete, draft status only)"""
-    permission_classes = [IsFranchiseAdmin]
+    """Delete document (Agency and team staff can delete, draft status only)"""
+    permission_classes = [IsTenantOrStaff]
     
     def get_queryset(self):
         application_id = self.kwargs['application_id']

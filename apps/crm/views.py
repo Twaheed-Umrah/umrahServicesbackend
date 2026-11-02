@@ -1,6 +1,8 @@
+from apps.common.tenancy import apply_date_filters, apply_category_filters, apply_status_filter, get_tenant_scoped_queryset
 import csv
 import io
 import logging
+from django.http import HttpResponse
 from django.db import transaction
 from django.db.models import Q, Count
 from rest_framework import generics, permissions, status
@@ -64,12 +66,29 @@ class LeadListCreateView(generics.ListCreateAPIView):
                 Q(campaign_name__icontains=search)
             )
 
+        # Date range & single date filters on created_at
+        queryset = apply_date_filters(queryset, self.request, date_field='created_at')
+
+        # Category filter (package_type / campaign_name)
+        category = self.request.query_params.get('category') or self.request.query_params.get('package_type')
+        if category and category.lower() != 'all':
+            queryset = queryset.filter(Q(package_type=category) | Q(campaign_name__icontains=category))
+
         return queryset
 
     def perform_create(self, serializer):
         user = self.request.user
-        agency_head = user if user.role != 'sells_caller' else user.created_by
-        serializer.save(user=agency_head or user)
+        tenant_id = self.request.data.get('tenant_id')
+        if user.role == 'superadmin':
+            if tenant_id and tenant_id != 'all':
+                agency_head = User.objects.filter(id=tenant_id, role='franchisesadmin').first()
+            else:
+                agency_head = User.objects.filter(role='franchisesadmin').first()
+        elif user.role == 'sells_caller':
+            agency_head = user.created_by
+        else:
+            agency_head = user
+        serializer.save(user=agency_head)
 
 
 class LeadDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -158,9 +177,16 @@ class ExcelLeadUploadView(APIView):
         if not extracted_rows:
             return Response({'error': 'The uploaded spreadsheet contains no data rows.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Determine Agency Head
-        agency_head = request.user if request.user.role != 'sells_caller' else request.user.created_by
-        if not agency_head:
+        # Determine Agency Head (Must be a Tenant Admin, NEVER SuperAdmin!)
+        tenant_id = request.data.get('tenant_id')
+        if request.user.role == 'superadmin':
+            if tenant_id and tenant_id != 'all':
+                agency_head = User.objects.filter(id=tenant_id, role='franchisesadmin').first()
+            else:
+                agency_head = User.objects.filter(role='franchisesadmin').first()
+        elif request.user.role == 'sells_caller':
+            agency_head = request.user.created_by
+        else:
             agency_head = request.user
 
         # Fetch all active Callers for this agency who are PRESENT
@@ -232,6 +258,125 @@ class ExcelLeadUploadView(APIView):
             'assigned_callers': [c.username for c in present_callers],
             'sent_to_master_pool': num_callers == 0
         }, status=status.HTTP_201_CREATED)
+
+
+
+
+class ExcelLeadExportView(APIView):
+    """
+    Download filtered leads in Excel (.xlsx) format.
+    Respects SuperAdmin / Tenant scoping, status, caller, search, and date filters.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        queryset = Lead.objects.all().select_related('assigned_caller', 'user')
+
+        if user.role == 'superadmin':
+            tenant_id = request.query_params.get('tenant_id', None)
+            if tenant_id and tenant_id != 'all':
+                queryset = queryset.filter(Q(user_id=tenant_id) | Q(assigned_caller__created_by_id=tenant_id))
+        elif user.role == 'sells_caller':
+            queryset = queryset.filter(assigned_caller=user)
+        else:
+            queryset = queryset.filter(Q(user=user) | Q(assigned_caller__created_by=user))
+
+        lead_status = request.query_params.get('status', None)
+        if lead_status and lead_status != 'all':
+            queryset = queryset.filter(status=lead_status)
+
+        caller_id = request.query_params.get('caller_id', None)
+        if caller_id and caller_id != 'all':
+            queryset = queryset.filter(assigned_caller_id=caller_id)
+
+        in_pool = request.query_params.get('in_pool', None)
+        if in_pool is not None:
+            if in_pool.lower() in ['true', '1']:
+                queryset = queryset.filter(is_in_agency_pool=True)
+            elif in_pool.lower() in ['false', '0']:
+                queryset = queryset.filter(is_in_agency_pool=False)
+
+        search = request.query_params.get('search', None)
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(mobile_number__icontains=search) |
+                Q(email__icontains=search) |
+                Q(city__icontains=search) |
+                Q(campaign_name__icontains=search)
+            )
+
+        queryset = apply_date_filters(queryset, request, 'created_at')
+
+        # Generate Excel workbook with openpyxl
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Alignment
+        from django.utils import timezone
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Leads Roster"
+
+        headers = [
+            "ID", "Pilgrim Name", "Mobile Number", "Email", "City",
+            "Status", "Source", "Campaign", "Pax Count", "Budget",
+            "Assigned Caller", "Agency / Tenant", "Next Follow-up",
+            "Lost Reason", "Notes", "Created At"
+        ]
+
+        header_font = Font(name="Arial", size=11, bold=True, color="FFFFFF")
+        header_fill = PatternFill(start_color="1E293B", end_color="1E293B", fill_type="solid")
+        center_align = Alignment(horizontal="center", vertical="center")
+
+        ws.append(headers)
+        for col_num in range(1, len(headers) + 1):
+            cell = ws.cell(row=1, column=col_num)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = center_align
+
+        for lead in queryset:
+            caller_name = lead.assigned_caller.get_full_name() or lead.assigned_caller.username if lead.assigned_caller else ("Master Pool" if lead.is_in_agency_pool else "Unassigned")
+            tenant_name = lead.user.company_name or lead.user.get_full_name() or lead.user.email if lead.user else "N/A"
+            followup_str = lead.next_followup_at.strftime("%Y-%m-%d %H:%M") if lead.next_followup_at else ""
+            created_str = lead.created_at.strftime("%Y-%m-%d %H:%M") if lead.created_at else ""
+
+            ws.append([
+                lead.id,
+                lead.name,
+                lead.mobile_number,
+                lead.email or "",
+                lead.city or "",
+                lead.get_status_display() if hasattr(lead, 'get_status_display') else lead.status,
+                lead.source,
+                lead.campaign_name or "",
+                lead.pax_count or 1,
+                float(lead.budget) if lead.budget else 0.0,
+                caller_name,
+                tenant_name,
+                followup_str,
+                lead.lost_reason or "",
+                lead.notes or "",
+                created_str
+            ])
+
+        for col in ws.columns:
+            max_len = max(len(str(cell.value or '')) for cell in col)
+            col_letter = openpyxl.utils.get_column_letter(col[0].column)
+            ws.column_dimensions[col_letter].width = max(max_len + 3, 12)
+
+        output = io.BytesIO()
+        wb.save(output)
+        output.seek(0)
+
+        filename = f"leads_export_{timezone.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+        response = HttpResponse(
+            output.getvalue(),
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
 
 
 class LeadAssignSingleView(APIView):
@@ -423,20 +568,33 @@ class LeadAgencyPoolListView(generics.ListAPIView):
 
 
 class TaskListCreateView(generics.ListCreateAPIView):
-    """Module 18: Task & Team Management"""
+    """Module 18: Task & Team Management with multi-tenant scoping and date range filtering"""
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
         if user.role == 'superadmin':
-            return Task.objects.all().select_related('assigned_to', 'created_by', 'related_lead')
+            qs = Task.objects.all().select_related('assigned_to', 'created_by', 'related_lead')
+            tenant_id = self.request.query_params.get('tenant_id')
+            if tenant_id and str(tenant_id).lower() != 'all':
+                qs = qs.filter(
+                    Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id) |
+                    Q(assigned_to_id=tenant_id) | Q(assigned_to__created_by_id=tenant_id)
+                )
         elif user.role in ['franchisesadmin', 'franchiseadmin']:
-            return Task.objects.filter(
+            qs = Task.objects.filter(
                 Q(created_by=user) | Q(assigned_to=user) | Q(assigned_to__created_by=user)
             ).select_related('assigned_to', 'created_by', 'related_lead')
         else:
-            return Task.objects.filter(assigned_to=user).select_related('assigned_to', 'created_by', 'related_lead')
+            qs = Task.objects.filter(assigned_to=user).select_related('assigned_to', 'created_by', 'related_lead')
+
+        qs = apply_date_filters(qs, self.request, date_field='due_date')
+        qs = apply_date_filters(qs, self.request, date_field='created_at')
+        status_val = self.request.query_params.get('status')
+        if status_val and status_val.lower() != 'all':
+            qs = qs.filter(status=status_val)
+        return qs
 
 
 class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):

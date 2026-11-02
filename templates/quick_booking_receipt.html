@@ -396,15 +396,32 @@
             </ul>
         </div>
         
-        <!-- Signature Section -->
-        <div class="signature-section">
-            <div class="signature">
-                <div class="signature-line">Customer Signature</div>
-            </div>
-            <div class="signature">
-                <div class="signature-line">Agent Signature</div>
-            </div>
-        </div>
+        <!-- Signature & Stamp Section -->
+        <table style="width: 100%; margin-top: 25px; margin-bottom: 10px; border: none;">
+            <tr>
+                <td style="width: 45%; text-align: center; vertical-align: bottom; border: none; padding: 0 15px;">
+                    <div style="height: 60px;"></div>
+                    <div style="border-top: 1px solid #333; padding-top: 5px; font-size: 10px; font-weight: bold; color: #555;">
+                        Customer Signature
+                    </div>
+                </td>
+                <td style="width: 10%; border: none;"></td>
+                <td style="width: 45%; text-align: center; vertical-align: bottom; border: none; padding: 0 15px;">
+                    <div style="min-height: 60px; margin-bottom: 2px;">
+                        {% if company.stamp_url %}
+                        <img src="{{ company.stamp_url }}" alt="Official Stamp" style="max-height: 58px; max-width: 90px; vertical-align: middle; margin-right: 8px; opacity: 0.88;" />
+                        {% endif %}
+                        {% if company.signature_url %}
+                        <img src="{{ company.signature_url }}" alt="Authorized Signature" style="max-height: 50px; max-width: 125px; vertical-align: middle;" />
+                        {% endif %}
+                    </div>
+                    <div style="border-top: 1px solid #007a55; padding-top: 5px; font-size: 10px; font-weight: bold; color: #007a55;">
+                        Authorized Signatory & Seal
+                        <div style="font-size: 9px; font-weight: normal; color: #666;">{{ company.name }}</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
         
         <!-- Footer -->
         <div class="footer">

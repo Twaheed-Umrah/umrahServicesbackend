@@ -1,3 +1,4 @@
+from apps.common.tenancy import get_tenant_scoped_queryset, apply_date_filters, apply_category_filters, apply_status_filter
 from datetime import timezone
 from rest_framework import generics, status, permissions
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -30,10 +31,10 @@ class APIKeyListCreateView(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication, SessionAuthentication]
     
     def get_queryset(self):
-        return APIKey.objects.filter(user=self.request.user)
+        return get_tenant_scoped_queryset(self.request, APIKey.objects.all().order_by('-created_at'), user_field='user')
     
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        serializer.save(user=self.request.user)
 
 class APIKeyDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = APIKeySerializer
@@ -41,7 +42,7 @@ class APIKeyDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication, SessionAuthentication]
     
     def get_queryset(self):
-        return APIKey.objects.filter(user=self.request.user)
+        return get_tenant_scoped_queryset(self.request, APIKey.objects.all(), user_field='user')
 
 # Package Management Views
 class PackageListCreateView(generics.ListCreateAPIView):
@@ -119,7 +120,7 @@ class HomePageListCreateView(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication, SessionAuthentication]
     
     def get_queryset(self):
-        return HomePage.objects.filter(user=self.request.user).order_by('-created_at')
+        return get_tenant_scoped_queryset(self.request, HomePage.objects.all().order_by('-created_at'), user_field='user')
     
     def perform_create(self, serializer):
         # Deactivate all existing homepage content for THIS user before creating new one
@@ -135,7 +136,7 @@ class HomePageDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication, SessionAuthentication]
     
     def get_queryset(self):
-        return HomePage.objects.filter(user=self.request.user)
+        return get_tenant_scoped_queryset(self.request, HomePage.objects.all(), user_field='user')
     
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -247,14 +248,19 @@ class ContactUsAdminView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
+        qs = ContactUs.objects.all().order_by('-created_at')
 
         if IsSuperAdmin().has_permission(self.request, self):
-            return ContactUs.objects.all().order_by('-created_at')
+            tenant_id = self.request.query_params.get('tenant_id') or self.request.query_params.get('tenant')
+            if tenant_id and str(tenant_id).lower() != 'all':
+                qs = qs.filter(Q(submitted_by_user_id=tenant_id) | Q(api_key__user_id=tenant_id))
+        else:
+            user_api_keys = APIKey.objects.filter(user=user)
+            qs = qs.filter(Q(api_key__in=user_api_keys) | Q(submitted_by_user=user))
 
-        user_api_keys = APIKey.objects.filter(user=user)
-        return ContactUs.objects.filter(
-            api_key__in=user_api_keys
-        ).order_by('-created_at')
+        qs = apply_date_filters(qs, self.request, date_field='created_at')
+        qs = apply_category_filters(qs, self.request, category_field='package_type')
+        return qs
     
 class ContactUsAdminDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -347,10 +353,10 @@ class GalleryImageListCreateView(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication, SessionAuthentication]
 
     def get_queryset(self):
-        return GalleryImage.objects.filter(user=self.request.user)
+        return get_tenant_scoped_queryset(self.request, GalleryImage.objects.all().order_by('-created_at'), user_field='user')
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        serializer.save(user=self.request.user)
 
 class GalleryImageDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -361,7 +367,7 @@ class GalleryImageDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication, SessionAuthentication]
 
     def get_queryset(self):
-        return GalleryImage.objects.filter(user=self.request.user)
+        return get_tenant_scoped_queryset(self.request, GalleryImage.objects.all(), user_field='user')
 
 # Gallery API for External Websites
 class GalleryImageAPIView(generics.ListAPIView):

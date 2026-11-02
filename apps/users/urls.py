@@ -6,7 +6,8 @@ from .views import (
     GetTenantUsersView, GetUserDetailsByIdView,
     ForgotPasswordSendOTPView, ForgotPasswordVerifyOTPView, ResetPasswordView,
     RefreshTokenView, VerifyTokenView, GetAgencyCallersView, ToggleCallerAttendanceView,
-    TenantListView, TenantDetailView
+    TenantListView, TenantDetailView,
+    TokenManagementView, TokenBlacklistView
 )
 
 urlpatterns = [
@@ -17,6 +18,7 @@ urlpatterns = [
     
     # User profile endpoints
     path('users/me/', MeView.as_view(), name='user-me'),
+    path('profile/', MeView.as_view(), name='user-profile-alias'),
     path('users/update-profile/', UpdateProfileView.as_view(), name='update-profile'),
     path('users/change-password/', ChangePasswordView.as_view(), name='change-password'),
 
@@ -43,4 +45,6 @@ urlpatterns = [
     path('users/<int:user_id>/', GetUserDetailsByIdView.as_view(), name='get-user-details'),
     path('verify-token/', VerifyTokenView.as_view(), name='verify-token'),
     path('refresh-token/', RefreshTokenView.as_view(), name='refresh-token'),
+    path('tokens/', TokenManagementView.as_view(), name='token-management'),
+    path('tokens/<int:token_id>/blacklist/', TokenBlacklistView.as_view(), name='token-blacklist'),
 ]

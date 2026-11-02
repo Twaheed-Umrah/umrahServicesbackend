@@ -1,3 +1,5 @@
+from apps.common.tenancy import apply_date_filters, apply_category_filters
+from django.db.models import Q
 # views.py
 from django.http import HttpResponse
 from rest_framework import viewsets, status
@@ -25,9 +27,14 @@ logger = logging.getLogger(__name__)
 
 class PosterTemplateListView(APIView):
     def get(self, request):
-        """Get all poster templates with full image URLs"""
+        """Get all poster templates with full image URLs and filtering"""
         templates = PosterTemplate.objects.all()
-        # Pass request context to get full URLs
+        template_type = request.query_params.get('template_type') or request.query_params.get('category')
+        if template_type and template_type.lower() != 'all':
+            templates = templates.filter(template_type=template_type)
+        search = request.query_params.get('search')
+        if search:
+            templates = templates.filter(name__icontains=search)
         serializer = PosterTemplateSerializer(templates, many=True, context={'request': request})
         return Response({
             'results': serializer.data
@@ -118,10 +125,25 @@ class PackagePosterListView(APIView):
     permission_classes = [IsAuthenticated, CanCreatePosterPermission]
     
     def get(self, request):
-        """Get all posters for the authenticated user"""
+        """Get all posters with multi-tenant scoping and date range filtering"""
         try:
-            posters = PackagePoster.objects.filter(user=request.user).order_by('-created_at')
-            # Pass request context to get full URLs for all poster files and template images
+            user = request.user
+            if user.role == 'superadmin':
+                posters = PackagePoster.objects.all().order_by('-created_at')
+                tenant_id = request.query_params.get('tenant_id')
+                if tenant_id and str(tenant_id).lower() != 'all':
+                    posters = posters.filter(Q(user_id=tenant_id) | Q(user__created_by_id=tenant_id))
+            elif user.role in ['franchisesadmin', 'franchiseadmin']:
+                posters = PackagePoster.objects.filter(Q(user=user) | Q(user__created_by=user)).order_by('-created_at')
+            else:
+                agency_head = user.created_by or user
+                posters = PackagePoster.objects.filter(Q(user=user) | Q(user=agency_head)).order_by('-created_at')
+
+            posters = apply_date_filters(posters, request, date_field='created_at')
+            package_type = request.query_params.get('package_type') or request.query_params.get('category')
+            if package_type and package_type.lower() != 'all':
+                posters = posters.filter(package_type=package_type)
+
             serializer = PackagePosterSerializer(posters, many=True, context={'request': request})
             return Response({
                 'results': serializer.data,
@@ -155,8 +177,14 @@ class PackagePosterDetailView(APIView):
     permission_classes = [IsAuthenticated, CanCreatePosterPermission]
     
     def get_object(self, poster_id, user):
-        """Get poster object for the authenticated user"""
-        return get_object_or_404(PackagePoster, id=poster_id, user=user)
+        """Get poster object with tenant isolation"""
+        if user.role == 'superadmin':
+            return get_object_or_404(PackagePoster, id=poster_id)
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
+            return get_object_or_404(PackagePoster, Q(id=poster_id) & (Q(user=user) | Q(user__created_by=user)))
+        else:
+            agency_head = user.created_by or user
+            return get_object_or_404(PackagePoster, Q(id=poster_id) & (Q(user=user) | Q(user=agency_head)))
     
     def get(self, request, poster_id):
         """Get specific poster details"""

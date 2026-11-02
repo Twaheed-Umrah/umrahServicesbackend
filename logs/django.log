@@ -1925,3 +1925,232 @@ WARNING 2026-11-02 13:13:53,762 log 4572 1276 Bad Request: /api/auth/login/
 WARNING 2026-11-02 13:14:00,665 log 4572 1276 Forbidden: /api/auth/tenants/
 WARNING 2026-11-02 13:14:08,300 log 4572 1276 Not Found: /api/auth/callers/3/toggle-attendance/
 WARNING 2026-11-02 13:14:15,699 log 4572 1276 Unauthorized: /api/auth/users/me/
+WARNING 2026-11-02 17:19:22,534 log 14788 4492 Unauthorized: /api/crm/leads/
+WARNING 2026-11-02 17:19:22,542 log 14788 4492 Unauthorized: /api/bookings/bookings/
+WARNING 2026-11-02 17:19:22,543 log 14788 4492 Unauthorized: /api/auth/users/all/
+WARNING 2026-11-02 17:19:22,544 log 14788 4492 Unauthorized: /api/auth/tenants/
+WARNING 2026-11-02 17:19:22,545 log 14788 4492 Unauthorized: /api/quotations/
+WARNING 2026-11-02 17:19:22,545 log 14788 4492 Unauthorized: /api/visa/applications/
+WARNING 2026-11-02 17:19:22,547 log 14788 4492 Unauthorized: /api/packages/packages/
+WARNING 2026-11-02 17:19:22,547 log 14788 4492 Unauthorized: /api/dashboard/stats/
+WARNING 2026-11-02 17:19:22,549 log 14788 4492 Unauthorized: /api/auth/tokens/
+WARNING 2026-11-02 17:19:22,903 log 14788 4492 Not Found: /api/crm/leads/8/
+WARNING 2026-11-02 17:19:22,906 log 14788 4492 Not Found: /api/bookings/bookings/180/
+WARNING 2026-11-02 17:19:22,907 log 14788 4492 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:19:22,932 log 14788 4492 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:19:22,933 log 14788 4492 Forbidden: /api/auth/tenants/
+WARNING 2026-11-02 17:19:22,942 log 14788 4492 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:19:22,975 log 14788 4492 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:19:23,017 log 14788 4492 Not Found: /api/crm/leads/99999999/
+WARNING 2026-11-02 17:19:23,019 log 14788 4492 Not Found: /api/bookings/bookings/99999999/
+WARNING 2026-11-02 17:19:23,022 log 14788 4492 Not Found: /api/quotations/99999999/
+WARNING 2026-11-02 17:19:23,476 log 14788 4492 Bad Request: /api/visa/applications/create/
+WARNING 2026-11-02 17:21:33,305 log 9472 5276 Unauthorized: /api/crm/leads/
+WARNING 2026-11-02 17:21:33,311 log 9472 5276 Unauthorized: /api/bookings/bookings/
+WARNING 2026-11-02 17:21:33,313 log 9472 5276 Unauthorized: /api/auth/users/all/
+WARNING 2026-11-02 17:21:33,313 log 9472 5276 Unauthorized: /api/auth/tenants/
+WARNING 2026-11-02 17:21:33,315 log 9472 5276 Unauthorized: /api/quotations/
+WARNING 2026-11-02 17:21:33,315 log 9472 5276 Unauthorized: /api/visa/applications/
+WARNING 2026-11-02 17:21:33,316 log 9472 5276 Unauthorized: /api/packages/packages/
+WARNING 2026-11-02 17:21:33,316 log 9472 5276 Unauthorized: /api/dashboard/stats/
+WARNING 2026-11-02 17:21:33,318 log 9472 5276 Unauthorized: /api/auth/tokens/
+WARNING 2026-11-02 17:21:33,710 log 9472 5276 Not Found: /api/crm/leads/8/
+WARNING 2026-11-02 17:21:33,713 log 9472 5276 Not Found: /api/bookings/bookings/180/
+WARNING 2026-11-02 17:21:33,714 log 9472 5276 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:21:33,740 log 9472 5276 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:21:33,742 log 9472 5276 Forbidden: /api/auth/tenants/
+WARNING 2026-11-02 17:21:33,743 log 9472 5276 Forbidden: /api/auth/tokens/
+WARNING 2026-11-02 17:21:33,749 log 9472 5276 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:21:33,786 log 9472 5276 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:21:33,830 log 9472 5276 Not Found: /api/crm/leads/99999999/
+WARNING 2026-11-02 17:21:33,831 log 9472 5276 Not Found: /api/bookings/bookings/99999999/
+WARNING 2026-11-02 17:21:33,834 log 9472 5276 Not Found: /api/quotations/99999999/
+ERROR 2026-11-02 17:21:34,202 log 9472 5276 Internal Server Error: /api/visa/applications/create/
+Traceback (most recent call last):
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\serializers.py", line 991, in create
+    instance = ModelClass._default_manager.create(**validated_data)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\db\models\query.py", line 663, in create
+    obj.save(force_insert=True, using=self.db)
+  File "c:\companyData\masarumrahCRM\umrahServicesbackend\apps\visa\models.py", line 47, in save
+    self.total_fee = self.processing_fee + self.embassy_fee + self.service_fee
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'float' and 'decimal.Decimal'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\generics.py", line 194, in post
+    return self.create(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+  File "c:\companyData\masarumrahCRM\umrahServicesbackend\apps\visa\views.py", line 143, in perform_create
+    serializer.save(applied_by=applied_by)
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\companyData\masarumrahCRM\umrahServicesbackend\apps\visa\serializers.py", line 118, in create
+    return super().create(validated_data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\serializers.py", line 1010, in create
+    raise TypeError(msg)
+TypeError: Got a `TypeError` when calling `VisaApplication.objects.create()`. This may be because you have a writable field on the serializer class that is not a valid argument to `VisaApplication.objects.create()`. You may need to make the field read-only, or override the VisaApplicationCreateSerializer.create() method to handle this correctly.
+Original exception was:
+ Traceback (most recent call last):
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\rest_framework\serializers.py", line 991, in create
+    instance = ModelClass._default_manager.create(**validated_data)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\companyData\masarumrahCRM\umrahServicesbackend\.venv\Lib\site-packages\django\db\models\query.py", line 663, in create
+    obj.save(force_insert=True, using=self.db)
+  File "c:\companyData\masarumrahCRM\umrahServicesbackend\apps\visa\models.py", line 47, in save
+    self.total_fee = self.processing_fee + self.embassy_fee + self.service_fee
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'float' and 'decimal.Decimal'
+
+WARNING 2026-11-02 17:22:29,160 log 15608 5236 Unauthorized: /api/crm/leads/
+WARNING 2026-11-02 17:22:29,161 log 15608 5236 Unauthorized: /api/bookings/bookings/
+WARNING 2026-11-02 17:22:29,163 log 15608 5236 Unauthorized: /api/auth/users/all/
+WARNING 2026-11-02 17:22:29,164 log 15608 5236 Unauthorized: /api/auth/tenants/
+WARNING 2026-11-02 17:22:29,166 log 15608 5236 Unauthorized: /api/quotations/
+WARNING 2026-11-02 17:22:29,166 log 15608 5236 Unauthorized: /api/visa/applications/
+WARNING 2026-11-02 17:22:29,167 log 15608 5236 Unauthorized: /api/packages/packages/
+WARNING 2026-11-02 17:22:29,168 log 15608 5236 Unauthorized: /api/dashboard/stats/
+WARNING 2026-11-02 17:22:29,170 log 15608 5236 Unauthorized: /api/auth/tokens/
+WARNING 2026-11-02 17:22:29,538 log 15608 5236 Not Found: /api/crm/leads/8/
+WARNING 2026-11-02 17:22:29,541 log 15608 5236 Not Found: /api/bookings/bookings/180/
+WARNING 2026-11-02 17:22:29,543 log 15608 5236 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:22:29,574 log 15608 5236 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:22:29,578 log 15608 5236 Forbidden: /api/auth/tenants/
+WARNING 2026-11-02 17:22:29,579 log 15608 5236 Forbidden: /api/auth/tokens/
+WARNING 2026-11-02 17:22:29,585 log 15608 5236 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:22:29,624 log 15608 5236 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:22:29,723 log 15608 5236 Not Found: /api/crm/leads/99999999/
+WARNING 2026-11-02 17:22:29,733 log 15608 5236 Not Found: /api/bookings/bookings/99999999/
+WARNING 2026-11-02 17:22:29,738 log 15608 5236 Not Found: /api/quotations/99999999/
+WARNING 2026-11-02 17:36:45,426 log 3708 8160 Bad Request: /api/bookings/bookings/
+ERROR 2026-11-02 17:37:48,622 log 16548 1700 Internal Server Error: /api/bookings/bookings/202/receipt/
+WARNING 2026-11-02 17:38:09,157 log 7928 17980 Bad Request: /api/bookings/quick-bookings/
+WARNING 2026-11-02 17:39:19,297 log 18296 10156 Bad Request: /api/bookings/quick-bookings/17/
+WARNING 2026-11-02 17:40:04,882 log 16232 16796 Unauthorized: /api/crm/leads/
+WARNING 2026-11-02 17:40:04,884 log 16232 16796 Unauthorized: /api/bookings/bookings/
+WARNING 2026-11-02 17:40:04,886 log 16232 16796 Unauthorized: /api/auth/users/all/
+WARNING 2026-11-02 17:40:04,886 log 16232 16796 Unauthorized: /api/auth/tenants/
+WARNING 2026-11-02 17:40:04,887 log 16232 16796 Unauthorized: /api/quotations/
+WARNING 2026-11-02 17:40:04,888 log 16232 16796 Unauthorized: /api/visa/applications/
+WARNING 2026-11-02 17:40:04,888 log 16232 16796 Unauthorized: /api/packages/packages/
+WARNING 2026-11-02 17:40:04,890 log 16232 16796 Unauthorized: /api/dashboard/stats/
+WARNING 2026-11-02 17:40:04,890 log 16232 16796 Unauthorized: /api/auth/tokens/
+WARNING 2026-11-02 17:40:05,283 log 16232 16796 Not Found: /api/crm/leads/8/
+WARNING 2026-11-02 17:40:05,286 log 16232 16796 Not Found: /api/bookings/bookings/180/
+WARNING 2026-11-02 17:40:05,287 log 16232 16796 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:40:05,312 log 16232 16796 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:40:05,313 log 16232 16796 Forbidden: /api/auth/tenants/
+WARNING 2026-11-02 17:40:05,313 log 16232 16796 Forbidden: /api/auth/tokens/
+WARNING 2026-11-02 17:40:05,321 log 16232 16796 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:40:05,358 log 16232 16796 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:40:05,401 log 16232 16796 Not Found: /api/crm/leads/99999999/
+WARNING 2026-11-02 17:40:05,403 log 16232 16796 Not Found: /api/bookings/bookings/99999999/
+WARNING 2026-11-02 17:40:05,405 log 16232 16796 Not Found: /api/quotations/99999999/
+ERROR 2026-11-02 17:46:07,663 images 7164 16488 Failed to load image at 'http://testserver/media/stamps/feddb4e4-e4ba-4de4-811e-268199484b10.png': URLError: <urlopen error [Errno 11001] getaddrinfo failed>
+ERROR 2026-11-02 17:46:07,671 images 7164 16488 Failed to load image at 'http://testserver/media/signatures/4ffcf7df-ae46-410a-b12a-ad100ef5847d.png': URLError: <urlopen error [Errno 11001] getaddrinfo failed>
+ERROR 2026-11-02 17:46:08,522 images 7164 16488 Failed to load image at 'http://testserver/media/stamps/feddb4e4-e4ba-4de4-811e-268199484b10.png': URLError: <urlopen error [Errno 11001] getaddrinfo failed>
+ERROR 2026-11-02 17:46:08,525 images 7164 16488 Failed to load image at 'http://testserver/media/signatures/4ffcf7df-ae46-410a-b12a-ad100ef5847d.png': URLError: <urlopen error [Errno 11001] getaddrinfo failed>
+WARNING 2026-11-02 17:46:08,776 log 7164 16488 Not Found: /api/visa/applications/
+ERROR 2026-11-02 17:48:14,159 log 6344 17480 Internal Server Error: /api/bookings/bookings/197/receipt/
+ERROR 2026-11-02 17:49:18,033 images 8216 6896 Failed to load image at 'http://testserver/media/stamps/0db53c57-6501-4eba-8146-16b7ac50dce3.png': NameError: name 'settings' is not defined
+ERROR 2026-11-02 17:49:18,034 images 8216 6896 Failed to load image at 'http://testserver/media/signatures/a9fb5df3-84e9-4074-a953-01f2900dafe1.png': NameError: name 'settings' is not defined
+ERROR 2026-11-02 17:49:18,794 images 8216 6896 Failed to load image at 'http://testserver/media/stamps/0db53c57-6501-4eba-8146-16b7ac50dce3.png': NameError: name 'settings' is not defined
+ERROR 2026-11-02 17:49:18,794 images 8216 6896 Failed to load image at 'http://testserver/media/signatures/a9fb5df3-84e9-4074-a953-01f2900dafe1.png': NameError: name 'settings' is not defined
+WARNING 2026-11-02 17:49:19,050 log 8216 6896 Not Found: /api/visa/applications/
+ERROR 2026-11-02 17:49:43,713 log 11312 6216 Internal Server Error: /api/bookings/bookings/197/receipt/
+WARNING 2026-11-02 17:51:37,620 log 16900 12716 Not Found: /api/visa/applications/
+WARNING 2026-11-02 17:52:01,918 log 10080 8144 Unauthorized: /api/crm/leads/
+WARNING 2026-11-02 17:52:01,920 log 10080 8144 Unauthorized: /api/bookings/bookings/
+WARNING 2026-11-02 17:52:01,923 log 10080 8144 Unauthorized: /api/auth/users/all/
+WARNING 2026-11-02 17:52:01,924 log 10080 8144 Unauthorized: /api/auth/tenants/
+WARNING 2026-11-02 17:52:01,924 log 10080 8144 Unauthorized: /api/quotations/
+WARNING 2026-11-02 17:52:01,926 log 10080 8144 Unauthorized: /api/packages/packages/
+WARNING 2026-11-02 17:52:01,926 log 10080 8144 Unauthorized: /api/dashboard/stats/
+WARNING 2026-11-02 17:52:01,927 log 10080 8144 Unauthorized: /api/auth/tokens/
+WARNING 2026-11-02 17:52:02,273 log 10080 8144 Not Found: /api/crm/leads/8/
+WARNING 2026-11-02 17:52:02,277 log 10080 8144 Not Found: /api/bookings/bookings/180/
+WARNING 2026-11-02 17:52:02,277 log 10080 8144 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:02,302 log 10080 8144 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:02,303 log 10080 8144 Forbidden: /api/auth/tenants/
+WARNING 2026-11-02 17:52:02,303 log 10080 8144 Forbidden: /api/auth/tokens/
+WARNING 2026-11-02 17:52:02,312 log 10080 8144 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:02,343 log 10080 8144 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:02,391 log 10080 8144 Not Found: /api/crm/leads/99999999/
+WARNING 2026-11-02 17:52:02,396 log 10080 8144 Not Found: /api/bookings/bookings/99999999/
+WARNING 2026-11-02 17:52:02,399 log 10080 8144 Not Found: /api/quotations/99999999/
+WARNING 2026-11-02 17:52:02,813 log 10080 8144 Not Found: /api/visa/applications/create/
+WARNING 2026-11-02 17:52:31,422 log 5980 7504 Unauthorized: /api/crm/leads/
+WARNING 2026-11-02 17:52:31,424 log 5980 7504 Unauthorized: /api/bookings/bookings/
+WARNING 2026-11-02 17:52:31,426 log 5980 7504 Unauthorized: /api/auth/users/all/
+WARNING 2026-11-02 17:52:31,427 log 5980 7504 Unauthorized: /api/auth/tenants/
+WARNING 2026-11-02 17:52:31,428 log 5980 7504 Unauthorized: /api/quotations/
+WARNING 2026-11-02 17:52:31,428 log 5980 7504 Unauthorized: /api/packages/packages/
+WARNING 2026-11-02 17:52:31,429 log 5980 7504 Unauthorized: /api/dashboard/stats/
+WARNING 2026-11-02 17:52:31,430 log 5980 7504 Unauthorized: /api/auth/tokens/
+WARNING 2026-11-02 17:52:31,876 log 5980 7504 Not Found: /api/crm/leads/8/
+WARNING 2026-11-02 17:52:31,879 log 5980 7504 Not Found: /api/bookings/bookings/180/
+WARNING 2026-11-02 17:52:31,880 log 5980 7504 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:31,906 log 5980 7504 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:31,906 log 5980 7504 Forbidden: /api/auth/tenants/
+WARNING 2026-11-02 17:52:31,906 log 5980 7504 Forbidden: /api/auth/tokens/
+WARNING 2026-11-02 17:52:31,914 log 5980 7504 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:31,953 log 5980 7504 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:31,997 log 5980 7504 Not Found: /api/crm/leads/99999999/
+WARNING 2026-11-02 17:52:31,999 log 5980 7504 Not Found: /api/bookings/bookings/99999999/
+WARNING 2026-11-02 17:52:32,002 log 5980 7504 Not Found: /api/quotations/99999999/
+WARNING 2026-11-02 17:52:32,402 log 5980 7504 Not Found: /api/visa/applications/
+WARNING 2026-11-02 17:52:32,407 log 5980 7504 Not Found: /api/auth/profile/
+WARNING 2026-11-02 17:52:57,302 log 4872 1540 Unauthorized: /api/crm/leads/
+WARNING 2026-11-02 17:52:57,304 log 4872 1540 Unauthorized: /api/bookings/bookings/
+WARNING 2026-11-02 17:52:57,305 log 4872 1540 Unauthorized: /api/auth/users/all/
+WARNING 2026-11-02 17:52:57,306 log 4872 1540 Unauthorized: /api/auth/tenants/
+WARNING 2026-11-02 17:52:57,307 log 4872 1540 Unauthorized: /api/quotations/
+WARNING 2026-11-02 17:52:57,308 log 4872 1540 Unauthorized: /api/packages/packages/
+WARNING 2026-11-02 17:52:57,309 log 4872 1540 Unauthorized: /api/dashboard/stats/
+WARNING 2026-11-02 17:52:57,310 log 4872 1540 Unauthorized: /api/auth/tokens/
+WARNING 2026-11-02 17:52:57,665 log 4872 1540 Not Found: /api/crm/leads/8/
+WARNING 2026-11-02 17:52:57,668 log 4872 1540 Not Found: /api/bookings/bookings/180/
+WARNING 2026-11-02 17:52:57,669 log 4872 1540 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:57,688 log 4872 1540 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:57,695 log 4872 1540 Forbidden: /api/auth/tenants/
+WARNING 2026-11-02 17:52:57,695 log 4872 1540 Forbidden: /api/auth/tokens/
+WARNING 2026-11-02 17:52:57,705 log 4872 1540 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:57,738 log 4872 1540 Forbidden: /api/auth/users/all/
+WARNING 2026-11-02 17:52:57,788 log 4872 1540 Not Found: /api/crm/leads/99999999/
+WARNING 2026-11-02 17:52:57,794 log 4872 1540 Not Found: /api/bookings/bookings/99999999/
+WARNING 2026-11-02 17:52:57,797 log 4872 1540 Not Found: /api/quotations/99999999/
+WARNING 2026-11-02 17:52:58,139 log 4872 1540 Not Found: /api/visa/applications/

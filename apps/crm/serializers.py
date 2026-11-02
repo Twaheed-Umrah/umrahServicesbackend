@@ -18,6 +18,8 @@ class LeadSerializer(serializers.ModelSerializer):
     history_notes = LeadNoteSerializer(many=True, read_only=True)
     assigned_caller_name = serializers.SerializerMethodField()
     assigned_caller_details = serializers.SerializerMethodField()
+    tenant_name = serializers.SerializerMethodField()
+    tenant_details = serializers.SerializerMethodField()
 
     class Meta:
         model = Lead
@@ -26,6 +28,7 @@ class LeadSerializer(serializers.ModelSerializer):
             'source', 'campaign_name', 'journey_type', 'pax_count', 'budget',
             'status', 'notes', 'next_followup_at', 'lost_reason', 'assigned_caller', 'assigned_caller_name',
             'assigned_caller_details', 'is_in_agency_pool', 'history_notes',
+            'tenant_name', 'tenant_details',
             'created_at', 'updated_at'
         ]
         read_only_fields = ['user', 'created_at', 'updated_at']
@@ -44,6 +47,20 @@ class LeadSerializer(serializers.ModelSerializer):
                 'email': obj.assigned_caller.email,
                 'is_present': obj.assigned_caller.is_present,
                 'caller_status': getattr(obj.assigned_caller, 'caller_status', 'available'),
+            }
+        return None
+
+    def get_tenant_name(self, obj):
+        if obj.user:
+            return obj.user.company_name or obj.user.get_full_name() or obj.user.username
+        return "Platform Pool"
+
+    def get_tenant_details(self, obj):
+        if obj.user:
+            return {
+                'id': obj.user.id,
+                'company_name': obj.user.company_name,
+                'email': obj.user.email
             }
         return None
 

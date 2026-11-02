@@ -44,7 +44,11 @@ class VisaApplication(TimestampMixin):
             import uuid 
             self.application_number = f"VA{str(uuid.uuid4())[:8].upper()}" 
          
-        self.total_fee = self.processing_fee + self.embassy_fee + self.service_fee 
+        from decimal import Decimal 
+        p = Decimal(str(self.processing_fee or '0.00')) 
+        e = Decimal(str(self.embassy_fee or '0.00')) 
+        s = Decimal(str(self.service_fee or '0.00')) 
+        self.total_fee = p + e + s 
         super().save(*args, **kwargs) 
  
     class Meta:

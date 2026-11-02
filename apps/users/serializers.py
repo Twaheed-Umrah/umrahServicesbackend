@@ -60,8 +60,12 @@ class UserSerializer(serializers.ModelSerializer):
     # Use Base64ImageField for both input and output with full URLs
     profile_image = Base64ImageField(required=False, allow_null=True)
     company_logo = Base64ImageField(required=False, allow_null=True)
+    signature_image = Base64ImageField(required=False, allow_null=True)
+    stamp_image = Base64ImageField(required=False, allow_null=True)
     # Use Base64FileField for agreement letter
     agreement_letter = Base64FileField(required=False, allow_null=True)
+    tenant_name = serializers.CharField(source='created_by.company_name', read_only=True)
+    tenant_id = serializers.IntegerField(source='created_by.id', read_only=True)
 
     class Meta:
         model = User
@@ -69,7 +73,9 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'username', 'email', 'first_name', 'last_name', 'role',
             'phone', 'address', 'profile_image', 'is_active',
             'bio', 'website', 'company_name', 'agreement_letter', 'company_logo',
+            'signature_image', 'stamp_image',
             'is_present', 'caller_status', 'daily_lead_quota',
+            'created_by', 'tenant_name', 'tenant_id',
             'password'
         ]
         extra_kwargs = {

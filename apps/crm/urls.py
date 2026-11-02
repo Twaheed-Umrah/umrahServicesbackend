@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     LeadListCreateView, LeadDetailView, LeadAddNoteView,
-    ExcelLeadUploadView, LeadAssignSingleView, LeadRecallToPoolView,
+    ExcelLeadUploadView, ExcelLeadExportView, LeadAssignSingleView, LeadRecallToPoolView,
     LeadReassignFromPoolView, LeadAgencyPoolListView,
     TaskListCreateView, TaskDetailView
 )
@@ -14,6 +14,7 @@ urlpatterns = [
 
     # Meta Ads / Excel Ingestion & Round-Robin Distribution
     path('leads/upload-excel/', ExcelLeadUploadView.as_view(), name='lead-upload-excel'),
+    path('leads/export-excel/', ExcelLeadExportView.as_view(), name='lead-export-excel'),
 
     # Caller Management & Reassignment Workflows
     path('leads/<int:lead_id>/assign-single/', LeadAssignSingleView.as_view(), name='lead-assign-single'),

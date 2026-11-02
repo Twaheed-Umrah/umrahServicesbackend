@@ -22,6 +22,14 @@ class BookingSerializer(serializers.ModelSerializer):
     gross_profit = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     profit_margin_pct = serializers.FloatField(read_only=True)
 
+    def to_internal_value(self, data):
+        mutable_data = data.copy() if hasattr(data, 'copy') else dict(data)
+        if 'travel_date' in mutable_data and 'travel_month' not in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_date'])[:8]
+        elif 'travel_month' in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_month'])[:8]
+        return super().to_internal_value(mutable_data)
+
     class Meta:
         model = Booking
         fields = [
@@ -44,6 +52,18 @@ class BookingSerializer(serializers.ModelSerializer):
         read_only_fields = ['booking_number', 'total_adult_price', 'total_child_price', 
                            'total_infant_price', 'total_price', 'discount_amount', 
                            'payable_amount', 'balance', 'total_direct_cost', 'gross_profit', 'profit_margin_pct', 'created_by']  # Add created_by here
+
+    def to_internal_value(self, data):
+        mutable_data = data.copy() if hasattr(data, 'copy') else dict(data)
+        if 'mobile_no' in mutable_data and 'mobile' not in mutable_data:
+            mutable_data['mobile'] = mutable_data['mobile_no']
+        if 'travel_date' in mutable_data and 'travel_month' not in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_date'])[:8]
+        elif 'travel_month' in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_month'])[:8]
+        if 'travelers' in mutable_data and 'number_of_travelers' not in mutable_data:
+            mutable_data['number_of_travelers'] = mutable_data['travelers']
+        return super().to_internal_value(mutable_data)
 
     def create(self, validated_data):
         travelers_data = validated_data.pop('travelers', [])
@@ -80,6 +100,18 @@ class QuickBookingSerializer(serializers.ModelSerializer):
     total_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     payment_status = serializers.CharField(read_only=True)
 
+    def to_internal_value(self, data):
+        mutable_data = data.copy() if hasattr(data, 'copy') else dict(data)
+        if 'mobile_no' in mutable_data and 'mobile' not in mutable_data:
+            mutable_data['mobile'] = mutable_data['mobile_no']
+        if 'travel_date' in mutable_data and 'travel_month' not in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_date'])[:8]
+        elif 'travel_month' in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_month'])[:8]
+        if 'travelers' in mutable_data and 'number_of_travelers' not in mutable_data:
+            mutable_data['number_of_travelers'] = mutable_data['travelers']
+        return super().to_internal_value(mutable_data)
+
     class Meta:
         model = QuickBooking
         fields = [
@@ -92,16 +124,28 @@ class QuickBookingSerializer(serializers.ModelSerializer):
         read_only_fields = ['booking_number', 'dues', 'total_amount', 'payment_status',
                            'is_converted_to_full_booking', 'converted_booking', 'created_by']
 
+    def to_internal_value(self, data):
+        mutable_data = data.copy() if hasattr(data, 'copy') else dict(data)
+        if 'mobile_no' in mutable_data and 'mobile' not in mutable_data:
+            mutable_data['mobile'] = mutable_data['mobile_no']
+        if 'travel_date' in mutable_data and 'travel_month' not in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_date'])[:8]
+        elif 'travel_month' in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_month'])[:8]
+        if 'travelers' in mutable_data and 'number_of_travelers' not in mutable_data:
+            mutable_data['number_of_travelers'] = mutable_data['travelers']
+        return super().to_internal_value(mutable_data)
+
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
         return QuickBooking.objects.create(**validated_data)
 
     def validate(self, data):
         """Validate that payment doesn't exceed budget"""
-        budget = data.get('budget', 0)
-        payment = data.get('payment', 0)
+        budget = data.get('budget', self.instance.budget if self.instance else 0)
+        payment = data.get('payment', self.instance.payment if self.instance else 0)
         
-        if payment > budget:
+        if float(payment or 0) > float(budget or 0):
             raise serializers.ValidationError("Payment amount cannot exceed budget.")
         
         return data
@@ -117,6 +161,14 @@ class BookingReceiptSerializer(serializers.ModelSerializer):
     gross_profit = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     profit_margin_pct = serializers.FloatField(read_only=True)
 
+    def to_internal_value(self, data):
+        mutable_data = data.copy() if hasattr(data, 'copy') else dict(data)
+        if 'travel_date' in mutable_data and 'travel_month' not in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_date'])[:8]
+        elif 'travel_month' in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_month'])[:8]
+        return super().to_internal_value(mutable_data)
+
     class Meta:
         model = Booking
         fields = [
@@ -127,7 +179,8 @@ class BookingReceiptSerializer(serializers.ModelSerializer):
             'total_child_price', 'infant_price', 'total_infant_price', 'total_price',
             'discount_percentage', 'discount_amount', 'advance_payment', 'balance',
             'payment_type', 'special_request', 'travelers', 'package_details',
-            'created_by_name', 'created_at'
+            'created_by_name', 'created_at',
+            'total_direct_cost', 'gross_profit', 'profit_margin_pct'
         ]
 
 
@@ -137,6 +190,18 @@ class QuickBookingReceiptSerializer(serializers.ModelSerializer):
     customer_name = serializers.CharField(read_only=True)
     total_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     payment_status = serializers.CharField(read_only=True)
+
+    def to_internal_value(self, data):
+        mutable_data = data.copy() if hasattr(data, 'copy') else dict(data)
+        if 'mobile_no' in mutable_data and 'mobile' not in mutable_data:
+            mutable_data['mobile'] = mutable_data['mobile_no']
+        if 'travel_date' in mutable_data and 'travel_month' not in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_date'])[:8]
+        elif 'travel_month' in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_month'])[:8]
+        if 'travelers' in mutable_data and 'number_of_travelers' not in mutable_data:
+            mutable_data['number_of_travelers'] = mutable_data['travelers']
+        return super().to_internal_value(mutable_data)
 
     class Meta:
         model = QuickBooking
@@ -167,6 +232,18 @@ class SupportTicketSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'ticket_number', 'created_by', 'created_at', 'updated_at']
+
+    def to_internal_value(self, data):
+        mutable_data = data.copy() if hasattr(data, 'copy') else dict(data)
+        if 'mobile_no' in mutable_data and 'mobile' not in mutable_data:
+            mutable_data['mobile'] = mutable_data['mobile_no']
+        if 'travel_date' in mutable_data and 'travel_month' not in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_date'])[:8]
+        elif 'travel_month' in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_month'])[:8]
+        if 'travelers' in mutable_data and 'number_of_travelers' not in mutable_data:
+            mutable_data['number_of_travelers'] = mutable_data['travelers']
+        return super().to_internal_value(mutable_data)
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
@@ -242,6 +319,18 @@ class QuotationSerializer(serializers.ModelSerializer):
             'estimated_gross_profit', 'gross_margin_percentage',
             'requires_discount_approval', 'created_by', 'created_at', 'updated_at'
         ]
+
+    def to_internal_value(self, data):
+        mutable_data = data.copy() if hasattr(data, 'copy') else dict(data)
+        if 'mobile_no' in mutable_data and 'mobile' not in mutable_data:
+            mutable_data['mobile'] = mutable_data['mobile_no']
+        if 'travel_date' in mutable_data and 'travel_month' not in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_date'])[:8]
+        elif 'travel_month' in mutable_data:
+            mutable_data['travel_month'] = str(mutable_data['travel_month'])[:8]
+        if 'travelers' in mutable_data and 'number_of_travelers' not in mutable_data:
+            mutable_data['number_of_travelers'] = mutable_data['travelers']
+        return super().to_internal_value(mutable_data)
 
     def create(self, validated_data):
         hotels_data = validated_data.pop('hotels', [])

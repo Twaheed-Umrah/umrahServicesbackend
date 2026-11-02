@@ -1,3 +1,5 @@
+from django.db.models import Q
+from apps.common.tenancy import apply_date_filters, apply_category_filters, apply_status_filter, get_tenant_scoped_queryset
 from rest_framework import generics, filters, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,6 +9,22 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from rest_framework import status
 from weasyprint import HTML, CSS
+import os
+import pathlib
+from django.conf import settings
+
+def get_media_file_uri(field, request=None):
+    if not field:
+        return None
+    try:
+        if hasattr(field, 'path') and os.path.exists(field.path):
+            return pathlib.Path(field.path).as_uri()
+    except Exception:
+        pass
+    if hasattr(field, 'url'):
+        return request.build_absolute_uri(field.url) if request else field.url
+    val = str(field)
+    return request.build_absolute_uri(val) if request and not val.startswith(('http://', 'https://', 'file://')) else val
 from decimal import Decimal
 import datetime
 from rest_framework import renderers
@@ -52,20 +70,19 @@ class BookingListCreateView(generics.ListCreateAPIView):
         
         if user.role == 'superadmin':
             tenant_id = self.request.query_params.get('tenant_id', None)
-            if tenant_id and tenant_id != 'all':
-                return queryset.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id))
-            return queryset
+            if tenant_id and str(tenant_id).lower() != 'all':
+                queryset = queryset.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id))
         elif user.role == 'accountant':
-            # Accountant can see bookings created by their parent admin AND themselves
             if user.created_by:
-                return queryset.filter(created_by__in=[user.created_by, user])
+                queryset = queryset.filter(created_by__in=[user.created_by, user])
             else:
-                return queryset.filter(created_by=user)
+                queryset = queryset.filter(created_by=user)
         else:
-            # Agency/Franchise admin can see their own bookings AND bookings created by their accountants
-            return queryset.filter(
+            queryset = queryset.filter(
                 Q(created_by=user) | Q(created_by__created_by=user)
             )
+        queryset = apply_date_filters(queryset, self.request, date_field='created_at')
+        return queryset
 
 
 class BookingDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -117,18 +134,20 @@ class QuickBookingListCreateView(generics.ListCreateAPIView):
         user = self.request.user
         
         if user.role == 'superadmin':
-            return queryset
+            tenant_id = self.request.query_params.get('tenant_id', None)
+            if tenant_id and str(tenant_id).lower() != 'all':
+                queryset = queryset.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id))
         elif user.role == 'accountant':
-            # Accountant can see quick bookings created by their parent admin AND themselves
             if user.created_by:
-                return queryset.filter(created_by__in=[user.created_by, user])
+                queryset = queryset.filter(created_by__in=[user.created_by, user])
             else:
-                return queryset.filter(created_by=user)
+                queryset = queryset.filter(created_by=user)
         else:
-            # Agency/Franchise admin can see their own quick bookings AND quick bookings created by their accountants
-            return queryset.filter(
+            queryset = queryset.filter(
                 Q(created_by=user) | Q(created_by__created_by=user)
             )
+        queryset = apply_date_filters(queryset, self.request, date_field='created_at')
+        return queryset
 
 
 class QuickBookingDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -332,25 +351,24 @@ class BookingReceiptView(APIView):
                             status=status.HTTP_403_FORBIDDEN
                         )
             
-            # Get company details from the user who created the booking
+            # Get company details from the tenant admin
             company_user = booking.created_by
-            logo_url = None
-            if company_user.company_logo:
-                if hasattr(company_user.company_logo, 'url'):
-                    logo_url = request.build_absolute_uri(company_user.company_logo.url)
-                else:
-                    if company_user.company_logo.startswith(('http://', 'https://')):
-                        logo_url = company_user.company_logo
-                    else:
-                        logo_url = request.build_absolute_uri(company_user.company_logo)
+            if company_user and company_user.role != 'franchisesadmin' and company_user.created_by:
+                company_user = company_user.created_by
+                
+            logo_url = get_media_file_uri(getattr(company_user, 'company_logo', None), request) if company_user else None
+            signature_url = get_media_file_uri(getattr(company_user, 'signature_image', None), request) if company_user else None
+            stamp_url = get_media_file_uri(getattr(company_user, 'stamp_image', None), request) if company_user else None
             
             company_details = {
-                'name': company_user.company_name or 'Your Travel Company',
-                'address': company_user.address or 'Your Company Address',
-                'phone': company_user.phone or 'Your Phone Number',
-                'email': company_user.email,
+                'name': company_user.company_name if company_user else 'Your Travel Company',
+                'address': company_user.address if company_user else 'Your Company Address',
+                'phone': company_user.phone if company_user else 'Your Phone Number',
+                'email': company_user.email if company_user else '',
                 'logo_url': logo_url,
-                'website': company_user.website,
+                'signature_url': signature_url,
+                'stamp_url': stamp_url,
+                'website': company_user.website if company_user else '',
             }
             
             # Serialize booking data
@@ -430,27 +448,25 @@ class QuickBookingReceiptView(APIView):
                             status=status.HTTP_403_FORBIDDEN
                         )
             
-            # Get company details
+            # Get company details from the tenant admin
             company_user = quick_booking.created_by
+            if company_user and company_user.role != 'franchisesadmin' and company_user.created_by:
+                company_user = company_user.created_by
             
             # Handle logo URL properly
-            logo_url = None
-            if company_user.company_logo:
-                if hasattr(company_user.company_logo, 'url'):
-                    logo_url = request.build_absolute_uri(company_user.company_logo.url)
-                else:
-                    if company_user.company_logo.startswith(('http://', 'https://')):
-                        logo_url = company_user.company_logo
-                    else:
-                        logo_url = request.build_absolute_uri(company_user.company_logo)
+            logo_url = get_media_file_uri(getattr(company_user, 'company_logo', None), request) if company_user else None
+            signature_url = get_media_file_uri(getattr(company_user, 'signature_image', None), request) if company_user else None
+            stamp_url = get_media_file_uri(getattr(company_user, 'stamp_image', None), request) if company_user else None
             
             company_details = {
-                'name': company_user.company_name or 'Your Travel Company',
-                'address': company_user.address or 'Your Company Address',
-                'phone': company_user.phone or 'Your Phone Number',
-                'email': company_user.email,
+                'name': company_user.company_name if company_user else 'Your Travel Company',
+                'address': company_user.address if company_user else 'Your Company Address',
+                'phone': company_user.phone if company_user else 'Your Phone Number',
+                'email': company_user.email if company_user else '',
                 'logo_url': logo_url,
-                'website': company_user.website,
+                'signature_url': signature_url,
+                'stamp_url': stamp_url,
+                'website': company_user.website if company_user else '',
             }
             
             # Serialize quick booking data
@@ -589,22 +605,22 @@ class AllBookingDetailView(generics.ListAPIView):
         from django.db.models import Q
         user = self.request.user
         
+        qs = Booking.objects.all()
         if user.role == 'superadmin':
             tenant_id = self.request.query_params.get('tenant_id', None)
-            if tenant_id and tenant_id != 'all':
-                return Booking.objects.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id))
-            return Booking.objects.all()
+            if tenant_id and str(tenant_id).lower() != 'all':
+                qs = qs.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id))
         elif user.role == 'accountant':
-            # Accountant sees bookings created by their parent admin AND themselves
             if user.created_by:
-                return Booking.objects.filter(created_by__in=[user.created_by, user])
+                qs = qs.filter(created_by__in=[user.created_by, user])
             else:
-                return Booking.objects.filter(created_by=user)
+                qs = qs.filter(created_by=user)
         else:
-            # Agency/Franchise admin sees their own bookings AND bookings created by their accountants
-            return Booking.objects.filter(
+            qs = qs.filter(
                 Q(created_by=user) | Q(created_by__created_by=user)
             )
+        qs = apply_date_filters(qs, self.request, date_field='created_at')
+        return qs
 
 
 class AllQuickBookingDetailView(generics.ListAPIView):
@@ -626,19 +642,22 @@ class AllQuickBookingDetailView(generics.ListAPIView):
         from django.db.models import Q
         user = self.request.user
         
+        qs = QuickBooking.objects.all()
         if user.role == 'superadmin':
-            return QuickBooking.objects.all()
+            tenant_id = self.request.query_params.get('tenant_id', None)
+            if tenant_id and str(tenant_id).lower() != 'all':
+                qs = qs.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id))
         elif user.role == 'accountant':
-            # Accountant sees quick bookings created by their parent admin AND themselves
             if user.created_by:
-                return QuickBooking.objects.filter(created_by__in=[user.created_by, user])
+                qs = qs.filter(created_by__in=[user.created_by, user])
             else:
-                return QuickBooking.objects.filter(created_by=user)
+                qs = qs.filter(created_by=user)
         else:
-            # Agency/Franchise admin sees their own quick bookings AND quick bookings created by their accountants
-            return QuickBooking.objects.filter(
+            qs = qs.filter(
                 Q(created_by=user) | Q(created_by__created_by=user)
             )
+        qs = apply_date_filters(qs, self.request, date_field='created_at')
+        return qs
 
 
 class UserBookingDetailView(generics.RetrieveAPIView):
@@ -905,17 +924,19 @@ class QuotationListCreateView(generics.ListCreateAPIView):
         if user.role == 'superadmin':
             queryset = Quotation.objects.all().prefetch_related('hotels', 'activities').select_related('created_by', 'lead')
             tenant_id = self.request.query_params.get('tenant_id', None)
-            if tenant_id and tenant_id != 'all':
+            if tenant_id and str(tenant_id).lower() != 'all':
                 queryset = queryset.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id) | Q(lead__user_id=tenant_id))
-            return queryset
         elif user.role in ['franchisesadmin', 'franchiseadmin']:
-            return Quotation.objects.filter(
+            queryset = Quotation.objects.filter(
                 models.Q(created_by=user) | models.Q(created_by__created_by=user) | models.Q(lead__user=user)
             ).prefetch_related('hotels', 'activities').select_related('created_by', 'lead')
         else:
-            return Quotation.objects.filter(
+            queryset = Quotation.objects.filter(
                 models.Q(created_by=user) | models.Q(lead__assigned_caller=user)
             ).prefetch_related('hotels', 'activities').select_related('created_by', 'lead')
+        queryset = apply_date_filters(queryset, self.request, date_field='quotation_date')
+        queryset = apply_date_filters(queryset, self.request, date_field='created_at')
+        return queryset
 
 
 class QuotationDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -1568,28 +1589,51 @@ class AccountingSummaryView(APIView):
 class BookingTravelerCreateView(APIView):
     """
     Module 4: Add new pilgrim/family member to a booking group
+    Ensures strict tenant ownership verification before adding travelers.
     """
     permission_classes = [IsTenantOrStaff]
 
     def post(self, request, booking_id):
+        user = request.user
         try:
-            booking = Booking.objects.get(pk=booking_id)
+            if user.role == 'superadmin':
+                booking = Booking.objects.get(pk=booking_id)
+            elif user.role in ['franchisesadmin', 'franchiseadmin']:
+                booking = Booking.objects.get(Q(pk=booking_id) & (Q(created_by=user) | Q(created_by__created_by=user)))
+            else:
+                agency_head = user.created_by or user
+                booking = Booking.objects.get(Q(pk=booking_id) & (Q(created_by=agency_head) | Q(created_by=user)))
+
             serializer = BookingTravelerSerializer(data=request.data)
             if serializer.is_valid():
                 traveler = serializer.save(booking=booking)
                 return Response(BookingTravelerSerializer(traveler).data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Booking.DoesNotExist:
-            return Response({'detail': 'Booking not found.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Booking not found or access denied.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class BookingTravelerDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     Module 4: Manage, update or remove a pilgrim from a family group
+    Strict tenant isolation: non-superadmin cannot access travelers of other tenants.
     """
-    queryset = BookingTraveler.objects.all()
     serializer_class = BookingTravelerSerializer
     permission_classes = [IsTenantOrStaff]
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = BookingTraveler.objects.all().select_related('booking')
+        if user.role == 'superadmin':
+            tenant_id = self.request.query_params.get('tenant_id')
+            if tenant_id and str(tenant_id).lower() != 'all':
+                qs = qs.filter(Q(booking__created_by_id=tenant_id) | Q(booking__created_by__created_by_id=tenant_id))
+            return qs
+        elif user.role in ['franchisesadmin', 'franchiseadmin']:
+            return qs.filter(Q(booking__created_by=user) | Q(booking__created_by__created_by=user))
+        else:
+            agency_head = user.created_by or user
+            return qs.filter(Q(booking__created_by=agency_head) | Q(booking__created_by=user))
 
 
 class ExpensesReportsView(APIView):

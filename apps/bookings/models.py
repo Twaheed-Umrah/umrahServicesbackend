@@ -194,6 +194,9 @@ class Booking(TimestampMixin):
         
         super().save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['-created_at']
+
 
 class BookingTraveler(TimestampMixin):
     GENDER_CHOICES = [

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import VisaApplication, VisaDocument
@@ -64,28 +65,57 @@ class VisaApplicationDetailSerializer(serializers.ModelSerializer):
 
 class VisaApplicationCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating visa applications (Agency use)"""
-    
+    nationality = serializers.CharField(required=False, default='Indian')
+    destination_country = serializers.CharField(required=False, default='Saudi Arabia')
+    purpose_of_visit = serializers.CharField(required=False, default='Umrah Pilgrimage')
+    return_date = serializers.DateField(required=False)
+    processing_fee = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, default=Decimal('0.00'))
+    embassy_fee = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, default=Decimal('0.00'))
+    service_fee = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, default=Decimal('0.00'))
+
     class Meta:
         model = VisaApplication
         fields = [
-            'applicant_name', 'passport_number', 'nationality', 
+            'applicant_name', 'passport_number', 'nationality',
             'destination_country', 'visa_type', 'travel_date', 'return_date',
             'purpose_of_visit', 'processing_fee', 'embassy_fee', 'service_fee'
         ]
-    
+
+    def to_internal_value(self, data):
+        if hasattr(data, '_mutable') and not data._mutable:
+            data = data.copy()
+        elif isinstance(data, dict):
+            data = data.copy()
+        # Alias applicant_passport -> passport_number
+        if 'applicant_passport' in data and not data.get('passport_number'):
+            data['passport_number'] = data['applicant_passport']
+        # Auto-compute return_date if omitted (default to travel_date + 15 days)
+        if 'travel_date' in data and not data.get('return_date'):
+            try:
+                import datetime
+                t_date = datetime.date.fromisoformat(str(data['travel_date']))
+                data['return_date'] = str(t_date + datetime.timedelta(days=15))
+            except Exception:
+                pass
+        # If total_fee is provided without breakdown, assign to service_fee
+        if 'total_fee' in data and not data.get('service_fee'):
+            data['service_fee'] = data['total_fee']
+        return super().to_internal_value(data)
+
     def validate(self, data):
         """Custom validation"""
-        if data['travel_date'] >= data['return_date']:
+        if data.get('travel_date') and data.get('return_date') and data['travel_date'] >= data['return_date']:
             raise serializers.ValidationError("Return date must be after travel date")
-        
-        if data['processing_fee'] < 0 or data['embassy_fee'] < 0 or data['service_fee'] < 0:
+        proc = data.get('processing_fee', 0) or 0
+        emb = data.get('embassy_fee', 0) or 0
+        srv = data.get('service_fee', 0) or 0
+        if proc < 0 or emb < 0 or srv < 0:
             raise serializers.ValidationError("Fees cannot be negative")
-        
         return data
-    
+
     def create(self, validated_data):
-        # Set the applied_by to current user (agency)
-        validated_data['applied_by'] = self.context['request'].user
+        if 'applied_by' not in validated_data:
+            validated_data['applied_by'] = self.context['request'].user
         return super().create(validated_data)
 
 class VisaApplicationUpdateSerializer(serializers.ModelSerializer):

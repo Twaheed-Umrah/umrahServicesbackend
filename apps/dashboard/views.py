@@ -16,55 +16,67 @@ from apps.enquiries.models import APIKey
 from django.db.models.functions import Extract, TruncMonth, TruncYear, TruncDate
 
 
-def get_user_specific_queryset(user, model_class):
+def get_user_specific_queryset(user, model_class, request=None):
     """
-    Get queryset filtered by user role and permissions
-    - Superadmin: sees all data
-    - Accountant: sees data created by their parent admin
-    - Other roles: see only their own data
+    Get queryset filtered by user role, tenant selection, and date filters
     """
     if user.role == 'superadmin':
-        # SuperAdmin can see all data
-        return model_class.objects.all()
-    elif user.role == 'accountant':
-        # Accountant sees data created by their parent admin
+        qs = model_class.objects.all()
+        if request:
+            tenant_id = request.GET.get('tenant_id') or getattr(request, 'query_params', {}).get('tenant_id')
+            if tenant_id and str(tenant_id).lower() != 'all':
+                qs = qs.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id))
+            from apps.common.tenancy import apply_date_filters
+            qs = apply_date_filters(qs, request, date_field='created_at')
+        return qs
+    elif user.role in ['accountant', 'operations', 'sells_caller']:
         if user.created_by:
-            return model_class.objects.filter(created_by=user.created_by)
+            qs = model_class.objects.filter(Q(created_by=user.created_by) | Q(created_by=user))
         else:
-            # If accountant has no parent, return empty queryset
-            return model_class.objects.none()
+            qs = model_class.objects.filter(created_by=user)
+        if request:
+            from apps.common.tenancy import apply_date_filters
+            qs = apply_date_filters(qs, request, date_field='created_at')
+        return qs
     else:
-        # Other users (franchisesadmin) see only their own data
-        return model_class.objects.filter(created_by=user)
+        # Franchise Admin (Tenant)
+        qs = model_class.objects.filter(Q(created_by=user) | Q(created_by__created_by=user))
+        if request:
+            from apps.common.tenancy import apply_date_filters
+            qs = apply_date_filters(qs, request, date_field='created_at')
+        return qs
 
 
-def get_enquiry_queryset(user):
+def get_enquiry_queryset(user, request=None):
     """
-    Get enquiry queryset based on user's API keys
-    - Superadmin: gets all enquiries
-    - Accountant: gets enquiries from their parent admin's API keys
-    - Other roles: get enquiries from their own API keys
+    Get enquiry queryset based on user's API keys and tenancy
     """
     if user.role == 'superadmin':
-        # SuperAdmin gets all enquiries
-        return ContactUs.objects.all()
-    elif user.role == 'accountant':
-        # Accountant gets enquiries from their parent admin's API keys
+        qs = ContactUs.objects.all()
+        if request:
+            tenant_id = request.GET.get('tenant_id') or getattr(request, 'query_params', {}).get('tenant_id')
+            if tenant_id and str(tenant_id).lower() != 'all':
+                qs = qs.filter(Q(submitted_by_user_id=tenant_id) | Q(api_key__user_id=tenant_id))
+            from apps.common.tenancy import apply_date_filters
+            qs = apply_date_filters(qs, request, date_field='created_at')
+        return qs
+    elif user.role in ['accountant', 'operations', 'sells_caller']:
         if user.created_by:
             user_api_keys = APIKey.objects.filter(user=user.created_by, is_active=True)
-            if user_api_keys.exists():
-                return ContactUs.objects.filter(api_key__in=user_api_keys)
-            else:
-                return ContactUs.objects.none()
+            qs = ContactUs.objects.filter(Q(api_key__in=user_api_keys) | Q(submitted_by_user=user.created_by))
         else:
-            return ContactUs.objects.none()
+            qs = ContactUs.objects.filter(submitted_by_user=user)
+        if request:
+            from apps.common.tenancy import apply_date_filters
+            qs = apply_date_filters(qs, request, date_field='created_at')
+        return qs
     else:
-        # Other users get enquiries only from their API keys
         user_api_keys = APIKey.objects.filter(user=user, is_active=True)
-        if user_api_keys.exists():
-            return ContactUs.objects.filter(api_key__in=user_api_keys)
-        else:
-            return ContactUs.objects.none()
+        qs = ContactUs.objects.filter(Q(api_key__in=user_api_keys) | Q(submitted_by_user=user))
+        if request:
+            from apps.common.tenancy import apply_date_filters
+            qs = apply_date_filters(qs, request, date_field='created_at')
+        return qs
 
 
 @api_view(['GET'])
@@ -545,6 +557,12 @@ def executive_dashboard_overview(request):
         lead_qs = lead_qs.filter(Q(user=user) | Q(assigned_caller__created_by=user))
         contact_qs = contact_qs.filter(Q(submitted_by_user=user) | Q(api_key__user=user))
 
+    from apps.common.tenancy import apply_date_filters
+    booking_qs = apply_date_filters(booking_qs, request, date_field='created_at')
+    quick_booking_qs = apply_date_filters(quick_booking_qs, request, date_field='created_at')
+    lead_qs = apply_date_filters(lead_qs, request, date_field='created_at')
+    contact_qs = apply_date_filters(contact_qs, request, date_field='created_at')
+
     # 1. User Info & Greeting
     full_name = f"{user.first_name} {user.last_name}".strip()
     if not full_name:
@@ -645,11 +663,11 @@ def executive_dashboard_overview(request):
     source_total = sum(source_counts.values())
     lead_source_analysis = []
     source_palette = {
-        'Website Search': '#2563eb',
-        'Meta Ads': '#0d9488',
-        'Google Ads': '#f59e0b',
-        'Walk-in / Referral': '#8b5cf6',
-        'Other': '#64748b'
+        'Website Search': '#0f172a',
+        'Meta Ads': '#059669',
+        'Google Ads': '#334155',
+        'Walk-in / Referral': '#0d9488',
+        'Other': '#94a3b8'
     }
     for s_name, s_cnt in source_counts.items():
         pct = round((s_cnt / source_total) * 100) if source_total > 0 else 0
@@ -709,10 +727,10 @@ def executive_dashboard_overview(request):
 
     # 10. Lead Status Distribution for Staff (Bar Chart)
     lead_status_distribution = [
-        {'status': 'Hot', 'count': hot_leads, 'color': '#ef4444'},
-        {'status': 'Warm', 'count': warm_leads, 'color': '#f59e0b'},
-        {'status': 'Cold', 'count': cold_leads, 'color': '#3b82f6'},
-        {'status': 'Closed', 'count': closed_leads, 'color': '#10b981'},
+        {'status': 'Hot', 'count': hot_leads, 'color': '#e11d48'},
+        {'status': 'Warm', 'count': warm_leads, 'color': '#d97706'},
+        {'status': 'Cold', 'count': cold_leads, 'color': '#64748b'},
+        {'status': 'Closed', 'count': closed_leads, 'color': '#059669'},
     ]
 
     return Response({

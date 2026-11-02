@@ -1504,6 +1504,43 @@ class AccountingSummaryView(APIView):
                 'created_at': qb.created_at.strftime('%Y-%m-%d') if qb.created_at else ''
             })
 
+        # Master consolidated ledger items
+        ledger_items = []
+        for b in booking_qs.order_by('-created_at')[:100]:
+            ledger_items.append({
+                'id': b.id,
+                'record_type': 'regular',
+                'booking_number': b.booking_number,
+                'client_name': f"{b.first_name} {b.last_name}",
+                'mobile_no': b.mobile_no,
+                'email': b.email,
+                'package_name': b.package_name,
+                'travel_month': b.travel_month,
+                'total_amount': float(b.total_price),
+                'paid_amount': float(b.advance_payment),
+                'balance': float(b.balance),
+                'payment_type': b.payment_type,
+                'payment_status': 'paid' if b.balance <= 0 else ('partial' if b.advance_payment > 0 else 'unpaid'),
+                'created_at': b.created_at.strftime('%Y-%m-%d') if b.created_at else ''
+            })
+        for qb in quick_qs.order_by('-created_at')[:50]:
+            ledger_items.append({
+                'id': qb.id,
+                'record_type': 'quick',
+                'booking_number': qb.booking_number,
+                'client_name': f"{qb.first_name} {qb.last_name}",
+                'mobile_no': qb.mobile,
+                'email': qb.email,
+                'package_name': qb.destination or 'Quick Voucher',
+                'travel_month': qb.travel_month or 'Immediate',
+                'total_amount': float(qb.budget or 0),
+                'paid_amount': float(qb.payment or 0),
+                'balance': float(qb.dues or 0),
+                'payment_type': qb.preferred_payment or 'cash',
+                'payment_status': qb.payment_status or ('paid' if (qb.dues or 0) <= 0 else 'pending'),
+                'created_at': qb.created_at.strftime('%Y-%m-%d') if qb.created_at else ''
+            })
+
         return Response({
             'kpis': {
                 'total_revenue': total_revenue,
@@ -1523,7 +1560,8 @@ class AccountingSummaryView(APIView):
                 }
             },
             'payment_methods': methods,
-            'due_schedules': due_clients
+            'due_schedules': due_clients,
+            'ledger': ledger_items
         })
 
 
@@ -1552,3 +1590,115 @@ class BookingTravelerDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = BookingTraveler.objects.all()
     serializer_class = BookingTravelerSerializer
     permission_classes = [IsTenantOrStaff]
+
+
+class ExpensesReportsView(APIView):
+    """
+    Module 16 & 21: Direct Supplier Costs, Operating Expenses & Profitability Reports
+    """
+    permission_classes = [IsTenantOrStaff]
+
+    def get(self, request):
+        user = request.user
+        tenant_id = request.query_params.get('tenant_id')
+        try:
+            year = int(request.query_params.get('year', timezone.now().year))
+        except (ValueError, TypeError):
+            year = timezone.now().year
+        
+        booking_qs = Booking.objects.all()
+        if user.role == 'superadmin':
+            if tenant_id and tenant_id != 'all':
+                booking_qs = booking_qs.filter(models.Q(created_by_id=tenant_id) | models.Q(created_by__created_by_id=tenant_id))
+        elif user.role in ['accountant', 'operations', 'sells_caller']:
+            if user.created_by:
+                booking_qs = booking_qs.filter(models.Q(created_by=user.created_by) | models.Q(created_by=user) | models.Q(created_by__created_by=user.created_by))
+            else:
+                booking_qs = booking_qs.filter(created_by=user)
+        else:
+            booking_qs = booking_qs.filter(models.Q(created_by=user) | models.Q(created_by__created_by=user))
+
+        costs = booking_qs.aggregate(
+            hotel=models.Sum('cost_hotel'),
+            flight=models.Sum('cost_flight'),
+            visa=models.Sum('cost_visa'),
+            transport=models.Sum('cost_transport'),
+            other=models.Sum('cost_other'),
+            revenue=models.Sum('total_price'),
+            collected=models.Sum('advance_payment'),
+            pending=models.Sum('balance')
+        )
+
+        cost_hotel = float(costs['hotel'] or 0)
+        cost_flight = float(costs['flight'] or 0)
+        cost_visa = float(costs['visa'] or 0)
+        cost_transport = float(costs['transport'] or 0)
+        cost_other = float(costs['other'] or 0)
+        total_costs = cost_hotel + cost_flight + cost_visa + cost_transport + cost_other
+        total_revenue = float(costs['revenue'] or 0)
+        net_profit = total_revenue - total_costs
+        margin_pct = round((net_profit / total_revenue) * 100, 2) if total_revenue > 0 else 0.0
+
+        # Monthly breakdown for requested year
+        monthly_breakdown = []
+        month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        for m in range(1, 13):
+            m_qs = booking_qs.filter(created_at__year=year, created_at__month=m)
+            m_rev = float(m_qs.aggregate(t=models.Sum('total_price'))['t'] or 0)
+            m_costs = m_qs.aggregate(
+                h=models.Sum('cost_hotel'),
+                f=models.Sum('cost_flight'),
+                v=models.Sum('cost_visa'),
+                tr=models.Sum('cost_transport'),
+                o=models.Sum('cost_other')
+            )
+            m_exp = float(
+                (m_costs['h'] or 0) + (m_costs['f'] or 0) + (m_costs['v'] or 0) +
+                (m_costs['tr'] or 0) + (m_costs['o'] or 0)
+            )
+            monthly_breakdown.append({
+                'month': month_names[m - 1],
+                'revenue': m_rev,
+                'expenses': m_exp,
+                'profit': m_rev - m_exp
+            })
+
+        # Supplier ledger list
+        supplier_ledger = []
+        for b in booking_qs.order_by('-created_at')[:100]:
+            tot_exp = float((b.cost_hotel or 0) + (b.cost_flight or 0) + (b.cost_visa or 0) + (b.cost_transport or 0) + (b.cost_other or 0))
+            tot_price = float(b.total_price or 0)
+            prof = tot_price - tot_exp
+            supplier_ledger.append({
+                'id': b.id,
+                'booking_number': b.booking_number,
+                'client_name': f"{b.first_name} {b.last_name}".strip(),
+                'package_name': b.package_name or "-",
+                'travel_month': b.travel_month,
+                'cost_hotel': float(b.cost_hotel or 0),
+                'cost_flight': float(b.cost_flight or 0),
+                'cost_visa': float(b.cost_visa or 0),
+                'cost_transport': float(b.cost_transport or 0),
+                'cost_other': float(b.cost_other or 0),
+                'total_expense': tot_exp,
+                'total_price': tot_price,
+                'profit': prof,
+                'profit_margin': round((prof / tot_price) * 100, 1) if tot_price > 0 else 0.0
+            })
+
+        return Response({
+            'kpis': {
+                'total_revenue': total_revenue,
+                'total_expenses': total_costs,
+                'net_profit': net_profit,
+                'margin_pct': margin_pct,
+                'cost_hotel': cost_hotel,
+                'cost_flight': cost_flight,
+                'cost_visa': cost_visa,
+                'cost_transport': cost_transport,
+                'cost_other': cost_other,
+            },
+            'monthly_breakdown': monthly_breakdown,
+            'supplier_ledger': supplier_ledger,
+            'year': year
+        })

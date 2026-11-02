@@ -10,6 +10,7 @@ from calendar import month_name
 import calendar
 
 from apps.bookings.models import Booking, QuickBooking
+from apps.crm.models import Lead
 from apps.enquiries.models import ContactUs
 from apps.enquiries.models import APIKey
 from django.db.models.functions import Extract, TruncMonth, TruncYear, TruncDate
@@ -485,3 +486,273 @@ def dashboard_summary(request):
             {'error': f'Failed to fetch dashboard data: {str(e)}'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def executive_dashboard_overview(request):
+    """
+    Unified endpoint for Executive Dashboard matching the reference UI:
+    - User Profile & Greeting
+    - 4 Top KPI Pods (Bookings, Accounts, Lead CRM, Staff Pipeline)
+    - Monthly Booking Overview (Bookings + Passengers per month for requested year)
+    - Lead Source Analysis (Percentages and counts for donut chart)
+    - Recent Bookings (Top 5)
+    - Recent Payments (Top 5)
+    - Lead Status Distribution (Bar chart)
+    """
+    user = request.user
+    now = timezone.now()
+    today = now.date()
+
+    # Determine requested year
+    try:
+        selected_year = int(request.GET.get('year', now.year))
+    except (ValueError, TypeError):
+        selected_year = now.year
+
+    current_month = now.month
+    prev_month = 12 if current_month == 1 else current_month - 1
+    prev_month_year = now.year - 1 if current_month == 1 else now.year
+
+    # Querysets filtered by role / tenant
+    booking_qs = Booking.objects.all()
+    quick_booking_qs = QuickBooking.objects.all()
+    lead_qs = Lead.objects.all()
+    contact_qs = ContactUs.objects.all()
+
+    if user.role == 'superadmin':
+        tenant_id = request.GET.get('tenant_id', None)
+        if tenant_id and tenant_id != 'all':
+            booking_qs = booking_qs.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id))
+            quick_booking_qs = quick_booking_qs.filter(Q(created_by_id=tenant_id) | Q(created_by__created_by_id=tenant_id))
+            lead_qs = lead_qs.filter(Q(user_id=tenant_id) | Q(assigned_caller__created_by_id=tenant_id))
+            contact_qs = contact_qs.filter(Q(submitted_by_user_id=tenant_id) | Q(api_key__user_id=tenant_id))
+    elif user.role in ['accountant', 'operations', 'sells_caller']:
+        if user.created_by:
+            booking_qs = booking_qs.filter(Q(created_by=user.created_by) | Q(created_by=user) | Q(created_by__created_by=user.created_by))
+            quick_booking_qs = quick_booking_qs.filter(Q(created_by=user.created_by) | Q(created_by=user))
+            lead_qs = lead_qs.filter(Q(user=user.created_by) | Q(assigned_caller=user) | Q(assigned_caller__created_by=user.created_by))
+            contact_qs = contact_qs.filter(Q(submitted_by_user=user.created_by) | Q(api_key__user=user.created_by))
+        else:
+            booking_qs = booking_qs.filter(created_by=user)
+            quick_booking_qs = quick_booking_qs.filter(created_by=user)
+            lead_qs = lead_qs.filter(Q(user=user) | Q(assigned_caller=user))
+            contact_qs = contact_qs.filter(submitted_by_user=user)
+    else:
+        # Franchise Admin / Tenant
+        booking_qs = booking_qs.filter(Q(created_by=user) | Q(created_by__created_by=user))
+        quick_booking_qs = quick_booking_qs.filter(Q(created_by=user) | Q(created_by__created_by=user))
+        lead_qs = lead_qs.filter(Q(user=user) | Q(assigned_caller__created_by=user))
+        contact_qs = contact_qs.filter(Q(submitted_by_user=user) | Q(api_key__user=user))
+
+    # 1. User Info & Greeting
+    full_name = f"{user.first_name} {user.last_name}".strip()
+    if not full_name:
+        full_name = user.email.split('@')[0] if user.email else user.username
+    greeting_name = full_name.title()
+
+    role_map = {
+        'superadmin': 'Super Admin',
+        'franchisesadmin': 'Tenant Admin',
+        'sells_caller': 'Sales & Telecaller',
+        'operations': 'Operations Coordinator',
+        'accountant': 'Accountant'
+    }
+    role_display = role_map.get(user.role, 'Travel Agent')
+
+    # 2. Top Pod 1: Booking Dashboard
+    total_bookings = booking_qs.count() + quick_booking_qs.count()
+    this_month_reg = booking_qs.filter(created_at__year=now.year, created_at__month=current_month).count()
+    this_month_quick = quick_booking_qs.filter(created_at__year=now.year, created_at__month=current_month).count()
+    this_month_bookings = this_month_reg + this_month_quick
+
+    last_month_reg = booking_qs.filter(created_at__year=prev_month_year, created_at__month=prev_month).count()
+    last_month_quick = quick_booking_qs.filter(created_at__year=prev_month_year, created_at__month=prev_month).count()
+    last_month_bookings = last_month_reg + last_month_quick
+
+    if last_month_bookings > 0:
+        booking_growth_pct = round(((this_month_bookings - last_month_bookings) / last_month_bookings) * 100)
+    elif this_month_bookings > 0:
+        booking_growth_pct = 100
+    else:
+        booking_growth_pct = 0
+
+    # 3. Top Pod 2: Account Dashboard
+    amounts = booking_qs.aggregate(
+        total=Sum('total_price'),
+        advance=Sum('advance_payment'),
+        balance=Sum('balance')
+    )
+    quick_budget = quick_booking_qs.aggregate(total=Sum('budget'))['total'] or 0
+
+    total_amount = float((amounts['total'] or 0) + quick_budget)
+    advance_payment = float(amounts['advance'] or 0)
+    remaining_amount = float(amounts['balance'] or 0)
+
+    # 4. Top Pod 3: Lead CRM Dashboard
+    total_crm_leads = lead_qs.count()
+    total_enquiries = contact_qs.count()
+    total_leads = total_crm_leads + total_enquiries
+
+    today_leads = lead_qs.filter(created_at__date=today).count() + contact_qs.filter(created_at__date=today).count()
+    this_month_leads = lead_qs.filter(created_at__year=now.year, created_at__month=current_month).count() + contact_qs.filter(created_at__year=now.year, created_at__month=current_month).count()
+    last_month_leads = lead_qs.filter(created_at__year=prev_month_year, created_at__month=prev_month).count() + contact_qs.filter(created_at__year=prev_month_year, created_at__month=prev_month).count()
+
+    if last_month_leads > 0:
+        lead_growth_pct = round(((this_month_leads - last_month_leads) / last_month_leads) * 100)
+    elif this_month_leads > 0:
+        lead_growth_pct = 100
+    else:
+        lead_growth_pct = 0
+
+    # 5. Top Pod 4: Staff / Pipeline Dashboard
+    hot_leads = lead_qs.filter(status__in=['NEW', 'INTERESTED']).count() + contact_qs.filter(is_processed=False).count()
+    warm_leads = lead_qs.filter(status__in=['CONTACTED', 'FOLLOW_UP', 'CALLBACK']).count()
+    cold_leads = lead_qs.filter(status__in=['BUSY', 'RNR', 'SWITCH_OFF', 'NOT_INTERESTED']).count()
+    closed_leads = lead_qs.filter(status__in=['CLOSED', 'CONVERTED']).count()
+
+    # 6. Monthly Booking Overview (Bookings + Passengers per month for requested year)
+    month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    monthly_booking_overview = []
+    for m in range(1, 13):
+        m_reg_qs = booking_qs.filter(created_at__year=selected_year, created_at__month=m)
+        m_quick_qs = quick_booking_qs.filter(created_at__year=selected_year, created_at__month=m)
+        b_count = m_reg_qs.count() + m_quick_qs.count()
+        
+        pax_agg = m_reg_qs.aggregate(
+            adults=Sum('total_adults'),
+            children=Sum('total_children'),
+            infants=Sum('total_infants')
+        )
+        passengers = (pax_agg['adults'] or 0) + (pax_agg['children'] or 0) + (pax_agg['infants'] or 0)
+        passengers += m_quick_qs.count()
+
+        monthly_booking_overview.append({
+            'month': month_names[m - 1],
+            'month_num': m,
+            'bookings': b_count,
+            'passengers': passengers
+        })
+
+    # 7. Lead Source Analysis (Donut Chart & List)
+    source_counts = {
+        'Website Search': contact_qs.count() + lead_qs.filter(source__iexact='Website').count(),
+        'Meta Ads': lead_qs.filter(source__iexact='Meta Ads').count(),
+        'Google Ads': lead_qs.filter(source__iexact='Google Ads').count(),
+        'Walk-in / Referral': lead_qs.filter(source__in=['Walk-in', 'Referral']).count(),
+        'Other': lead_qs.filter(source__in=['Other', 'Excel Upload']).count(),
+    }
+    source_total = sum(source_counts.values())
+    lead_source_analysis = []
+    source_palette = {
+        'Website Search': '#2563eb',
+        'Meta Ads': '#0d9488',
+        'Google Ads': '#f59e0b',
+        'Walk-in / Referral': '#8b5cf6',
+        'Other': '#64748b'
+    }
+    for s_name, s_cnt in source_counts.items():
+        pct = round((s_cnt / source_total) * 100) if source_total > 0 else 0
+        lead_source_analysis.append({
+            'source': s_name,
+            'count': s_cnt,
+            'percentage': pct,
+            'color': source_palette.get(s_name, '#64748b')
+        })
+
+    # 8. Recent Bookings (Top 5)
+    recent_bookings = []
+    for b in booking_qs.order_by('-created_at')[:5]:
+        pax = (b.total_adults or 0) + (b.total_children or 0) + (b.total_infants or 0) or 1
+        name = f"{b.first_name} {b.last_name}".strip() or b.booking_number
+        recent_bookings.append({
+            'id': b.id,
+            'booking_number': b.booking_number,
+            'date': b.created_at.strftime('%d %b'),
+            'client_name': name,
+            'package': b.package_name or "-",
+            'pax': pax,
+            'amount': float(b.total_price or 0),
+            'status': (b.status or 'confirmed').capitalize()
+        })
+
+    # 9. Recent Payments (Top 5)
+    recent_payments = []
+    for b in booking_qs.order_by('-updated_at')[:5]:
+        tot = float(b.total_price or 0)
+        adv = float(b.advance_payment or 0)
+        bal = float(b.balance or 0)
+        
+        if bal == 0 and tot > 0:
+            p_type = 'Full Payment'
+            p_status = 'Received'
+            amt = tot
+        elif adv > 0:
+            p_type = 'Advance'
+            p_status = 'Received'
+            amt = adv
+        else:
+            p_type = 'Part Payment'
+            p_status = 'Pending'
+            amt = tot
+
+        name = f"{b.first_name} {b.last_name}".strip() or b.booking_number
+        recent_payments.append({
+            'id': b.id,
+            'booking_number': b.booking_number,
+            'date': b.created_at.strftime('%d %b'),
+            'client_name': name,
+            'amount': amt,
+            'type': p_type,
+            'status': p_status
+        })
+
+    # 10. Lead Status Distribution for Staff (Bar Chart)
+    lead_status_distribution = [
+        {'status': 'Hot', 'count': hot_leads, 'color': '#ef4444'},
+        {'status': 'Warm', 'count': warm_leads, 'color': '#f59e0b'},
+        {'status': 'Cold', 'count': cold_leads, 'color': '#3b82f6'},
+        {'status': 'Closed', 'count': closed_leads, 'color': '#10b981'},
+    ]
+
+    return Response({
+        'user_info': {
+            'name': greeting_name,
+            'role': role_display,
+            'email': user.email,
+            'current_date': now.strftime('%A, %d %b %Y')
+        },
+        'booking_dashboard': {
+            'total_bookings': total_bookings,
+            'this_month': this_month_bookings,
+            'growth_pct': booking_growth_pct,
+            'growth_label': 'vs last month'
+        },
+        'account_dashboard': {
+            'total_amount': total_amount,
+            'advance_payment': advance_payment,
+            'remaining_amount': remaining_amount
+        },
+        'lead_crm_dashboard': {
+            'today_leads': today_leads,
+            'this_month': this_month_leads,
+            'total_leads': total_leads,
+            'growth_pct': lead_growth_pct,
+            'growth_label': 'vs last month'
+        },
+        'staff_dashboard': {
+            'hot_leads': hot_leads,
+            'warm_leads': warm_leads,
+            'cold_leads': cold_leads,
+            'closed_leads': closed_leads
+        },
+        'monthly_booking_overview': monthly_booking_overview,
+        'selected_year': selected_year,
+        'lead_source_analysis': {
+            'total_leads': source_total,
+            'sources': lead_source_analysis
+        },
+        'recent_bookings': recent_bookings,
+        'recent_payments': recent_payments,
+        'lead_status_distribution': lead_status_distribution
+    })

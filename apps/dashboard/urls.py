@@ -11,4 +11,5 @@ urlpatterns = [
     path('enquiry-distribution/', views.enquiry_distribution, name='enquiry-distribution'),
     path('recent-activities/', views.recent_activities, name='recent-activities'),
     path('summary/', views.dashboard_summary, name='dashboard-summary'),
+    path('executive-overview/', views.executive_dashboard_overview, name='executive-dashboard-overview'),
 ]

@@ -28,7 +28,8 @@ from .views import (
     QuotationStatsView,
     AccountingSummaryView,
     BookingTravelerCreateView,
-    BookingTravelerDetailView
+    BookingTravelerDetailView,
+    ExpensesReportsView
 )
 
 urlpatterns = [
@@ -59,6 +60,7 @@ urlpatterns = [
     # Module 6: Quotation & Costing URLs
     # Module 15: Accounting & Finance Hub
     path('accounting-summary/', AccountingSummaryView.as_view(), name='accounting-summary'),
+    path('expenses-reports/', ExpensesReportsView.as_view(), name='expenses-reports'),
     # Module 4: Family & Group Pilgrims Management
     path('bookings/<int:booking_id>/travelers/', BookingTravelerCreateView.as_view(), name='booking-traveler-create'),
     path('travelers/<int:pk>/', BookingTravelerDetailView.as_view(), name='booking-traveler-detail'),

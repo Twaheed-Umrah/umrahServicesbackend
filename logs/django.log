@@ -1900,3 +1900,28 @@ WARNING 2026-10-30 15:31:15,891 log 19276 6640 Not Found: /api/bookings/quotatio
 WARNING 2026-10-30 15:31:35,691 log 19276 6640 Not Found: /api/bookings/quotations/1/
 WARNING 2026-10-30 15:31:35,703 log 19276 6640 Not Found: /api/bookings/quotations/1/convert/
 WARNING 2026-10-30 15:31:37,702 log 19276 6640 Unauthorized: /api/bookings/quotations/
+WARNING 2026-11-02 13:00:55,594 log 9944 7576 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-11-02 13:00:58,909 log 9944 7576 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-11-02 13:01:02,211 log 9944 7576 Not Found: /api/bookings/quotations/999999/convert/
+WARNING 2026-11-02 13:01:35,599 log 9944 7576 Not Found: /api/bookings/quotations/1/
+WARNING 2026-11-02 13:01:35,618 log 9944 7576 Not Found: /api/bookings/quotations/1/convert/
+WARNING 2026-11-02 13:01:38,339 log 9944 7576 Unauthorized: /api/bookings/quotations/
+WARNING 2026-11-02 13:01:41,811 log 9944 7576 Bad Request: /api/crm/leads/
+WARNING 2026-11-02 13:02:02,189 log 9944 7576 Not Found: /api/crm/leads/1/
+WARNING 2026-11-02 13:02:02,193 log 9944 7576 Not Found: /api/crm/leads/1/update-status/
+WARNING 2026-11-02 13:02:09,622 log 9944 7576 Unauthorized: /api/crm/leads/
+WARNING 2026-11-02 13:12:54,560 log 4572 1276 Forbidden: /api/bookings/quotations/1/approve-discount/
+WARNING 2026-11-02 13:12:56,490 log 4572 1276 Bad Request: /api/bookings/quotations/1/convert/
+WARNING 2026-11-02 13:12:58,421 log 4572 1276 Not Found: /api/bookings/quotations/999999/convert/
+WARNING 2026-11-02 13:13:17,889 log 4572 1276 Not Found: /api/bookings/quotations/1/
+WARNING 2026-11-02 13:13:17,893 log 4572 1276 Not Found: /api/bookings/quotations/1/convert/
+WARNING 2026-11-02 13:13:19,793 log 4572 1276 Unauthorized: /api/bookings/quotations/
+WARNING 2026-11-02 13:13:22,235 log 4572 1276 Bad Request: /api/crm/leads/
+WARNING 2026-11-02 13:13:36,320 log 4572 1276 Not Found: /api/crm/leads/1/
+WARNING 2026-11-02 13:13:36,328 log 4572 1276 Not Found: /api/crm/leads/1/update-status/
+WARNING 2026-11-02 13:13:40,974 log 4572 1276 Unauthorized: /api/crm/leads/
+WARNING 2026-11-02 13:13:50,916 log 4572 1276 Bad Request: /api/auth/login/
+WARNING 2026-11-02 13:13:53,762 log 4572 1276 Bad Request: /api/auth/login/
+WARNING 2026-11-02 13:14:00,665 log 4572 1276 Forbidden: /api/auth/tenants/
+WARNING 2026-11-02 13:14:08,300 log 4572 1276 Not Found: /api/auth/callers/3/toggle-attendance/
+WARNING 2026-11-02 13:14:15,699 log 4572 1276 Unauthorized: /api/auth/users/me/

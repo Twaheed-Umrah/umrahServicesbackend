@@ -138,24 +138,37 @@ class Booking(TimestampMixin):
 
     @property
     def customer_name(self):
-        return f"{self.first_name} {self.last_name}"
+        first = self.first_name or ''
+        last = self.last_name or ''
+        name = f"{first} {last}".strip()
+        if name:
+            return name
+        return self.created_by.get_full_name() if self.created_by else 'Valued Customer'
     
     @property
     def total_travelers(self):
-        return self.total_adults + self.total_children + self.total_infants
+        return (self.total_adults or 0) + (self.total_children or 0) + (self.total_infants or 0)
 
     @property
     def total_direct_cost(self):
-        return self.cost_hotel + self.cost_flight + self.cost_visa + self.cost_transport + self.cost_other
+        return (
+            (self.cost_hotel or Decimal('0.00')) +
+            (self.cost_flight or Decimal('0.00')) +
+            (self.cost_visa or Decimal('0.00')) +
+            (self.cost_transport or Decimal('0.00')) +
+            (self.cost_other or Decimal('0.00'))
+        )
 
     @property
     def gross_profit(self):
-        return self.total_price - self.total_direct_cost
+        total = self.total_price or Decimal('0.00')
+        return total - self.total_direct_cost
 
     @property
     def profit_margin_pct(self):
-        if self.total_price and self.total_price > 0:
-            return round(float(self.gross_profit / self.total_price) * 100, 2)
+        total = self.total_price or Decimal('0.00')
+        if total > Decimal('0.00'):
+            return round(float(self.gross_profit / total) * 100, 2)
         return 0.0
 
     def save(self, *args, **kwargs):

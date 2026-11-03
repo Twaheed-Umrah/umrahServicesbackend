@@ -177,6 +177,14 @@ class UserSerializer(serializers.ModelSerializer):
             if instance.company_logo:
                 representation['company_logo'] = request.build_absolute_uri(instance.company_logo.url)
             
+            # Handle signature_image
+            if instance.signature_image:
+                representation['signature_image'] = request.build_absolute_uri(instance.signature_image.url)
+
+            # Handle stamp_image
+            if instance.stamp_image:
+                representation['stamp_image'] = request.build_absolute_uri(instance.stamp_image.url)
+            
             # Handle agreement_letter
             if instance.agreement_letter:
                 representation['agreement_letter'] = request.build_absolute_uri(instance.agreement_letter.url)

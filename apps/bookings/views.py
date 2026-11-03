@@ -245,7 +245,8 @@ class BookingConfirmView(APIView):
                 # Agency/Franchise admin can confirm their own bookings AND bookings created by their accountants
                 if booking.created_by != user:
                     # Check if booking was created by one of their accountants
-                    if not (booking.created_by.created_by == user):
+                    creator_parent = getattr(booking.created_by, 'created_by', None) if booking.created_by else None
+                    if creator_parent != user:
                         return Response(
                             {'detail': 'You do not have permission to confirm this booking.'}, 
                             status=status.HTTP_403_FORBIDDEN
@@ -295,7 +296,8 @@ class BookingCancelView(APIView):
                 # Agency/Franchise admin can cancel their own bookings AND bookings created by their accountants
                 if booking.created_by != user:
                     # Check if booking was created by one of their accountants
-                    if not (booking.created_by.created_by == user):
+                    creator_parent = getattr(booking.created_by, 'created_by', None) if booking.created_by else None
+                    if creator_parent != user:
                         return Response(
                             {'detail': 'You do not have permission to cancel this booking.'}, 
                             status=status.HTTP_403_FORBIDDEN
@@ -323,37 +325,33 @@ class BookingReceiptView(APIView):
             booking = Booking.objects.get(pk=pk)
             user = request.user
             
-            # Check permissions
+            # Check permissions (Multi-Tenant isolation)
             if user.role == 'superadmin':
-                # Superadmin can view any booking receipt
                 pass
-            elif user.role == 'accountant':
-                # Accountant can view receipts for bookings created by their parent admin OR themselves
-                if user.created_by:
-                    if booking.created_by not in [user.created_by, user]:
-                        return Response(
-                            {'detail': 'You do not have permission to view this booking receipt.'}, 
-                            status=status.HTTP_403_FORBIDDEN
-                        )
-                else:
-                    if booking.created_by != user:
-                        return Response(
-                            {'detail': 'You do not have permission to view this booking receipt.'}, 
-                            status=status.HTTP_403_FORBIDDEN
-                        )
+            elif user.role == 'franchisesadmin':
+                creator = booking.created_by
+                creator_parent = getattr(creator, 'created_by', None) if creator else None
+                if creator != user and creator_parent != user:
+                    return Response(
+                        {'detail': 'You do not have permission to view this booking receipt.'}, 
+                        status=status.HTTP_403_FORBIDDEN
+                    )
             else:
-                # Agency/Franchise admin can view receipts for their own bookings AND bookings created by their accountants
-                if booking.created_by != user:
-                    # Check if booking was created by one of their accountants
-                    if not (booking.created_by.created_by == user):
-                        return Response(
-                            {'detail': 'You do not have permission to view this booking receipt.'}, 
-                            status=status.HTTP_403_FORBIDDEN
-                        )
+                tenant_admin = getattr(user, 'created_by', None)
+                creator = booking.created_by
+                creator_parent = getattr(creator, 'created_by', None) if creator else None
+                allowed = [user]
+                if tenant_admin:
+                    allowed.append(tenant_admin)
+                if creator not in allowed and creator_parent != tenant_admin:
+                    return Response(
+                        {'detail': 'You do not have permission to view this booking receipt.'}, 
+                        status=status.HTTP_403_FORBIDDEN
+                    )
             
             # Get company details from the tenant admin
             company_user = booking.created_by
-            if company_user and company_user.role != 'franchisesadmin' and company_user.created_by:
+            if company_user and company_user.role != 'franchisesadmin' and getattr(company_user, 'created_by', None):
                 company_user = company_user.created_by
                 
             logo_url = get_media_file_uri(getattr(company_user, 'company_logo', None), request) if company_user else None
@@ -420,37 +418,33 @@ class QuickBookingReceiptView(APIView):
             quick_booking = QuickBooking.objects.get(pk=pk)
             user = request.user
             
-            # Check permissions
+            # Check permissions (Multi-Tenant isolation)
             if user.role == 'superadmin':
-                # Superadmin can view any quick booking receipt
                 pass
-            elif user.role == 'accountant':
-                # Accountant can view receipts for quick bookings created by their parent admin OR themselves
-                if user.created_by:
-                    if quick_booking.created_by not in [user.created_by, user]:
-                        return Response(
-                            {'detail': 'You do not have permission to view this quick booking receipt.'}, 
-                            status=status.HTTP_403_FORBIDDEN
-                        )
-                else:
-                    if quick_booking.created_by != user:
-                        return Response(
-                            {'detail': 'You do not have permission to view this quick booking receipt.'}, 
-                            status=status.HTTP_403_FORBIDDEN
-                        )
+            elif user.role == 'franchisesadmin':
+                creator = quick_booking.created_by
+                creator_parent = getattr(creator, 'created_by', None) if creator else None
+                if creator != user and creator_parent != user:
+                    return Response(
+                        {'detail': 'You do not have permission to view this quick booking receipt.'}, 
+                        status=status.HTTP_403_FORBIDDEN
+                    )
             else:
-                # Agency/Franchise admin can view receipts for their own quick bookings AND quick bookings created by their accountants
-                if quick_booking.created_by != user:
-                    # Check if quick booking was created by one of their accountants
-                    if not (quick_booking.created_by.created_by == user):
-                        return Response(
-                            {'detail': 'You do not have permission to view this quick booking receipt.'}, 
-                            status=status.HTTP_403_FORBIDDEN
-                        )
+                tenant_admin = getattr(user, 'created_by', None)
+                creator = quick_booking.created_by
+                creator_parent = getattr(creator, 'created_by', None) if creator else None
+                allowed = [user]
+                if tenant_admin:
+                    allowed.append(tenant_admin)
+                if creator not in allowed and creator_parent != tenant_admin:
+                    return Response(
+                        {'detail': 'You do not have permission to view this quick booking receipt.'}, 
+                        status=status.HTTP_403_FORBIDDEN
+                    )
             
             # Get company details from the tenant admin
             company_user = quick_booking.created_by
-            if company_user and company_user.role != 'franchisesadmin' and company_user.created_by:
+            if company_user and company_user.role != 'franchisesadmin' and getattr(company_user, 'created_by', None):
                 company_user = company_user.created_by
             
             # Handle logo URL properly
@@ -537,7 +531,8 @@ class ConvertQuickBookingView(APIView):
                 # Agency/Franchise admin can convert their own quick bookings AND quick bookings created by their accountants
                 if quick_booking.created_by != user:
                     # Check if quick booking was created by one of their accountants
-                    if not (quick_booking.created_by.created_by == user):
+                    creator_parent = getattr(quick_booking.created_by, 'created_by', None) if quick_booking.created_by else None
+                    if creator_parent != user:
                         return Response(
                             {'detail': 'You do not have permission to convert this quick booking.'}, 
                             status=status.HTTP_403_FORBIDDEN
@@ -1039,7 +1034,7 @@ class QuotationConvertToBookingView(APIView):
             user = request.user
             allowed = (
                 quotation.created_by == user or
-                quotation.created_by.created_by == user or
+                getattr(quotation.created_by, 'created_by', None) == user or
                 (quotation.lead and quotation.lead.user == user)
             )
             if not allowed:
@@ -1294,7 +1289,7 @@ class QuotationSendEmailView(APIView):
             user = request.user
             allowed = (
                 quotation.created_by == user or
-                quotation.created_by.created_by == user or
+                getattr(quotation.created_by, 'created_by', None) == user or
                 (quotation.lead and quotation.lead.user == user)
             )
             if not allowed:
